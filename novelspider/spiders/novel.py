@@ -40,9 +40,9 @@ class NovelSpider(scrapy.Spider):
         #           self.db.DB_table_home.c.url, [response.url])
 
         self.pages += 1
-        if self.pages > LIMIT_INDEX_PAGES:
+        if LIMIT_INDEX_PAGES > 0 and self.pages > LIMIT_INDEX_PAGES:
             return
-        
+
         next_page = response.css('div.pagelink > a.next::attr("href")').extract_first()
         log.debug('next page: %s' % next_page)
         if next_page is not None:
