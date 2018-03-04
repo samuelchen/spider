@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-scrapy crawl chapter -s ./.scrapy-stat/chapter-1
+scrapy crawl chapter -s JOBDIR=./.scrapy-stat/chapter-1
