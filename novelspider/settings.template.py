@@ -80,7 +80,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'scrapy.pipelines.images.ImagesPipeline': 10,
+    'novelspider.pipelines.NovelspiderAlbumPipeline': 30,
     'novelspider.pipelines.NovelspiderDBPipeline': 300,
 }
 IMAGES_STORE = '../albums'
