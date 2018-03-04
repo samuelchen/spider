@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-scrapy crawl novel -s JOBDIR=./.scrapy-stat/novel-1
+nohup scrapy crawl novel -s JOBDIR=./.scrapy-stat/novel-1 >novel.log &
