@@ -4,6 +4,9 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+import scrapy
+from scrapy.exceptions import DropItem
+from scrapy.pipelines.images import ImagesPipeline
 from .db import Database, String, and_
 from sqlalchemy.sql import cast
 import logging
@@ -35,25 +38,30 @@ class NovelspiderDBPipeline(object):
 
         elif spider.name == 'novel':
             t = self.db.DB_table_novel
-            if len(item) < 3:
-                stmt = self.db.DB_table_novel.insert().values(url=item['url'], name=item['name'])
-            else:
-                stmt = t.update().values(
-                    author=item['author'],
-                    category=item['category'],
-                    length=item['length'],
-                    status=item['status'],
-                    desc=item['desc'],
-                    favorites=item['favorites'],
-                    recommends=item['recommends'],
-                    recommends_month=item['recommends_month'],
-                    update_on=item['update_on'],
-                    url_index=item['url_index'],
-                    chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
-                ).where(and_(t.c.url==item['url'], t.c.name==item['name']))
+            stmt = t.insert().values(
+                url=item['url'],
+                name=item['name'],
+                author=item['author'],
+                category=item['category'],
+                length=item['length'],
+                status=item['status'],
+                desc=item['desc'],
+                favorites=item['favorites'],
+                recommends=item['recommends'],
+                recommends_month=item['recommends_month'],
+                update_on=item['update_on'],
+                url_index=item['url_index'],
+            )
+            stmt2 = t.update().values(
+                chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
+            )
             try:
                 self.conn.execute(stmt)
-            except Database.IntegrityError:
+                self.conn.execute(stmt2)
+            except Database.IntegrityError as err:
+                s = str(err)
+                if s.find('name') > 0:
+                    log.error('--------  Novel with same name --------\n%s\n%s' % (err, item))
                 log.warn('Conflict (novel): %s' % item)
 
         elif spider.name == 'chapter':
@@ -82,3 +90,22 @@ class NovelspiderDBPipeline(object):
             except Database.IntegrityError:
                 log.warn('Conflict (content): %s - %s' % (table, id))
         return item
+
+
+class NovelspiderAlbumPipeline(ImagesPipeline):
+
+    def get_media_requests(self, item, info):
+        for url in item[self.images_urls_field]:
+            yield scrapy.Request(url, meta={'item': item})
+
+    # def item_completed(self, results, item, info):
+    #     image_paths = [x['path'] for ok, x in results if ok]
+    #     if not image_paths:
+    #         raise DropItem("Item contains no images")
+    #     return item
+
+    def file_path(self, request, response=None, info=None):
+        item = request.meta['item']
+        name = item['name']
+        filename = '%s.jpg' % name
+        return filename

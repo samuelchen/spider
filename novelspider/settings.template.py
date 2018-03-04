@@ -67,8 +67,8 @@ DEFAULT_REQUEST_HEADERS = {
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   # 'novelspider.middlewares.NovelspiderDownloaderMiddleware': 543,
-   'novelspider.middlewares.RotateUserAgentMiddleware': 300,
+    # 'novelspider.middlewares.NovelspiderDownloaderMiddleware': 543,
+    'novelspider.middlewares.RotateUserAgentMiddleware': 300,
 }
 
 # Enable or disable extensions
@@ -80,8 +80,14 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'novelspider.pipelines.NovelspiderDBPipeline': 300,
+    'scrapy.pipelines.images.ImagesPipeline': 10,
+    'novelspider.pipelines.NovelspiderDBPipeline': 300,
 }
+IMAGES_STORE = '../albums'
+IMAGES_URLS_FIELD = 'album'
+IMAGES_RESULT_FIELD = 'album_down'
+IMAGES_EXPIRES = 365*10
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

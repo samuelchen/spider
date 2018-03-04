@@ -26,12 +26,12 @@ class NovelSpider(scrapy.Spider):
         for x in response.css('table.grid > tr > td:first-child > a'):
             name = x.css('a::text').extract_first()
             url = x.css('a::attr("href")').extract_first()
-            yield {
+            item = {
                 "name": name,
                 "url": url
             }
 
-            yield response.follow(url, callback=self.parse_novel)
+            yield response.follow(url, meta={"item":item}, callback=self.parse_novel)
 
         # mark_done(self.db.engine, self.db.DB_table_home,
         #           self.db.DB_table_home.c.url, [response.url])
@@ -43,9 +43,11 @@ class NovelSpider(scrapy.Spider):
 
     def parse_novel(self, response):
 
+        item = response.meta['item']
         r = {}
-        r['url'] = response.url
+        # r['url'] = response.url
         r['name'] = response.css('div#content h1::text').extract_first()
+        assert r['name'] == item['name']
         line1 = response.css('div#content > table > tr:first-child > td > table > tr:nth-of-type(2) > td::text')
         r['category'] = line1[0].extract().split('：')[1]
         r['author'] = line1[1].extract().split('：')[1]
@@ -71,4 +73,5 @@ class NovelSpider(scrapy.Spider):
         r['desc'] = '\n'.join(sb)
         r['url_index'] = response.css('div#content > table > tr:nth-of-type(8)').css('caption > a::attr("href")').extract_first()
 
-        yield r
+        item.update(r)
+        return item

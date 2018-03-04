@@ -1,6 +1,7 @@
 .idea
 .scrapy
 *.sqlite
+albums
 
 # TODO: copy settings.template.py to settings.py
 settings.py
