@@ -51,12 +51,15 @@ class NovelspiderDBPipeline(object):
                 recommends_month=item['recommends_month'],
                 update_on=item['update_on'],
                 url_index=item['url_index'],
-            )
-            stmt2 = t.update().values(
-                chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
-            )
+            ).returning(t.c.id)
+
             try:
-                self.conn.execute(stmt)
+                rs = self.conn.execute(stmt)
+                r = rs.fetchone()
+
+                stmt2 = t.update().values(
+                    chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
+                ).where(t.c.id==r[t.c.id])
                 self.conn.execute(stmt2)
             except Database.IntegrityError as err:
                 s = str(err)
