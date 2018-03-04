@@ -95,8 +95,9 @@ class NovelspiderDBPipeline(object):
 class NovelspiderAlbumPipeline(ImagesPipeline):
 
     def get_media_requests(self, item, info):
-        for url in item[self.images_urls_field]:
-            yield scrapy.Request(url, meta={'item': item})
+        if info.spider.name == 'novel':
+            for url in item[self.images_urls_field]:
+                yield scrapy.Request(url, meta={'item': item})
 
     # def item_completed(self, results, item, info):
     #     image_paths = [x['path'] for ok, x in results if ok]

@@ -2,6 +2,7 @@
 import scrapy
 import logging
 from ..db import Database, select
+from ..settings import LIMIT_INDEX_PAGES
 
 log = logging.getLogger(__name__)
 
@@ -15,11 +16,13 @@ class NovelSpider(scrapy.Spider):
         self.db = Database()
 
         self.db.DB_table_novel.create(self.db.engine, checkfirst=True)
+        self.pages = 0
 
         t = self.db.DB_table_home
         stmt = select([t.c.url]).where(t.c.done==False)
         rs = self.db.engine.execute(stmt)
         self.start_urls = [r['url'] for r in rs]
+
         return super(NovelSpider, self).__init__(*args, **kwargs)
 
     def parse(self, response):
@@ -36,6 +39,10 @@ class NovelSpider(scrapy.Spider):
         # mark_done(self.db.engine, self.db.DB_table_home,
         #           self.db.DB_table_home.c.url, [response.url])
 
+        self.pages += 1
+        if self.pages > LIMIT_INDEX_PAGES:
+            return
+        
         next_page = response.css('div.pagelink > a.next::attr("href")').extract_first()
         log.debug('next page: %s' % next_page)
         if next_page is not None:

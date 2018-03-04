@@ -2,7 +2,8 @@
 from collections import OrderedDict
 import scrapy
 import logging
-from ..db import Database, select, and_, not_
+from ..db import Database, mark_done, select, and_, not_
+from ..settings import LIMIT_NOVELS
 
 log = logging.getLogger(__name__)
 
@@ -15,20 +16,20 @@ class ChapterSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.db = Database()
         # self.start_urls = []
-        self.limit = 1
+        self.limit = LIMIT_NOVELS
 
         return super(ChapterSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
         tn = self.db.DB_table_novel
-        stmt = select([tn.c.url_index, tn.c.chapter_table]
+        stmt = select([tn.c.id, tn.c.url_index, tn.c.chapter_table]
                     ).where(and_(tn.c.done==False, not_(tn.c.url_index==None)))
         if self.limit > 0:
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
         for r in rs:
             yield scrapy.http.Request(r['url_index'], dont_filter=True, meta={'table':r['chapter_table']})
-
+            mark_done(self.db.engine, tn, tn.c.id, [r['id'], ])
     def parse(self, response):
         current_url = response.url
         if current_url.endswith('index.html'):

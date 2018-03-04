@@ -127,3 +127,8 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 # DB_CONNECTION_STRING='postgresql://scott:tiger@localhost/test'
 DB_CONNECTION_STRING='sqlite:///../novel.sqlite'
 # DB_CONNECTION_STRING='postgresql://localhost/'
+
+# how many index pages will be crawled for obtain novels (novel spider)
+LIMIT_INDEX_PAGES = 1
+# how many novels will be crawled for obtain chapters (novel chapters)
+LIMIT_NOVELS = 1

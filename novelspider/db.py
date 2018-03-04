@@ -116,7 +116,6 @@ class Database(object):
         log.info('Initialize database.')
         self.DB_table_home.create(self.engine, checkfirst=True)
         self.DB_table_novel.create(self.engine, checkfirst=True)
-        self.DB_table_chapter.create(self.engine, checkfirst=True)
 
     def drop_all(self):
         log.warn('Your are DELETING ALL your database content!!!')
@@ -129,7 +128,6 @@ class Database(object):
             t.drop(self.engine, checkfirst=True)
 
         self.DB_table_home.drop(self.engine, checkfirst=True)
-        self.DB_table_chapter.drop(self.engine, checkfirst=True)
         self.DB_table_novel.drop(self.engine, checkfirst=True)
 
 
