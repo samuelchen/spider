@@ -1,0 +1,9 @@
+
+# spiders
+scrapy
+sqlalchemy
+#psycopg2   #renamed to psycopg2-binary
+psycopg2-binary
+
+# dashboard
+django

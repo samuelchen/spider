@@ -1,3 +1,10 @@
+.idea
+.scrapy
+*.sqlite
+
+# TODO: copy settings.template.py to settings.py
+settings.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
