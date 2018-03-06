@@ -5,7 +5,8 @@ sqlalchemy
 
 #psycopg2   #renamed to psycopg2-binary
 # window (py3.4):
-#       download from http://www.stickpeople.com/projects/python/win-psycopg/
+#       download from http://www.stickpeople.com/projects/python/win-psycopg/j
+#       then easy_install
 # OR
 #       pip install git+https://github.com/nwcell/psycopg2-windows.git@win32-py34#egg=psycopg2
 psycopg2-binary
