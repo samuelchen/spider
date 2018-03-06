@@ -28,14 +28,15 @@ class ChapterSpider(scrapy.Spider):
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
         for r in rs:
-            yield scrapy.http.Request(r['url_index'], dont_filter=True, meta={'table':r['chapter_table']})
-            mark_done(self.db.engine, tn, tn.c.id, [r['id'], ])
+            yield scrapy.http.Request(r['url_index'], dont_filter=True, meta={'table':r['chapter_table'], 'novel_id':r['id']})
+
     def parse(self, response):
         current_url = response.url
         if current_url.endswith('index.html'):
             current_url = current_url[:current_url.rindex('/')] + '/'
         meta = response.meta
         table = meta['table']
+        novel_id = meta['id']
 
         for x in response.css('div.centent > *'):
             is_section = x.css('li:first-child').extract_first() is None
@@ -60,6 +61,9 @@ class ChapterSpider(scrapy.Spider):
                         }
                     yield scrapy.http.Request(item['url'], meta={"item":item},
                                               callback=self.parse_content)
+        # mark this novel done
+        tn = self.db.DB_table_novel
+        mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
 
     def parse_content(self, response):
         item = response.meta['item']

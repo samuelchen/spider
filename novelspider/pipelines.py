@@ -28,13 +28,13 @@ class NovelspiderDBPipeline(object):
         log.debug('Database disconnected.')
 
     def process_item(self, item, spider):
-        log.debug('processing <spider:%s> %s' % (spider.name, item))
+        log.debug('processing <spider:%s>  id=%{id}s name=%{name}s' % (spider.name, item['name']))
         if spider.name == 'home':
             stmt = self.db.DB_table_home.insert().values(url=item['url'])
             try:
                 self.conn.execute(stmt)
             except Database.IntegrityError:
-                log.warn('Conflict (home): %s' % item)
+                log.warn('Conflict (home): id=%{id}s name=%{name}s' % item)
 
         elif spider.name == 'novel':
             t = self.db.DB_table_novel
@@ -64,8 +64,9 @@ class NovelspiderDBPipeline(object):
             except Database.IntegrityError as err:
                 s = str(err)
                 if s.find('name') > 0:
-                    log.error('--------  Novel with same name --------\n%s\n%s' % (err, item))
-                log.warn('Conflict (novel): %s' % item)
+                    log.error('--------  Novel with same name --------\n%s\nid=%{id}s name=%{name}s' % (err, item))
+                log.warn('Conflict (home): id=%{id}s name=%{name}s' % item)
+
 
         elif spider.name == 'chapter':
             table = item['table']
@@ -78,7 +79,8 @@ class NovelspiderDBPipeline(object):
             try:
                 self.conn.execute(stmt)
             except Database.IntegrityError:
-                log.warn('Conflict (%s): %s' % (table, item))
+                log.warn('Conflict (%s): id=%{id}s name=%{name}s' % (table, item))
+
         elif spider.name == 'content':
             table = item['table']
             t = self.db.get_chapter_table(table)
@@ -91,7 +93,7 @@ class NovelspiderDBPipeline(object):
             try:
                 self.conn.execute(stmt)
             except Database.IntegrityError:
-                log.warn('Conflict (content): %s - %s' % (table, id))
+                log.warn('Conflict (content:%s): id=%{id}s name=%{name}s' % (table, id))
         return item
 
 
