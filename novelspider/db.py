@@ -10,17 +10,15 @@ from sqlalchemy import MetaData, ForeignKey, Sequence
 from sqlalchemy.sql import select, update
 from sqlalchemy.sql.expression import not_, and_
 from sqlalchemy.exc import IntegrityError
-
-
-if __name__ == '__main__':
-    from settings import DB_CONNECTION_STRING
-else:
-    from .settings import DB_CONNECTION_STRING
-
+from scrapy.utils.project import get_project_settings
 import datetime
 import logging
+
 logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 log = logging.getLogger('db')
+
+settings = get_project_settings()
+DB_CONNECTION_STRING = settings['DB_CONNECTION_STRING']
 
 
 def get_all_undone(engine_or_conn, DB_columns):
@@ -85,7 +83,20 @@ class Database(object):
         schema=schema
     )
 
-    # DB_table_chapter = create_db_table_chapter('chapter', meta=meta, schema=schema)
+    DB_table_chapter_failure = Table('chapter_failure', meta,
+        Column('id', Integer, primary_key=True),
+        Column('novel_id', Integer, index=True),
+        Column('novel_name', String(100)),
+        Column('chapter_table', String(100)),
+        Column('chapter_id', Integer, index=True),
+        Column('error', Text),
+        Column('created_on', DateTime(timezone=True)),
+        Column('retry_count', Integer),
+        Column('timestamp', DateTime(timezone=True)),
+
+        schema=schema
+    )
+
 
     def __init__(self, schema=None):
         self.schema = schema
