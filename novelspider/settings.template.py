@@ -16,9 +16,8 @@
 #
 ##########################################
 
-import random
 import logging
-logging.getLogger('scrapy').setLevel(logging.INFO)
+LOG_LEVEL = logging.INFO
 
 # BOT_NAME = 'GoDuckDuck'
 

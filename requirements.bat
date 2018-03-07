@@ -6,6 +6,10 @@ set LIB=C:\OpenSSL-Win32\lib;
 pip install cryptography
 
 
+# twisted for win (scrapy)
+pip install Twisted[windows_platform]
+
+
 pip install scrapy sqlalchemy Pillow
 
 :: psycopg2 for window
