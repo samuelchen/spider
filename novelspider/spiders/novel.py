@@ -36,12 +36,13 @@ class NovelSpider(scrapy.Spider):
         for x in response.css('table.grid > tr > td:first-child > a'):
             name = x.css('a::text').extract_first()
             url = x.css('a::attr("href")').extract_first()
-            item = {
-                "name": name.strip(),
-                "url": url.strip()
-            }
+            if name and url:
+                item = {
+                    "name": name.strip(),
+                    "url": url.strip()
+                }
 
-            yield response.follow(url, meta={"item":item}, callback=self.parse_novel)
+                yield response.follow(url, meta={"item":item}, callback=self.parse_novel)
 
         # mark_done(self.db.engine, self.db.DB_table_home,
         #           self.db.DB_table_home.c.url, [response.url])
@@ -57,6 +58,8 @@ class NovelSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
     def parse_novel(self, response):
+
+        # TODO: need to check if None then strip()
 
         item = response.meta['item']
         r = {}

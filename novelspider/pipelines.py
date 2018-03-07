@@ -73,7 +73,6 @@ class NovelspiderDBPipeline(object):
                 log.warn('Conflict (home): %(name)s %(url)s' % item)
 
         elif spider.name == 'chapter':
-            log.info('<spider:chapter>: %(name)s(id=%(idx)s, url=%(url)s)' % item)
 
             novel_id = item['novel_id']
 
@@ -83,7 +82,8 @@ class NovelspiderDBPipeline(object):
             if novel_id not in self.counters:
                 self.counters[novel_id] = total['saved']     # count number begin from saved count
 
-            log.debug('Chapters counts: total=%s(%s), saved=%s' % (total['count'], 'done' if total['done'] else 'counting', self.counters[novel_id]))
+            log.debug('Chapters counts: total=%s(%s), saved=%s' % (total['count'],
+                       'done' if total['done'] else 'counting', self.counters[novel_id]))
 
             # get db table definition
             table = item['table']
@@ -95,16 +95,28 @@ class NovelspiderDBPipeline(object):
                                      timestamp=datetime.datetime.now(), is_section=is_section, done=True)
             try:
                 self.conn.execute(stmt)
+                log.info('Saved %(name)s(id=%(idx)s, url=%(url)s)' % item)
             except Database.IntegrityError:
                 log.warn('Conflict (%(table)s): %(name)s %(url)s' % item)
+
+                # add conflict chapter to conflict table
+                stmt = select([t.c.id]).where(t.c.name==item['name'])
+                cid = self.conn.execute(stmt).scalar()
+                if cid:
+                    tc = self.db.get_chapter_conflict_table(table)
+                    stmt = tc.insert().values(id=item['idx'], name=item['name'], url=item['url'],
+                                              content=item['content'], conflict_chapter_id=cid,
+                                              timestamp=datetime.datetime.now(), is_section=is_section)
+                    self.conn.execute(stmt)
+
+            self.counters[novel_id] += 1
 
             if total['done'] and self.counters[novel_id] >= total['count']:
                 # TODO: possible finished but chapters counting not done ?
                 # mark this novel done
                 tn = self.db.DB_table_novel
                 mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
-            else:
-                self.counters[novel_id] += 1
+
         else:
             log.error('Unknown spider <%s>' % spider.name)
         return item

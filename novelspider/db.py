@@ -21,10 +21,10 @@ settings = get_project_settings()
 DB_CONNECTION_STRING = settings['DB_CONNECTION_STRING']
 
 
-def get_all_undone(engine_or_conn, DB_columns):
-    stmt = select(DB_columns).where(done==False)
-    records = engine_or_conn.execute(stmt)
-    return records
+# def get_all_undone(engine_or_conn, DB_columns):
+#     stmt = select(DB_columns).where(done==False)
+#     records = engine_or_conn.execute(stmt)
+#     return records
 
 
 def mark_done(engine_or_conn, table, col_pk, pks):
@@ -42,6 +42,21 @@ def create_db_table_chapter(name, meta, schema=None):
         Column('url', Text, unique=True),
         Column('content', Text),
         Column('done', Boolean, default=False),
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.now),       # last modified datetime of record
+        schema=schema
+    )
+
+
+# create a conflict table corresponding to chapter table
+# conflict table name should be novel_id_name_conflict (chapter_table + "_conflict")
+def create_db_table_chapter_conflicts(name, meta, schema=None):
+    return Table(name, meta,
+        Column('id', Integer, primary_key=True, index=True),
+        Column('name', String(100), unique=True, nullable=False),
+        Column('is_section', Boolean, default=False),
+        Column('url', Text, unique=True),
+        Column('content', Text),
+        Column('conflict_chapter_id', Integer),
         Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.now),       # last modified datetime of record
         schema=schema
     )
@@ -97,7 +112,6 @@ class Database(object):
         schema=schema
     )
 
-
     def __init__(self, schema=None):
         self.schema = schema
         self.engine = Database.create_engine()
@@ -117,6 +131,15 @@ class Database(object):
         table = Database.meta.tables.get(name, None)
         if table is None:
             table = create_db_table_chapter(name, meta=self.meta, schema=self.schema)
+        return table
+
+    def get_chapter_conflict_table(self, name):
+        # arg "name" is chapter table name.
+        # conflict table will be name + "_conflict"
+        tname = name + '_conflict'
+        table = Database.meta.tables.get(tname, None)
+        if table is None:
+            table = create_db_table_chapter_conflicts(tname, meta=self.meta, schema=self.schema)
         return table
 
     def create_connection(self, *args, **kwargs):

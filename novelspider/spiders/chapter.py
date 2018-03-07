@@ -38,6 +38,8 @@ class ChapterSpider(scrapy.Spider):
             table = r['chapter_table']
             t = self.db.get_chapter_table(table)
             t.create(self.db.engine, checkfirst=True)
+            tc = self.db.get_chapter_conflict_table(table)
+            tc.create(self.db.engine, checkfirst=True)
 
             self.chapter_counters[r['id']] = {'count': 0, 'saved': 0, 'done': False}
             log.info('Parsing chapters for novel %(name)s(id=%(id)s) %(url_index)s' % r)
@@ -81,8 +83,10 @@ class ChapterSpider(scrapy.Spider):
             if is_section:
                 name = x.css('div::text').extract_first()
                 if name:
+                    name = name.strip()
                     self.chapter_counters[novel_id]['count'] += 1
                     if name not in finished_sections:
+                        log.info('Requesting section %s(id=%s) of %s' % (name, idx, table))
                         yield {
                             "table": table,
                             "novel_id": novel_id,
@@ -101,16 +105,19 @@ class ChapterSpider(scrapy.Spider):
                 for y in x.css('li'):
                     url = y.css('a::attr("href")').extract_first()
                     name = y.css('a::text').extract_first()
-                    if url and name:
+                    if url and name and url != '#' and not url.startswith('javascript:'):
+                        name = name.strip()
+                        url = url.strip()
                         self.chapter_counters[novel_id]['count'] += 1
                         if url not in finished_chapters:
+                            log.info('Requesting chapter %s(id=%s, %s) of %s' % (name, idx, url, table))
                             item = {
                                 "table": table,
                                 "novel_id": novel_id,
 
                                 "idx": idx,
-                                "name": name.strip(),
-                                "url": url.strip(),
+                                "name": name,
+                                "url": url,
                             }
                             yield scrapy.Request(novel_url + url, callback=self.parse_content, meta={"item": item})
                         else:
@@ -118,6 +125,7 @@ class ChapterSpider(scrapy.Spider):
                         idx += 1
 
         self.chapter_counters[novel_id]['done'] = True
+        log.debug('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
 
     def parse_content(self, response):
         item = response.meta['item']
