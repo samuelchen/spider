@@ -13,6 +13,8 @@ psycopg2-binary
 
 Pillow
 
+#readnovel
+flask
 
 # dashboard
 django
