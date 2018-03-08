@@ -1,7 +1,7 @@
 .idea
 .scrapy
 .scrapy-*
-*.sqlite
+*.sqlite3
 albums
 
 # TODO: copy settings.template.py to settings.py

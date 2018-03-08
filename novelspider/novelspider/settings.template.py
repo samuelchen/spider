@@ -16,8 +16,12 @@
 #
 ##########################################
 
+import os
 import logging
 LOG_LEVEL = logging.INFO
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # BOT_NAME = 'GoDuckDuck'
 
@@ -82,10 +86,10 @@ ITEM_PIPELINES = {
     'novelspider.pipelines.NovelspiderAlbumPipeline': 30,
     'novelspider.pipelines.NovelspiderDBPipeline': 300,
 }
-IMAGES_STORE = '../albums'
+IMAGES_STORE = os.path.join(BASE_DIR, 'albums')
 IMAGES_URLS_FIELD = 'album'
 IMAGES_RESULT_FIELD = 'album_down'
-IMAGES_EXPIRES = 365*10
+IMAGES_EXPIRES = 365 * 10
 
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -124,7 +128,7 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 # POSTGRESQL with driver and domain: postgresql+psycopg2://user:password@/dbname
 # POSTGRESQL with driver and domain: postgresql+psycopg2://user:password@/dbname?host=/var/lib/postgresql
 # DB_CONNECTION_STRING='postgresql://scott:tiger@localhost/test'
-DB_CONNECTION_STRING='sqlite:///../novel.sqlite'
+DB_CONNECTION_STRING = 'sqlite:///' + os.path.join(BASE_DIR, 'novel.sqlite3')
 # DB_CONNECTION_STRING='postgresql://localhost/'
 
 # how many index pages will be crawled for obtain novels (novel spider)
