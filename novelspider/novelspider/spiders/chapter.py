@@ -98,7 +98,8 @@ class ChapterSpider(scrapy.Spider):
                         }
                     else:
                         log.info('Skipped saved section %s' % name)
-                    idx += 1
+                    idx += 1        #TODO: id + 10 (so can add missing section or chapter)
+                    #TODO: update chapter_table set id=id*10
 
             else:
                 # chapter
@@ -122,7 +123,7 @@ class ChapterSpider(scrapy.Spider):
                             yield scrapy.Request(novel_url + url, callback=self.parse_content, meta={"item": item})
                         else:
                             log.info('Skipped saved chapter %s' % name)
-                        idx += 1
+                        idx += 1       #TODO: id + 10 (so can add missing section or chapter)
 
         self.chapter_counters[novel_id]['done'] = True
         log.debug('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
@@ -135,6 +136,7 @@ class ChapterSpider(scrapy.Spider):
         txt = txt[i:]
         j = txt.find('<!-- 翻页上AD开始 -->')
         txt = txt[:j]
+        # TODO: remove piaotian.com, link, 飘天文学 lines
         item['content'] = txt
         return item
 
