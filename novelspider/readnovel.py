@@ -71,9 +71,15 @@ def novel_index():
         "encoding": 'utf-8'
     }
 
+    # sql = '''select tablename from pg_catalog.pg_tables where tablename like 'novel_%';'''
+    chapter_tables = set(db.engine.table_names())
+    chapter_tables.remove('novel')
+    chapter_tables.remove('home')
+
     tn = db.DB_table_novel
     stmt = select([tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.length, tn.c.status, tn.c.desc, tn.c.recommends,
-                  tn.c.favorites, tn.c.recommends_month, tn.c.update_on, tn.c.chapter_table, tn.c.timestamp])
+                  tn.c.favorites, tn.c.recommends_month, tn.c.done, tn.c.update_on, tn.c.chapter_table, tn.c.timestamp]
+                  ).where(tn.c.chapter_table.in_(chapter_tables))
     try:
         rs = db.engine.execute(stmt)
         i = 0
@@ -85,8 +91,11 @@ def novel_index():
             if i % 4 == 0:
                 sb.append('<tr style="%s;">' % 'background-color:#eee' if odd else '')
                 odd = not odd
-            sb.append('<td align="right"><img src="/s/%(name)s.jpg" width="100px" height="125px"></td>' % r)
-            sb.append('<td><h3><a href="/%(id)s/" alt="%(desc)s">%(name)s</a></h3>作者: <a href="/author/%(author)s/">%(author)s</a>' % r)
+            sb.append('<td align="right"><img src="/s/%(name)s.jpg" width="100px" height="125px"></td><td>' % r)
+            sb.append('<h3>%(id)s <a title="%(desc)s" href="/%(id)s/">%(name)s</a></h3>' % r)
+            sb.append('<li>作者: <a href="/author/%(author)s/">%(author)s</a></li>' % r)
+            sb.append('<li>类型: %(category)s</li><li>%(length)s 字</li><li>%(status)s %(done)s</li>' % r)
+            sb.append('<li>%s</li></td>' % r['update_on'].strftime('%x'))
             i += 1
             if i % 4 == 0:
                 sb.append('</tr>')
