@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, Boolean, Text, DateTime, BLOB
 from sqlalchemy import MetaData, ForeignKey, Sequence
 from sqlalchemy.sql import select, update
-from sqlalchemy.sql.expression import not_, and_
+from sqlalchemy.sql.expression import not_, and_, or_
 from sqlalchemy.exc import IntegrityError
 from scrapy.utils.project import get_project_settings
 import datetime

@@ -33,17 +33,22 @@ class ChapterSpider(scrapy.Spider):
         if self.limit > 0:
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
-        # loop all novels index pages
+        # loop all novels index
+        novels = []
         for r in rs:
             table = r['chapter_table']
             t = self.db.get_chapter_table(table)
             t.create(self.db.engine, checkfirst=True)
-            tc = self.db.get_chapter_conflict_table(table)
-            tc.create(self.db.engine, checkfirst=True)
+            # tc = self.db.get_chapter_conflict_table(table)
+            # tc.create(self.db.engine, checkfirst=True)
+
+            novels.append('%s_%s' % (r[tn.c.id], r[tn.c.name]))
 
             self.chapter_counters[r['id']] = {'count': 0, 'saved': 0, 'done': False}
             log.info('Parsing chapters for novel %(name)s(id=%(id)s) %(url_index)s' % r)
             yield scrapy.Request(r['url_index'], meta={'table': table, 'novel_id': r['id']})
+
+        self.log_novels(novels)
 
     def parse(self, response):
 
@@ -58,7 +63,7 @@ class ChapterSpider(scrapy.Spider):
         meta = response.meta
         table = meta['table']
         novel_id = meta['novel_id']
-        idx = 1
+        idx = 10
         finished_chapters = set()
         finished_sections = set()
 
@@ -98,8 +103,7 @@ class ChapterSpider(scrapy.Spider):
                         }
                     else:
                         log.info('Skipped saved section %s' % name)
-                    idx += 1        #TODO: id + 10 (so can add missing section or chapter)
-                    #TODO: update chapter_table set id=id*10
+                    idx += 10
 
             else:
                 # chapter
@@ -123,7 +127,7 @@ class ChapterSpider(scrapy.Spider):
                             yield scrapy.Request(novel_url + url, callback=self.parse_content, meta={"item": item})
                         else:
                             log.info('Skipped saved chapter %s' % name)
-                        idx += 1       #TODO: id + 10 (so can add missing section or chapter)
+                        idx += 10
 
         self.chapter_counters[novel_id]['done'] = True
         log.debug('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
@@ -136,7 +140,18 @@ class ChapterSpider(scrapy.Spider):
         txt = txt[i:]
         j = txt.find('<!-- 翻页上AD开始 -->')
         txt = txt[:j]
-        # TODO: remove piaotian.com, link, 飘天文学 lines
+        # TODO: remove source site name/link lines
         item['content'] = txt
         return item
+
+    def log_novels(self, novels):
+        import os
+
+        base_dir = settings['BASE_DIR']
+        fname = os.path.join(base_dir, 'log', 'chapter_novels.log')
+        with open(fname, 'w') as f:
+            f.write('novel')
+            for n in novels:
+                f.write('+')
+                f.write(n)
 

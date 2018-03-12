@@ -104,6 +104,7 @@ class NovelspiderDBPipeline(object):
                 cid = self.conn.execute(stmt).scalar()
                 if cid:
                     tc = self.db.get_chapter_conflict_table(table)
+                    tc.create(self.db.engine, checkfirst=True)
                     stmt = tc.insert().values(id=item['idx'], name=item['name'], url=item['url'],
                                               content=item['content'], conflict_chapter_id=cid,
                                               timestamp=datetime.datetime.now(), is_section=is_section)
