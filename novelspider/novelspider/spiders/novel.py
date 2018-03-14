@@ -31,7 +31,7 @@ class NovelSpider(scrapy.Spider):
         rs = self.db.engine.execute(tn)
         self.saved_novels = {r[tn.c.name] for r in rs}
 
-        return super(NovelSpider, self).__init__(*args, **kwargs)
+        super(NovelSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
 

@@ -16,7 +16,6 @@ log = logging.getLogger(__name__)
 
 class NovelspiderDBPipeline(object):
 
-
     def __init__(self):
         self.db = Database()
         self.conn = None
@@ -124,8 +123,10 @@ class NovelspiderDBPipeline(object):
                 stmt = select([t.c.id]).where(t.c.name==item['name'])
                 cid = self.conn.execute(stmt).scalar()
                 if cid:
+                    # create conflict table if not exists
                     tc = self.db.get_chapter_conflict_table(table)
                     tc.create(self.db.engine, checkfirst=True)
+                    # insert conflict chapter
                     stmt = tc.insert().values(id=item['idx'], name=item['name'], url=item['url'],
                                               content=item['content'], conflict_chapter_id=cid,
                                               timestamp=datetime.datetime.utcnow(), is_section=is_section)
@@ -141,6 +142,7 @@ class NovelspiderDBPipeline(object):
                 # mark this novel done
                 tn = self.db.DB_table_novel
                 mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
+                log.info('Novel %s is finished downloading.' % table)
 
         else:
             log.error('Unknown spider <%s>' % spider.name)

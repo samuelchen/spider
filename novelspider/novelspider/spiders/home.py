@@ -16,7 +16,7 @@ class HomeSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.db = Database()
         self.db.DB_table_home.create(self.db.engine, checkfirst=True)
-        return super(HomeSpider, self).__init__(*args, **kwargs)
+        super(HomeSpider, self).__init__(*args, **kwargs)
 
     def parse(self, response):
         for x in response.css('ul.navlist').css('a'):

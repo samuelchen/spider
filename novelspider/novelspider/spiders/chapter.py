@@ -26,7 +26,7 @@ class ChapterSpider(scrapy.Spider):
         # "done": is a flag to control weather total chapters count ("count") is finished counting.
         self.chapter_counters = {}
 
-        return super(ChapterSpider, self).__init__(*args, **kwargs)
+        super(ChapterSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
 
@@ -69,23 +69,12 @@ class ChapterSpider(scrapy.Spider):
         table = meta['table']
         novel_id = meta['novel_id']
         idx = 10
-        finished_chapters = set()
-        finished_sections = set()
 
-        # finished chapters
-        t = self.db.get_chapter_table(table)
-        stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]).where(t.c.done==True)
-        rs = self.db.engine.execute(stmt)
+        # finished chapters including chapter, section and conflicts
+        finished_sections, finished_chapters = self.cache_finished(table)
         # keep count of saved chapters. calculate from this number.
-        self.chapter_counters[novel_id]['saved'] = rs.rowcount
-        log.info('Will skip %s chapters which were saved.' % rs.rowcount)
-
-        # cache finished urls
-        for r in rs:
-            if r[t.c.is_section]:
-                finished_sections.add(r[t.c.name])
-            else:
-                finished_chapters.add(r[t.c.name])
+        self.chapter_counters[novel_id]['saved'] = len(finished_chapters) + len(finished_sections)
+        log.info('Will skip %s chapters which were saved.' % self.chapter_counters[novel_id]['saved'])
 
         # loop all chapter links in current page
         for x in response.css('div.centent > *'):
@@ -93,8 +82,8 @@ class ChapterSpider(scrapy.Spider):
             is_section = x.css('li:first-child').extract_first() is None
             if is_section:
                 name = x.css('div::text').extract_first()
+                name = name.strip() if name else name
                 if name:
-                    name = name.strip()
                     self.chapter_counters[novel_id]['count'] += 1       # total count + 1
                     if name not in finished_sections:
                         log.info('Requesting section %s(id=%s) of %s' % (name, idx, table))
@@ -116,11 +105,13 @@ class ChapterSpider(scrapy.Spider):
                 for y in x.css('li'):
                     url = y.css('a::attr("href")').extract_first()
                     name = y.css('a::text').extract_first()
+                    url = url.strip() if url else url
+                    name = name.strip() if name else name
                     if url and name and url != '#' and not url.startswith('javascript:'):
                         name = name.strip()
                         url = url.strip()
                         self.chapter_counters[novel_id]['count'] += 1           # total count + 1
-                        if name not in finished_chapters:
+                        if url not in finished_chapters:
                             log.info('Requesting chapter %s(id=%s, %s) of %s' % (name, idx, url, table))
                             item = {
                                 "table": table,
@@ -136,7 +127,7 @@ class ChapterSpider(scrapy.Spider):
                         idx += 10
 
         self.chapter_counters[novel_id]['done'] = True
-        log.info('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
+        log.info('Chapters counts: total=%(count)s, saved=%(saved)s (including conflicts)' % self.chapter_counters[novel_id])
 
     def parse_content(self, response):
         item = response.meta['item']
@@ -161,3 +152,37 @@ class ChapterSpider(scrapy.Spider):
                 f.write('+')
                 f.write(n)
 
+    def cache_finished(self, table):
+        finished_chapters = set()
+        finished_sections = set()
+
+        # finished chapters
+        t = self.db.get_chapter_table(table)
+        stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url])
+        rs = self.db.engine.execute(stmt)
+
+        # cache finished urls
+        for r in rs:
+            if r[t.c.is_section]:
+                finished_sections.add(r[t.c.name])
+            else:
+                finished_chapters.add(r[t.c.url])
+
+        # conflict chapters
+        if self.db.exist_table(table + '_conflict'):
+            t = self.db.get_chapter_conflict_table(table)
+            stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url])
+            rs = self.db.engine.execute(stmt)
+
+            # cache conflict urls
+            for r in rs:
+                if r[t.c.is_section]:
+                    if r[t.c.name] in finished_sections:
+                        # do not miss duplicated section, otherwise, will miss a saved count.
+                        finished_sections.add('%s_%s' % (r[t.c.name], r[t.c.id]))
+                    else:
+                        finished_sections.add(r[t.c.name])
+                else:
+                    finished_chapters.add(r[t.c.url])
+
+        return finished_sections, finished_chapters

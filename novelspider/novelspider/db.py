@@ -29,7 +29,7 @@ DB_CONNECTION_STRING = settings['DB_CONNECTION_STRING']
 
 def mark_done(engine_or_conn, table, col_pk, pks):
     stmt = table.update().where(and_(col_pk.in_(pks), table.c.done==False)).values(done=True)
-    return engine_or_conn.execute(stmt)
+    return engine_or_conn.execute(stmt).returning(table.c.id)
 
 
 # create a table to store all chapters for a novel
@@ -52,9 +52,9 @@ def create_db_table_chapter(name, meta, schema=None):
 def create_db_table_chapter_conflicts(name, meta, schema=None):
     return Table(name, meta,
         Column('id', Integer, primary_key=True, index=True),
-        Column('name', String(100), unique=True, nullable=False),
+        Column('name', String(100), nullable=False),
         Column('is_section', Boolean, default=False),
-        Column('url', Text, unique=True),
+        Column('url', Text),
         Column('content', Text),
         Column('conflict_chapter_id', Integer),
         Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),       # last modified datetime of record
@@ -99,19 +99,19 @@ class Database(object):
         schema=schema
     )
 
-    DB_table_chapter_failure = Table('chapter_failure', meta,
-        Column('id', Integer, primary_key=True),
-        Column('novel_id', Integer, index=True),
-        Column('novel_name', String(100)),
-        Column('chapter_table', String(100)),
-        Column('chapter_id', Integer, index=True),
-        Column('error', Text),
-        Column('created_on', DateTime(timezone=True)),
-        Column('retry_count', Integer),
-        Column('timestamp', DateTime(timezone=True)),
-
-        schema=schema
-    )
+    # DB_table_chapter_failure = Table('chapter_failure', meta,
+    #     Column('id', Integer, primary_key=True),
+    #     Column('novel_id', Integer, index=True),
+    #     Column('novel_name', String(100)),
+    #     Column('chapter_table', String(100)),
+    #     Column('chapter_id', Integer, index=True),
+    #     Column('error', Text),
+    #     Column('created_on', DateTime(timezone=True)),
+    #     Column('retry_count', Integer),
+    #     Column('timestamp', DateTime(timezone=True)),
+    #
+    #     schema=schema
+    # )
 
     def __init__(self, schema=None):
         self.schema = schema
@@ -128,23 +128,31 @@ class Database(object):
     def status(self):
         return self.engine.url
 
-    def get_chapter_table(self, name):
+    @staticmethod
+    def get_chapter_table(name):
         table = Database.meta.tables.get(name, None)
         if table is None:
-            table = create_db_table_chapter(name, meta=self.meta, schema=self.schema)
+            table = create_db_table_chapter(name, meta=Database.meta, schema=Database.schema)
         return table
 
-    def get_chapter_conflict_table(self, name):
+    @staticmethod
+    def get_chapter_conflict_table(name):
         # arg "name" is chapter table name.
         # conflict table will be name + "_conflict"
         tname = name + '_conflict'
         table = Database.meta.tables.get(tname, None)
         if table is None:
-            table = create_db_table_chapter_conflicts(tname, meta=self.meta, schema=self.schema)
+            table = create_db_table_chapter_conflicts(tname, meta=Database.meta, schema=Database.schema)
         return table
 
-    def create_connection(self, *args, **kwargs):
-        conn = self.engine.connect()
+    def exist_table(self, name):
+        # return name in Database.meta.tables
+        sql = '''select tablename from pg_catalog.pg_tables where tablename='%s';''' % name
+        tname = self.engine.execute(sql).scalar()
+        return tname == name
+
+    def create_connection(self, **kwargs):
+        conn = self.engine.connect(**kwargs)
         return conn
 
     def init(self):
