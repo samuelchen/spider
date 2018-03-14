@@ -72,7 +72,9 @@ def novel_index():
     }
 
     # sql = '''select tablename from pg_catalog.pg_tables where tablename like 'novel_%';'''
-    chapter_tables = set(db.engine.table_names())
+    chapter_tables = {n if not n.endswith('_conflict') else None for n in db.engine.table_names()}
+    if None in chapter_tables:
+        chapter_tables.remove(None)
     chapter_tables.remove('novel')
     chapter_tables.remove('home')
 
