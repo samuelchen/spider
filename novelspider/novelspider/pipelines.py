@@ -127,7 +127,10 @@ class NovelspiderDBPipeline(object):
                     stmt = tc.insert().values(id=item['idx'], name=item['name'], url=item['url'],
                                               content=item['content'], conflict_chapter_id=cid,
                                               timestamp=datetime.datetime.utcnow(), is_section=is_section)
-                    self.conn.execute(stmt)
+                    try:
+                        self.conn.execute(stmt)
+                    except Database.IntegrityError:
+                        pass
 
             self.counters[novel_id] += 1
 
