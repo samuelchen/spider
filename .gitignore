@@ -2,7 +2,8 @@
 .scrapy
 .scrapy-*
 *.sqlite3
-albums
+albums/
+log/
 
 # TODO: copy settings.template.py to settings.py
 settings.py
