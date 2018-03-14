@@ -32,45 +32,64 @@ class NovelspiderDBPipeline(object):
 
     def process_item(self, item, spider):
         if spider.name == 'home':
-            stmt = self.db.DB_table_home.insert().values(url=item['url'])
+            stmt = self.db.DB_table_home.insert().values(url=item['url'], update_on=datetime.datetime.min)
             try:
                 self.conn.execute(stmt)
             except Database.IntegrityError:
                 log.warn('Conflict (home): %(name)s %(url)s' % item)
 
         elif spider.name == 'novel':
-            log.info('<spider:novel>: %(name)s %(url)s' % item)
+            # log.info('<spider:novel>: %(name)s %(url)s' % item)
 
+            is_updating = item.get('is_updating', False)
             t = self.db.DB_table_novel
-            stmt = t.insert().values(
-                url=item['url'],
-                name=item['name'],
-                author=item['author'],
-                category=item['category'],
-                length=item['length'],
-                status=item['status'],
-                desc=item['desc'],
-                favorites=item['favorites'],
-                recommends=item['recommends'],
-                recommends_month=item['recommends_month'],
-                update_on=item['update_on'],
-                url_index=item['url_index'],
-                timestamp=datetime.datetime.now()
-            ).returning(t.c.id)
-
+            if is_updating:
+                stmt = t.update().values(
+                    # url=item['url'],
+                    # name=item['name'],
+                    author=item['author'],
+                    category=item['category'],
+                    length=item['length'],
+                    status=item['status'],
+                    desc=item['desc'],
+                    favorites=item['favorites'],
+                    recommends=item['recommends'],
+                    recommends_month=item['recommends_month'],
+                    update_on=item['update_on'],
+                    # url_index=item['url_index'],
+                    timestamp=datetime.datetime.utcnow(),
+                    done=False,         # there is new chapter need to be download.
+                ).where(t.c.name==item['name']).returning(t.c.id)
+            else:
+                stmt = t.insert().values(
+                    url=item['url'],
+                    name=item['name'],
+                    author=item['author'],
+                    category=item['category'],
+                    length=item['length'],
+                    status=item['status'],
+                    desc=item['desc'],
+                    favorites=item['favorites'],
+                    recommends=item['recommends'],
+                    recommends_month=item['recommends_month'],
+                    update_on=item['update_on'],
+                    url_index=item['url_index'],
+                    timestamp=datetime.datetime.utcnow()
+                ).returning(t.c.id)
             try:
                 rs = self.conn.execute(stmt)
                 r = rs.fetchone()
-
-                stmt2 = t.update().values(
-                    chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
-                ).where(t.c.id==r[t.c.id])
-                self.conn.execute(stmt2)
-            except Database.IntegrityError as err:
-                s = str(err)
-                if s.find('name') > 0:
-                    log.error('-----  Novel with same name:  %(name)s %(url)s' % item)
-                log.warn('Conflict (home): %(name)s %(url)s' % item)
+                novel_id = r[t.c.id]
+                if is_updating:
+                    log.info('Existed novel %s (id=%s) updated.' % (item['name'], novel_id))
+                else:
+                    stmt2 = t.update().values(
+                        chapter_table='novel_' + cast(t.c.id, String) + '_' + item['name'],
+                    ).where(t.c.id==novel_id)
+                    self.conn.execute(stmt2)
+                    log.info('New novel %s (id=%s) added.' % (item['name'], novel_id))
+            except Database.IntegrityError:
+                log.warn('Conflict (novel): %(name)s %(url)s' % item)
 
         elif spider.name == 'chapter':
 
@@ -92,7 +111,7 @@ class NovelspiderDBPipeline(object):
             # insert chapter/section
             is_section = item['url'] is None
             stmt = t.insert().values(id=item['idx'], name=item['name'], url=item['url'], content=item['content'],
-                                     timestamp=datetime.datetime.now(), is_section=is_section, done=True)
+                                     timestamp=datetime.datetime.utcnow(), is_section=is_section, done=True)
             try:
                 self.conn.execute(stmt)
                 log.info('Saved %(name)s(id=%(idx)s, url=%(url)s)' % item)
@@ -107,7 +126,7 @@ class NovelspiderDBPipeline(object):
                     tc.create(self.db.engine, checkfirst=True)
                     stmt = tc.insert().values(id=item['idx'], name=item['name'], url=item['url'],
                                               content=item['content'], conflict_chapter_id=cid,
-                                              timestamp=datetime.datetime.now(), is_section=is_section)
+                                              timestamp=datetime.datetime.utcnow(), is_section=is_section)
                     self.conn.execute(stmt)
 
             self.counters[novel_id] += 1

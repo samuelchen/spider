@@ -42,7 +42,7 @@ def create_db_table_chapter(name, meta, schema=None):
         Column('url', Text, unique=True),
         Column('content', Text),
         Column('done', Boolean, default=False),
-        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.now),       # last modified datetime of record
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),       # last modified datetime of record
         schema=schema
     )
 
@@ -57,7 +57,7 @@ def create_db_table_chapter_conflicts(name, meta, schema=None):
         Column('url', Text, unique=True),
         Column('content', Text),
         Column('conflict_chapter_id', Integer),
-        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.now),       # last modified datetime of record
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),       # last modified datetime of record
         schema=schema
     )
 
@@ -70,7 +70,8 @@ class Database(object):
 
     DB_table_home = Table('home', meta,
         Column('url', Text, primary_key=True, index=True, unique=True),
-        Column('done', Boolean, default=False)
+        Column('update_on', DateTime(timezone=True)),
+        # Column('done', Boolean, default=False)
     )
 
     DB_table_novel = Table('novel', meta,
@@ -93,7 +94,7 @@ class Database(object):
 
         Column('chapter_table', String(100), unique=True),              # chapter table name in DB for this novel
         # last modified datetime of record
-        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.now),
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),
 
         schema=schema
     )

@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timezone, timedelta
 import scrapy
 import logging
 from ..db import Database, select
 from scrapy.utils.project import get_project_settings
+
+UTC = timezone.utc
+CST = timezone(timedelta(hours=8))
 
 settings = get_project_settings()
 LIMIT_INDEX_PAGES = settings['LIMIT_INDEX_PAGES']
@@ -16,36 +20,82 @@ class NovelSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         self.db = Database()
+        tn = self.db.DB_table_novel
 
-        self.db.DB_table_novel.create(self.db.engine, checkfirst=True)
+        tn.create(self.db.engine, checkfirst=True)
         self.pages = 0
+        self.start_urls = []
 
-        t = self.db.DB_table_home
-        stmt = select([t.c.url]).where(t.c.done==False)
-        rs = self.db.engine.execute(stmt)
-        self.start_urls = [r['url'] for r in rs]
+        # cache all saved novels
+        tn = select([tn.c.name])
+        rs = self.db.engine.execute(tn)
+        self.saved_novels = {r[tn.c.name] for r in rs}
 
         return super(NovelSpider, self).__init__(*args, **kwargs)
 
+    def start_requests(self):
+
+        t = self.db.DB_table_home
+
+        stmt = select([t.c.url, t.c.update_on])
+        rs = self.db.engine.execute(stmt)
+        for r in rs:
+            yield scrapy.Request(r[t.c.url],
+                                 meta={'last_update_on': r[t.c.update_on], 'home_url': r[t.c.url], 'dont_cache': True})
+
     def parse(self, response):
-        log.debug('Parsing %s list page %s' % (self.name, response.url))
+        log.info('Parsing %s list page %s' % (self.name, response.url))
+
+        home_url = response.meta['home_url']
+        last_update_on = response.meta['last_update_on']
+        new_update_on = last_update_on
+        update_on = datetime.min
+        update_done = False
 
         # if 'Bandwidth exceeded' in response.body:
         #     raise scrapy.exceptions.CloseSpider('bandwidth_exceeded')
 
-        for x in response.css('table.grid > tr > td:first-child > a'):
-            name = x.css('a::text').extract_first()
-            url = x.css('a::attr("href")').extract_first()
-            if name and url:
+        for x in response.css('table.grid > tr'):
+            y = x.css('td:first-child > a')
+            name = y.css('a::text').extract_first()
+            url = y.css('a::attr("href")').extract_first()
+            update_on = x.css('td:nth-of-type(5)::text').extract_first()
+            update_on = datetime.strptime(update_on, '%y-%m-%d') if update_on else datetime.min
+            update_on = update_on.replace(tzinfo=CST)
+
+            if update_on > last_update_on:
+                # remember largest update_on date
+                if update_on > new_update_on:
+                    new_update_on = update_on
+            else:
+                # update_on date of this novel is smaller than last_update_on,
+                # which means novels on rest home-index pages are not updated
+                # because home-index pages are sorted by date desc.
+                update_done = True
+
+            # only yield item which is later than the date last updated.
+            if name and url and update_on > last_update_on:
                 item = {
                     "name": name.strip(),
-                    "url": url.strip()
+                    "url": url.strip(),
+                    "is_updating": False
                 }
+                if name in self.saved_novels:
+                    item['is_updating'] = True
+                yield response.follow(url, meta={"item": item, "dont_cache": True}, callback=self.parse_novel)
 
-                yield response.follow(url, meta={"item":item}, callback=self.parse_novel)
+        if update_done:
+            log.info('%s update done due to novel is not updated (%s) since last update (%s)' % (
+                home_url, update_on.strftime('%y-%m-%d'), last_update_on.strftime('%y-%m-%d')))
+            # update latest update_on date to home
+            t = self.db.DB_table_home
+            stmt = t.update().values(update_on=new_update_on).where(t.c.url==home_url)
+            try:
+                self.db.engine.execute(stmt)
+            except Exception:
+                log.exception('Error when update update_on for home.')
 
-        # mark_done(self.db.engine, self.db.DB_table_home,
-        #           self.db.DB_table_home.c.url, [response.url])
+            return
 
         self.pages += 1
         if self.pages > LIMIT_INDEX_PAGES > 0:
@@ -55,7 +105,7 @@ class NovelSpider(scrapy.Spider):
         next_page = response.css('div.pagelink > a.next::attr("href")').extract_first()
         log.debug('next page: %s' % next_page)
         if next_page is not None:
-            yield response.follow(next_page, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse, meta=response.meta)
 
     def parse_novel(self, response):
 
@@ -92,7 +142,7 @@ class NovelSpider(scrapy.Spider):
         r['url_index'] = response.css('div#content > table > tr:nth-of-type(8)').css('caption > a::attr("href")').extract_first().strip()
 
         if r['name'] != item['name']:
-            log.warn('Novel name on index page (%s) is different from (%s), which is on novel page.' % (r['name'], item['name']))
+            log.warn('Novel name on index page (%s) is different from its on novel page (%s) .' % (r['name'], item['name']))
 
         item.update(r)
         return item
