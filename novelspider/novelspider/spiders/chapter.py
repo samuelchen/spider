@@ -15,16 +15,22 @@ class ChapterSpider(scrapy.Spider):
     allowed_domains = ['piaotian.com']
     start_urls = ['http://www.piaotian.com/html/8/8955/']
 
-    chapter_counters = {}
-
     def __init__(self, *args, **kwargs):
         self.db = Database()
         self.start_urls = []
         self.limit = LIMIT_NOVELS
 
+        # chapter counters for novel {novel_id: {'count': 0, 'saved': 0, 'done': False} }
+        # "count": used to calculate total chapters count
+        # "saved": used to calculate saved chapters count
+        # "done": is a flag to control weather total chapters count ("count") is finished counting.
+        self.chapter_counters = {}
+
         return super(ChapterSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
+
+        # novels to be downloaded
         tn = self.db.DB_table_novel
         # noinspection PyComparisonWithNone
         stmt = select([tn.c.id, tn.c.name, tn.c.url_index, tn.c.chapter_table]
@@ -33,14 +39,13 @@ class ChapterSpider(scrapy.Spider):
         if self.limit > 0:
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
+
         # loop all novels index
-        novels = []
+        novels = []     # to log novel id + name
         for r in rs:
             table = r['chapter_table']
             t = self.db.get_chapter_table(table)
             t.create(self.db.engine, checkfirst=True)
-            # tc = self.db.get_chapter_conflict_table(table)
-            # tc.create(self.db.engine, checkfirst=True)
 
             novels.append('%s_%s' % (r[tn.c.id], r[tn.c.name]))
 
@@ -71,6 +76,7 @@ class ChapterSpider(scrapy.Spider):
         t = self.db.get_chapter_table(table)
         stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]).where(t.c.done==True)
         rs = self.db.engine.execute(stmt)
+        # keep count of saved chapters. calculate from this number.
         self.chapter_counters[novel_id]['saved'] = rs.rowcount
         log.info('Will skip %s chapters which were saved.' % rs.rowcount)
 
@@ -79,7 +85,7 @@ class ChapterSpider(scrapy.Spider):
             if r[t.c.is_section]:
                 finished_sections.add(r[t.c.name])
             else:
-                finished_chapters.add(r[t.c.url])
+                finished_chapters.add(r[t.c.name])
 
         # loop all chapter links in current page
         for x in response.css('div.centent > *'):
@@ -89,7 +95,7 @@ class ChapterSpider(scrapy.Spider):
                 name = x.css('div::text').extract_first()
                 if name:
                     name = name.strip()
-                    self.chapter_counters[novel_id]['count'] += 1
+                    self.chapter_counters[novel_id]['count'] += 1       # total count + 1
                     if name not in finished_sections:
                         log.info('Requesting section %s(id=%s) of %s' % (name, idx, table))
                         yield {
@@ -113,8 +119,8 @@ class ChapterSpider(scrapy.Spider):
                     if url and name and url != '#' and not url.startswith('javascript:'):
                         name = name.strip()
                         url = url.strip()
-                        self.chapter_counters[novel_id]['count'] += 1
-                        if url not in finished_chapters:
+                        self.chapter_counters[novel_id]['count'] += 1           # total count + 1
+                        if name not in finished_chapters:
                             log.info('Requesting chapter %s(id=%s, %s) of %s' % (name, idx, url, table))
                             item = {
                                 "table": table,
@@ -130,7 +136,7 @@ class ChapterSpider(scrapy.Spider):
                         idx += 10
 
         self.chapter_counters[novel_id]['done'] = True
-        log.debug('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
+        log.info('Chapters counts: total=%(count)s, saved=%(saved)s' % self.chapter_counters[novel_id])
 
     def parse_content(self, response):
         item = response.meta['item']

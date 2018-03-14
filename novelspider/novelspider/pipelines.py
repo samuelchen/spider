@@ -16,11 +16,13 @@ log = logging.getLogger(__name__)
 
 class NovelspiderDBPipeline(object):
 
-    counters = {}
 
     def __init__(self):
         self.db = Database()
         self.conn = None
+
+        # counter to calculate saved chapters count. {novel_id: saved_count}
+        self.counters = {}
 
     def open_spider(self, spider):
         self.conn = self.db.create_connection()
