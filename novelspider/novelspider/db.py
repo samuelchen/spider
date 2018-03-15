@@ -27,9 +27,11 @@ DB_CONNECTION_STRING = settings['DB_CONNECTION_STRING']
 #     return records
 
 
-def mark_done(engine_or_conn, table, col_pk, pks):
+def mark_done(engine_or_conn, table, col_pk, pks, col_returns=[]):
     stmt = table.update().where(and_(col_pk.in_(pks), table.c.done==False)).values(done=True)
-    return engine_or_conn.execute(stmt).returning(table.c.id)
+    if col_returns:
+        stmt = stmt.returning(col_returns)
+    return engine_or_conn.execute(stmt)
 
 
 # create a table to store all chapters for a novel
