@@ -17,4 +17,4 @@ Pillow
 flask
 
 # dashboard
-django
+django<2.0.0

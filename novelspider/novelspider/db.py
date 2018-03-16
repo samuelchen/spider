@@ -8,23 +8,13 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, Boolean, Text, DateTime, BLOB
 from sqlalchemy import MetaData, ForeignKey, Sequence
 from sqlalchemy.sql import select, update
-from sqlalchemy.sql.expression import not_, and_, or_
+from sqlalchemy.sql.expression import not_, and_, or_, true as true_
 from sqlalchemy.exc import IntegrityError
-from scrapy.utils.project import get_project_settings
 import datetime
 import logging
 
 logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 log = logging.getLogger('db')
-
-settings = get_project_settings()
-DB_CONNECTION_STRING = settings['DB_CONNECTION_STRING']
-
-
-# def get_all_undone(engine_or_conn, DB_columns):
-#     stmt = select(DB_columns).where(done==False)
-#     records = engine_or_conn.execute(stmt)
-#     return records
 
 
 def mark_done(engine_or_conn, table, col_pk, pks, col_returns=[]):
@@ -101,30 +91,36 @@ class Database(object):
         schema=schema
     )
 
-    # DB_table_chapter_failure = Table('chapter_failure', meta,
-    #     Column('id', Integer, primary_key=True),
-    #     Column('novel_id', Integer, index=True),
-    #     Column('novel_name', String(100)),
-    #     Column('chapter_table', String(100)),
-    #     Column('chapter_id', Integer, index=True),
-    #     Column('error', Text),
-    #     Column('created_on', DateTime(timezone=True)),
-    #     Column('retry_count', Integer),
-    #     Column('timestamp', DateTime(timezone=True)),
-    #
-    #     schema=schema
-    # )
-
-    def __init__(self, schema=None):
+    def __init__(self, conn_str='', schema=None):
         self.schema = schema
-        self.engine = Database.create_engine()
+        self.__engine = None
+        self.__conn_str = conn_str
 
     @staticmethod
-    def create_engine():
-        if DB_CONNECTION_STRING.startswith('sqlite'):
-            return create_engine(DB_CONNECTION_STRING)
-        else:
-            return create_engine(DB_CONNECTION_STRING, pool_size=20, max_overflow=1)
+    def __internal_settings():
+        from scrapy.utils.project import get_project_settings
+        return get_project_settings()
+
+    @property
+    def conn_str(self):
+        if not self.__conn_str:
+            settings = Database.__internal_settings()
+            self.__conn_str = settings['DB_CONNECTION_STRING']
+        return self.__conn_str
+
+    @conn_str.setter
+    def conn_str(self, value):
+        self.__conn_str = value
+
+    @property
+    def engine(self):
+        if not self.__engine:
+            conn_str = self.conn_str
+            if conn_str.startswith('sqlite'):
+                self.__engine = create_engine(conn_str)
+            else:
+                self.__engine = create_engine(conn_str, pool_size=20, max_overflow=1)
+        return self.__engine
 
     @property
     def status(self):
@@ -162,21 +158,21 @@ class Database(object):
         self.DB_table_home.create(self.engine, checkfirst=True)
         self.DB_table_novel.create(self.engine, checkfirst=True)
 
-    def drop_all(self):
-        log.warn('Your are DELETING ALL your database content!!!')
-        # list all table names of novels
-        stmt = select([self.DB_table_novel.c.chapter_table]).where(not_(self.DB_table_novel.c.chapter_table==None))
-        result = self.engine.execute(stmt)
-        for row in result:
-            table = row['chapter_table']
-            t = create_db_table_chapter(table, self.meta, self.schema)
-            t.drop(self.engine, checkfirst=True)
-
-        self.DB_table_home.drop(self.engine, checkfirst=True)
-        self.DB_table_novel.drop(self.engine, checkfirst=True)
+    # def drop_all(self):
+    #     log.warn('Your are DELETING ALL your database content!!!')
+    #     # list all table names of novels
+    #     stmt = select([self.DB_table_novel.c.chapter_table]).where(not_(self.DB_table_novel.c.chapter_table==None))
+    #     result = self.engine.execute(stmt)
+    #     for row in result:
+    #         table = row['chapter_table']
+    #         t = create_db_table_chapter(table, self.meta, self.schema)
+    #         t.drop(self.engine, checkfirst=True)
+    #
+    #     self.DB_table_home.drop(self.engine, checkfirst=True)
+    #     self.DB_table_novel.drop(self.engine, checkfirst=True)
 
 
 if __name__ == '__main__':
     db = Database()
-    db.drop_all()
+    # db.drop_all()
     db.init()

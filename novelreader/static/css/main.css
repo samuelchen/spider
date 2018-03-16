@@ -1,0 +1,128 @@
+
+.content-main {
+    padding-left: 20px;
+}
+.main-page {
+    margin-top: 30px;
+}
+
+/* ----- for novel block ----- */
+
+.novel-list-block {
+    background-color: rgba(255, 255, 255, 0.85);
+    /*width: 980px;*/
+}
+.novel-list-block .bottom-title {
+    padding-left: 10px;
+    margin: 0 0 0 0;
+}
+
+.novel-card-block {
+    background-color: rgba(255, 255, 255, 0.85);
+    /*opacity: 0.5;*/
+}
+
+.novel-card-block .paris-title {
+    padding-left: 10px;
+    margin: 0 0 0 0;
+}
+
+.margin-b-10 {
+    margin-bottom: 10px;
+}
+/* ----- for novel list ----- */
+
+.novel-list {
+    border: 1px solid #eee;
+    margin: 20px 0 0 0;
+    padding: 0;
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+
+.novel-list ul {
+    line-height: 30px;
+    padding: 0;
+}
+.novel-list li {
+    list-style: none;
+    margin: 10px 0 0 10px;
+}
+.novel-list li span {
+    font-size: 16px;
+    display: inline-block;
+    overflow: hidden;
+    /*height: 30px;*/
+}
+
+.novel-list .a {
+    width: 200px;
+    text-align: left;
+    text-indent: 5px;
+    font-weight: bold;
+}
+.novel-list .b {
+    width: 400px;
+    text-align: left;
+}
+.novel-list .c {
+    width: 100px;
+    text-align: right;
+}
+.novel-list .d {
+    width: 100px;
+    text-align: right;
+}
+
+.novel-list a {
+    transition: all 0.3s ease;
+}
+.novel-list .b a {
+    color: inherit;
+}
+.novel-list .b a:hover {
+    color: #337ab7;
+}
+
+/* ---- for novel card ---- */
+.novel-card {
+    padding: 0 5px 0 5px;
+}
+
+.novel-cover {
+    display: inline;
+    float: left;
+	/*width: 100px;*/
+    /*height: 125px;*/
+    width: 80px;
+    height: 100px;
+	/*color: #fff;*/
+	/*position: absolute;*/
+	/*top: 0px;*/
+    /*left: 20px;*/
+	/*padding: 18px 10px;*/
+	margin: 0 0 5px 10px;
+	/*text-transform: uppercase;*/
+	/*font-size: 13px;*/
+	/*font-weight: 600;*/
+}
+
+.novel-card .novel-title {
+    margin-left: 120px;
+}
+
+.novel-desc {
+    height: 80px;
+}
+
+.novel-card .novel-name a {
+	color: #19beb6;
+}
+.novel-card .novel-name  a:hover {
+	color: #6f8538;
+}

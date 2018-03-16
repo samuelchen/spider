@@ -1,0 +1,154 @@
+{% extends "./base_site.html" %}{% load staticfiles static %}
+
+{% block title %}{{ choice_novels.0.name }} {{ choice_novels.0.last_chapter }} {{ choice_novels.0.author }} 最新章节{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{#  Editor choice  #}
+    <div class="row margin-b-10">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="box paris novel-card-block">
+                <div class="info float-container col-sm-12">
+                    <div class="col-sm-12 london-title paris-title">
+                        <h3>编辑推荐</h3>
+                        <h4 class="text-uppercase">Editor Choice</h4>
+                    </div>
+                </div>
+
+                {% for r in choice_novels %}
+
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-b-10">
+                    <div class="box london novel-card">
+                        <div class="box-icon">
+                        </div>
+                        <div class="info float-container col-sm-12">
+                            <div class="novel-cover">
+                                <img src="{% get_static_prefix %}albums/1984之狂潮.jpg" alt="Image"
+                                     class="img-responsive">
+                            </div>
+                            <div class="london-title novel-title">
+                                <h3 class="novel-name"><a href="#{{ r.id }}">{{ r.name }}</a></h3>
+                                <h4 class="text-uppercase">{{ r.author }}</h4>
+{#                                <h4 class="text-uppercase">{{ r.status }}</h4>#}
+{#                                <h4>&nbsp;</h4>#}
+                            </div>
+                            <div class="novel-desc"><p>{{ r.desc|slice:"100" }} ...</p></div>
+                            <hr/>
+                            <div class="col-sm-12 location-main">
+                                <div class="pull-left location">
+                                    <i class="fa fa-tag fa-2x"></i><span>{{ r.category }}</span>
+                                </div>
+                                <div class="pull-right user-icons">
+                                    <a href="#"><i class="fa fa-star fa-2x"></i></a>
+                                    <a href="#"><i class="fa fa-user fa-2x"></i></a>
+                                    <a href="#"><i class="fa fa-weibo fa-2x"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+{#  Editor choice DONE  #}
+
+
+
+{#        <div class="row margin-b-30">#}
+{#            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">#}
+{#                <div class="banner-main-home novel-list">#}
+{#                    <div class="banner-main-home-text">#}
+{#                        <div class="heading">#}
+{#                            <h1 class="text-nowrap">最新推荐</h1>#}
+{##}
+{#                            <p class="text-uppercase">Proin gravida nibhISI</p>#}
+{#                        </div>#}
+{#                        <div class="desc">#}
+{##}
+{##}
+{#                            <button type="button" class="">SAGITIS SELIT</button>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <img src="images/home-img-1.png" alt="Image" class="img-responsive">#}
+{#                        {% for r in novels %}#}
+{#        <ul><li>#}
+{#            <span>{{ r.name }}</span>#}
+{#            <span>{{ r.author }}</span>#}
+{#        </li></ul>#}
+{##}
+{#    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+
+
+
+
+{#  Updated novels  #}
+    <div class="row margin-b-10">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="box bottom-main novel-list-block">
+                <div class="info float-container">
+                    <div class="col-sm-12 bottom-title">
+                        <h3 class="text-uppercase">最新更新</h3>
+                        <h4 class="text-uppercase">latest updated</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-xxs-12 col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                            <div class="bottom-img">
+                                <img src="/s/images/home-img-4.jpg" alt="Image">
+
+                                <p class="first">Sollicitudin nibh</p>
+                            </div>
+                        </div>
+                        <div class="col-xxs-12 col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                            <div class="bottom-img">
+                                <img src="/s/images/home-img-5.jpg" alt="Image">
+
+                                <p class="second">duis sedio amiet</p>
+                            </div>
+                        </div>
+                        <div class="col-xxs-12 col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                            <div class="bottom-img">
+                                <img src="/s/images/home-img-6.jpg" alt="Image">
+
+                                <p class="third">Nec sagittis seim</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row novel-list">
+                        <ul>
+                            {% for r in update_novels %}
+                                <li>
+                                    <span class="a"><a href="#">{{ r.name }}</a></span>
+                                    <span class="b"><a href="#">{{ r.last_chapter }}</a></span>
+                                    <span class="c">{{ r.author }}</span>
+                                    <span class="d">{{ r.update_on|date:"d-m-y" }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {#                                        <p class="bottom-desc">Duis sed odio sit amet nibh vulputate cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non  mauris vitae erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris in erat justo. </p><hr>#}
+                    <div class="col-sm-12 location-main">
+                        <div class="pull-right bottom-user">
+                            <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{#  updated novels DONE #}
+
+
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}

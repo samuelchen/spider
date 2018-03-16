@@ -4,6 +4,7 @@
 *.sqlite3
 albums/
 log/
+data/
 
 # TODO: copy settings.template.py to settings.py
 settings.py
