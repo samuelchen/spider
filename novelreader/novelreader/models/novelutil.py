@@ -2,9 +2,7 @@
 
 from django.conf import settings
 import os, sys
-p=os.path.join(settings.BASE_DIR, '..', 'novelspider')
-print(p)
-sys.path.append(p)
+sys.path.append(os.path.join(settings.BASE_DIR, '..', 'novelspider'))
 from novelspider.db import Database, select, and_, or_, true_
 import logging
 
