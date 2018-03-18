@@ -21,10 +21,12 @@ class IndexView(TemplateView, BaseViewMixin):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        context['update_novels'] = list_update_novels()
+        update_novels = list_update_novels(add_last_chapter=True)
+        context['update_novels_top'] = update_novels[:3]
+        context['update_novels'] = update_novels[3:]
         context['recommend_novels'] = list_recommend_novels()
         context['favorite_novels'] = list_favorite_novels()
         context['hot_novels'] = list_hot_novels()
-        context['choice_novels'] = list_choice_novels(page_items=4)
+        context['choice_novels'] = list_choice_novels(page_items=6)
 
         return context

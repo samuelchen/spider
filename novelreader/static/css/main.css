@@ -10,6 +10,7 @@
 
 .novel-list-block {
     background-color: rgba(255, 255, 255, 0.85);
+    width: 100%;
     /*width: 980px;*/
 }
 .novel-list-block .bottom-title {
@@ -38,44 +39,47 @@
     padding: 0;
     display: block;
     list-style-type: disc;
-    -webkit-margin-before: 1em;
-    -webkit-margin-after: 1em;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
-    -webkit-padding-start: 40px;
+    /*-webkit-margin-before: 1em;*/
+    /*-webkit-margin-after: 1em;*/
+    /*-webkit-margin-start: 0px;*/
+    /*-webkit-margin-end: 0px;*/
+    /*-webkit-padding-start: 40px;*/
 }
 
 .novel-list ul {
     line-height: 30px;
     padding: 0;
+    margin: 0;
 }
 .novel-list li {
     list-style: none;
-    margin: 10px 0 0 10px;
+    margin: 10px 0 0 0px;
 }
 .novel-list li span {
     font-size: 16px;
     display: inline-block;
     overflow: hidden;
     /*height: 30px;*/
+    white-space: nowrap;
+    /*white-break: keep-all;*/
 }
 
 .novel-list .a {
-    width: 200px;
+    /*width: 150px;*/
     text-align: left;
     text-indent: 5px;
     font-weight: bold;
 }
 .novel-list .b {
-    width: 400px;
+    /*width: 300px;*/
     text-align: left;
 }
 .novel-list .c {
-    width: 100px;
+    /*width: 50px;*/
     text-align: right;
 }
 .novel-list .d {
-    width: 100px;
+    /*width: 50px;*/
     text-align: right;
 }
 
@@ -118,6 +122,10 @@
 
 .novel-desc {
     height: 80px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:4;
 }
 
 .novel-card .novel-name a {
@@ -125,4 +133,36 @@
 }
 .novel-card .novel-name  a:hover {
 	color: #6f8538;
+}
+
+
+/*@media (max-width:400px) {*/
+
+	/*.desc2 { font-size: 12px; }*/
+
+	/*.contact-content-upper { padding: 20px;	}*/
+/*}*/
+
+@media (max-width: 330px) {
+    .info {padding: 0;}
+    .hr {margin: 10px 0 10px 0;}
+    .novel-card .novel-title {margin-left: 80px;}
+    .novel-cover {margin: 10px 10px 10px 5px;}
+    .london-title h2 {font-size: 18px;}
+    .london-title h3 {font-size: 16px;}
+    .london-title h4 {font-size: 14px;}
+}
+
+@media (max-width: 400px) {
+    .info {padding: 5px;}
+    .hr {margin: 10px 0 10px 0;}
+    .novel-card .novel-title {margin-left: 100px;}
+    .novel-cover {margin: 10px 10px 10px 5px;}
+    .bottom-img p {font-size: 16px;}
+}
+
+@media (max-width: 480px) {
+    .info {padding: 10px;}
+    .novel-card .novel-title {margin-left: 120px;}
+    .novel-cover {margin: 10px 10px 10px 10px;}
 }
