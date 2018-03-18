@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
-from novelspider.novelspider.db import Database, select, and_, or_, true_
 from django.conf import settings
+import os, sys
+p=os.path.join(settings.BASE_DIR, '..', 'novelspider')
+print(p)
+sys.path.append(p)
+from novelspider.db import Database, select, and_, or_, true_
 import logging
 
 __author__ = 'samuel'
