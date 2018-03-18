@@ -10,7 +10,7 @@ SECRET_KEY = '_@ddb>,d7*bc5*x@*z=oi(a2pLdu92b_^vtt3^chv@u=m3sfl(7$s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.domain.com', 'domain.com']
+ALLOWED_HOSTS = ['www.domain.com', 'domain.com', 'azure']
 
 INSTALLED_APPS.extend([
     'novelreader',
