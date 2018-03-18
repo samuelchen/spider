@@ -21,7 +21,7 @@ STATICFILES_DIRS = [
     ('albums', os.path.abspath(os.path.join(BASE_DIR, '..', 'novelspider', 'albums'))),
 ]
 
-NOVEL_DB_CONNECTION_STRING = 'postgresql://postgres:postgres@192.168.0.93/novel'
+NOVEL_DB_CONNECTION_STRING = 'postgresql://postgres:postgres@localhost/novel'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

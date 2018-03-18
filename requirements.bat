@@ -17,4 +17,5 @@ pip install scrapy sqlalchemy Pillow
 :: easy_install psycopg2-windows.xxx.exe
 pip install git+https://github.com/nwcell/psycopg2-windows.git@win32-py34#egg=psycopg2
 
-pip install django<2.0.0
+::pip install django<2.0.0
+pip install django=1.11

@@ -16,5 +16,6 @@ Pillow
 #readnovel
 flask
 
-# dashboard
-django<2.0.0
+# novel reader
+# django<2.0.0
+django=1.11
