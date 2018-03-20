@@ -17,6 +17,8 @@
     padding-left: 10px;
     margin: 0 0 0 0;
 }
+.novel-list-block .bottom-img {
+}
 
 .novel-card-block {
     background-color: rgba(255, 255, 255, 0.85);
@@ -98,7 +100,7 @@
     padding: 0 5px 0 5px;
 }
 
-.novel-cover {
+.novel-card .novel-cover {
     display: inline;
     float: left;
     width: 80px;

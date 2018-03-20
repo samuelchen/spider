@@ -32,7 +32,8 @@
                             </div>
                             <div class="info float-container col-sm-12">
                                 <div class="col-xxs-12 novel-cover">
-                                    <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg" alt="Image"
+                                    <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg" alt="{{ r.name }}.jpg"
+                                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
                                          class="img-responsive">
                                 </div>
                                 <div class="london-title novel-title">
@@ -79,7 +80,9 @@
                             {% for r in update_novels_top %}
                             <div class="col-xxs-12 col-xs-6 col-sm-4 col-md-3 col-lg-3">
                                 <div class="bottom-img">
-                                    <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg" alt="Image">
+                                    <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg"
+                                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                                         alt="{{ r.name }}.jpg">
 
                                     <p class="first">
                                         《{{ r.name }}》 <br>
