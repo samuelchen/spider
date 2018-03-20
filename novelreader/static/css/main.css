@@ -6,6 +6,17 @@
     margin-top: 30px;
 }
 
+.info {
+    padding: 15px 15px 15px 15px;
+}
+
+/* ----- for toolbar ----- */
+.toolbar {
+    background-color: rgba(255, 255, 255, 0.85);
+    width: 100%;
+    /*width: 980px;*/
+}
+
 /* ----- for novel block ----- */
 
 .novel-list-block {
@@ -19,6 +30,11 @@
 }
 .novel-list-block .bottom-img {
 }
+
+.novel-list-block .london-title{
+    margin: 0;
+}
+
 
 .novel-card-block {
     background-color: rgba(255, 255, 255, 0.85);
@@ -37,7 +53,7 @@
 
 .novel-list {
     border: 1px solid #eee;
-    margin: 20px 0 0 0;
+    margin: 10px 0 0 0;
     padding: 0;
     display: block;
     list-style-type: disc;
@@ -85,6 +101,7 @@
     text-align: right;
 }
 
+
 .novel-list a {
     transition: all 0.3s ease;
 }
@@ -130,6 +147,14 @@
 	color: #6f8538;
 }
 
+/* right column top novels */
+.novel-list .m {
+    text-align: left;
+}
+.novel-list .n {
+    text-align: right;
+}
+/* ------------------------- */
 
 /*@media (max-width:400px) {*/
 

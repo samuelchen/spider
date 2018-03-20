@@ -82,7 +82,8 @@ def list_recommend_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_c
 
 # 总点击，点击数倒序
 def list_hot_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
-    pass
+    # TODO: return real
+    return list_recommend_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
 # 月点击
@@ -99,7 +100,8 @@ def list_hot_novels_cur_week(page=0, page_items=settings.ITEMS_PER_PAGE, add_las
 
 # 强推，编辑选择，等等 （站内系统，非爬取）
 def list_choice_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
-    return  list_recommend_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+    # TODO: return real
+    return list_recommend_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
 # 完本
