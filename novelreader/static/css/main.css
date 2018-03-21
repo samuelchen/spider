@@ -1,9 +1,10 @@
 
 .content-main {
-    padding-left: 20px;
+    padding: 0 10px;
+    min-width: 320px;
 }
 .main-page {
-    margin-top: 30px;
+    margin-top: 0;
 }
 
 .info {
@@ -14,9 +15,50 @@
 .toolbar {
     background-color: rgba(255, 255, 255, 0.85);
     width: 100%;
-    /*width: 980px;*/
 }
 
+.toolbar .bottom-title {
+    margin: 0;
+}
+
+/* ----- for banner ----- */
+.banner-main-home {
+    padding: 30px 30px 10px 50px;
+    background-image: none;
+    background-color: rgba(255, 255, 255, 0.85);
+    min-height: 150px;
+}
+.banner-main-home .actions li {
+    margin: 0;
+    text-align: center;
+}
+.banner-main-home .actions i {
+    display: block;
+    font-size: 3em;
+}
+
+.banner-main-home .category ul {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.banner-main-home .category li {
+    font-size: 18px;
+    color: #10a5cd;
+    line-height: 40px;
+}
+
+.banner-main-home .category li a {
+    background-color: #363636;
+    color: #fff;
+    /*font-weight: bold;*/
+    border: none;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+    /*-webkit-transition: all 0.3s ease;*/
+}
+.banner-main-home .category li a:hover {
+        background-color: #777;
+}
 /* ----- for novel block ----- */
 
 .novel-list-block {
@@ -185,4 +227,12 @@
     .info {padding: 10px;}
     .novel-card .novel-title {margin-left: 120px;}
     .novel-cover {margin: 10px 10px 10px 10px;}
+}
+
+@media  (max-width: 600px) {
+    .banner-main-home .actions ul { float: left; }
+}
+
+@media  (max-width: 1024px) {
+    .banner-main-home .category li {font-size: 16px; line-height: 36px;}
 }

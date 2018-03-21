@@ -1,4 +1,4 @@
-{% extends "./base_site.html" %}{% load staticfiles static %}
+{% extends "../base_site.html" %}{% load staticfiles static %}
 
 {% block title %}{{ choice_novels.0.name }} {{ choice_novels.0.last_chapter }} {{ choice_novels.0.author }} 最新章节{% endblock %}
 
@@ -9,6 +9,7 @@
 
 <div class="row">
 
+    {% include '../inc/banner.html' %}
 
     {#  ===== Left column =====  #}
     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
@@ -241,5 +242,5 @@
 {% endblock %}
 
 {% block script %}
-
+    {{ block.super }}
 {% endblock %}

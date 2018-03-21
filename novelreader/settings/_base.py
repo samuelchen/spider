@@ -39,6 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # for django-allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.weibo',
+    'allauth.socialaccount.providers.weixin',
+
 ]
 
 MIDDLEWARE = [
@@ -56,7 +65,7 @@ ROOT_URLCONF = 'novelreader.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'novelreader', 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,6 +110,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# for all auth
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -110,7 +129,7 @@ LANGUAGE_CODE = 'zh-cn'
 # TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/Shanghai'
 
-USE_I18N = False
+USE_I18N = True
 
 USE_L10N = True
 
@@ -122,6 +141,27 @@ USE_TZ = True
 
 STATIC_URL = '/s/'
 MEDIA_URL = '/m/'
+
+
+# -------- allauth settings --------
+SITE_ID = 1
+
+ACCOUNT_USERNAME_MIN_LENGTH = 4
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'weibo', 'wechat', 'root', 'staff', 'contact',
+                              'notification', 'administrator', 'manager', 'sale', 'billing', 'support'
+                              'subscription', 'system', 'bill', 'account', 'service']
+
+SOCIALACCOUNT_AUTO_SIGNUP = False
+
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"     # "mandatory", "optional", or "none"
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 
 # -------- added settings --------

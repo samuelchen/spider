@@ -1,0 +1,41 @@
+    {#  ===== END Banner =====  #}
+    <div class="row margin-b-10">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="banner-main-home">
+                <div class="banner-main-home-text">
+                    <div class="heading">
+                        <h1 class="text-nowrap">{{ website.name }}</h1>
+                        <p class="text-uppercase">{{ website.domain }}</p>
+                    </div>
+{#                    <div class="desc">#}
+{#                        <button type="button" class="">Subscribe</button>#}
+{#                    </div>#}
+                        <form class="search">
+                            <input type="text" placeholder="Search: Book-Name or Author-Name">
+                            <button type="submit"><i class="fa fa-search fa-2x"></i></button>
+                        </form>
+
+                </div>
+{#                <img src="/s/images/home-img-1.png" alt="Image" class="img-responsive">#}
+                {% include '../inc/actions.html' %}
+                <div class="clearfix"></div>
+                <div class="row category">
+                    <ul class="row list-inline text-center">
+                        <li><a href="#">玄幻魔法</a></li>
+                        <li><a href="#">武侠修真</a></li>
+                        <li><a href="#">都市言情</a></li>
+                        <li><a href="#">历史军事</a></li>
+                        <li><a href="#">网游竞技</a></li>
+                        <li><a href="#">科幻小说</a></li>
+                        <li><a href="#">恐怖灵异</a></li>
+                        <li><a href="#">同人漫画</a></li>
+                        <li><a href="#">其他类型</a></li>
+                        <li><a href="#">全本小说</a></li>
+                        <li><a href="#">全部文章</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {#  ===== END Banner =====  #}

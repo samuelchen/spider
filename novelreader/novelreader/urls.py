@@ -13,9 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from .views import IndexView
+from .views.test import TestView
 
 
 def t(name):
@@ -25,5 +26,9 @@ def t(name):
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', IndexView.as_view(template_name=t('index.html')), name='index'),
+
+    url(r"^test/(?P<name>\w+)/$", TestView.as_view()),
+
+    url(r'^accounts/', include('allauth.urls')),
 
 ]   # + static(settings.STATIC_URL + 'albums/', document_root=settings.STATICFILES_DIRS[1])

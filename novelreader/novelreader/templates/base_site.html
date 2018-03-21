@@ -23,7 +23,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
 
-
     {% block head %}<!-- HEAD BLOCK -->{% endblock %}
 </head>
 
@@ -35,11 +34,9 @@
             <div class="row">
                 <div class="main-page">
                     <div class="content-main">
-
-
+                    {% block content_wrapper %}
                     {% block content %}<!-- CONTENT BLOCK -->{% endblock %}
-
-
+                    {% endblock %}
                     </div> <!-- .content-main -->
                 </div> <!-- .main-page -->
             </div> <!-- .row -->
@@ -62,8 +59,6 @@
 
         </div> <!-- .container -->
     </div> <!-- .main-body -->
-
-
 
 
     <!-- JavaScript -->
