@@ -91,6 +91,16 @@ class Database(object):
         schema=schema
     )
 
+    DB_table_novel_lock = Table('novel_lock', meta,
+        Column('id', Integer, primary_key=True, autoincrement=True),
+        Column('novel_id', Integer, unique=True, index=True),
+        Column('name', String(100), unique=True),
+        Column('locker', String(100)),
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),
+
+        schema=schema
+    )
+
     def __init__(self, conn_str='', schema=None):
         self.schema = schema
         self.__engine = None
@@ -171,6 +181,37 @@ class Database(object):
     #     self.DB_table_home.drop(self.engine, checkfirst=True)
     #     self.DB_table_novel.drop(self.engine, checkfirst=True)
 
+    def lock_novel(self, novel_id, novel_name=None, spider=None, conn=None):
+        tl = self.DB_table_novel_lock
+        stmt = tl.insert().values(novel_id=novel_id, name=novel_name, locker=spider)
+        try:
+            if conn:
+                conn.execute(stmt)
+            else:
+                self.engine.execute(stmt)
+            log.info('Locked novel %s(id=%s).' % (novel_name or '', novel_id))
+        except IntegrityError:
+            log.error('Fail to lock novel %s(id=%s). It was locked already.' % (novel_name or '', novel_id))
+
+    def unlock_novel(self, novel_id, conn=None):
+        tl = self.DB_table_novel_lock
+        stmt = tl.delete().where(novel_id==novel_id)
+        count = 0
+        try:
+            if conn:
+                rs = conn.execute(stmt)
+            else:
+                rs = self.engine.execute(stmt)
+            count = rs.rowcount
+        except Exception as err:
+            log.exception(err)
+
+        if count == 0:
+            log.warn('Novel (id=%s) was not locked to unlock.' % novel_id)
+        elif count > 1:
+            log.warn('Unlocked more than 1 novels which has id=%s' % novel_id)
+        else:
+            log.info('Unlocked novel (id=%s).' % novel_id)
 
 if __name__ == '__main__':
     db = Database()

@@ -2,11 +2,13 @@
 
 import scrapy
 import logging
-from ..db import Database, select, and_, not_
+from ..db import Database, select, and_, not_, mark_done
 from scrapy.utils.project import get_project_settings
 
 settings = get_project_settings()
 LIMIT_NOVELS = settings['LIMIT_NOVELS']
+HOSTNAME = settings['HOSTNAME']
+SPIDER_ID = settings['SPIDER_ID']
 log = logging.getLogger(__name__)
 
 
@@ -32,10 +34,12 @@ class ChapterSpider(scrapy.Spider):
 
         # novels to be downloaded
         tn = self.db.DB_table_novel
+        tl = self.db.DB_table_novel_lock
         # noinspection PyComparisonWithNone
+        stmt1 = select([tl.c.novel_id]).where(tl.c.locker!=SPIDER_ID)
         stmt = select([tn.c.id, tn.c.name, tn.c.url_index, tn.c.chapter_table]
-                    ).order_by(tn.c.recommends.desc()
-                    ).where(and_(tn.c.done==False, not_(tn.c.url_index==None)))
+                    ).where(and_(tn.c.done==False, not_(tn.c.url_index==None), not_(tn.c.id.in_(stmt1)))
+                    ).order_by(tn.c.recommends.desc())
         if self.limit > 0:
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
@@ -51,6 +55,8 @@ class ChapterSpider(scrapy.Spider):
 
             self.chapter_counters[r['id']] = {'count': 0, 'saved': 0, 'done': False}
             log.info('Parsing chapters for novel %(name)s(id=%(id)s) %(url_index)s' % r)
+
+            self.db.lock_novel(novel_id=r['id'], novel_name=r['name'], spider=SPIDER_ID)
             yield scrapy.Request(r['url_index'], meta={'table': table, 'novel_id': r['id']})
 
         self.log_novels(novels)
@@ -71,7 +77,7 @@ class ChapterSpider(scrapy.Spider):
         idx = 10
 
         # finished chapters including chapter, section and conflicts
-        finished_sections, finished_chapters = self.cache_finished(table)
+        finished_sections, finished_chapters = self.cache_finished_chapters(table)
         # keep count of saved chapters. calculate from this number.
         self.chapter_counters[novel_id]['saved'] = len(finished_chapters) + len(finished_sections)
         log.info('Will skip %s chapters which were saved.' % self.chapter_counters[novel_id]['saved'])
@@ -128,6 +134,14 @@ class ChapterSpider(scrapy.Spider):
 
         self.chapter_counters[novel_id]['done'] = True
         log.info('Chapters counts: total=%(count)s, saved=%(saved)s (including conflicts)' % self.chapter_counters[novel_id])
+        # it maybe all saved but not marked done. So mark it done here because it will not yield to pipeline.
+        if self.chapter_counters[novel_id]['saved'] >= self.chapter_counters[novel_id]['count']:
+            # TODO: possible finished but chapters counting not done ?
+            # mark this novel done
+            tn = self.db.DB_table_novel
+            mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
+            log.info('Novel %s is finished downloading.' % table)
+            self.db.unlock_novel(novel_id=novel_id)
 
     def parse_content(self, response):
         item = response.meta['item']
@@ -151,8 +165,9 @@ class ChapterSpider(scrapy.Spider):
             for n in novels:
                 f.write('+')
                 f.write(n)
+            f.write('.log')
 
-    def cache_finished(self, table):
+    def cache_finished_chapters(self, table):
         finished_chapters = set()
         finished_sections = set()
 

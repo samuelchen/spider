@@ -21,8 +21,9 @@ class NovelSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.db = Database()
         tn = self.db.DB_table_novel
-
+        tl = self.db.DB_table_novel_lock
         tn.create(self.db.engine, checkfirst=True)
+        tl.create(self.db.engine, checkfirst=True)
         self.pages = 0
         self.start_urls = []
 

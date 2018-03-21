@@ -142,6 +142,7 @@ class NovelspiderDBPipeline(object):
                 # mark this novel done
                 tn = self.db.DB_table_novel
                 mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
+                self.db.unlock_novel(novel_id=novel_id)
                 log.info('Novel %s is finished downloading.' % table)
 
         else:

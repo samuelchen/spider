@@ -17,6 +17,7 @@
 ##########################################
 
 import os
+import socket
 import logging
 LOG_LEVEL = logging.INFO
 
@@ -130,6 +131,10 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 # DB_CONNECTION_STRING='postgresql://scott:tiger@localhost/test'
 DB_CONNECTION_STRING = 'sqlite:///' + os.path.join(BASE_DIR, 'novel.sqlite3')
 # DB_CONNECTION_STRING='postgresql://localhost/'
+
+# host name & IP. for distributed spiders
+HOSTNAME = socket.gethostname()
+SPIDER_ID = HOSTNAME
 
 # how many index pages will be crawled for obtain novels (novel spider)
 LIMIT_INDEX_PAGES = 1
