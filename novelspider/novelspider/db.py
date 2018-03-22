@@ -205,9 +205,9 @@ class Database(object):
 
         return rc
 
-    def unlock_novel(self, novel_id, conn=None):
+    def unlock_novel(self, novel_id, locker, conn=None):
         tl = self.DB_table_novel_lock
-        stmt = tl.delete().where(novel_id==novel_id)
+        stmt = tl.delete().where(novel_id==novel_id, locker==locker)
         count = 0
         try:
             if conn:
@@ -219,11 +219,11 @@ class Database(object):
             log.exception(err)
 
         if count == 0:
-            log.warn('Novel (id=%s) was not locked to unlock.' % novel_id)
+            log.warn('Novel (id=%s) was not locked by %s to unlock.' % (novel_id, locker))
         elif count > 1:
-            log.warn('Unlocked more than 1 novels which has id=%s' % novel_id)
+            log.warn('Unlocked more than 1 novels which has id=%s locker=%s' % (novel_id, locker))
         else:
-            log.info('Unlocked novel (id=%s).' % novel_id)
+            log.info('Unlocked novel (id=%s, locker=%s).' % (novel_id, locker))
 
         return count
 

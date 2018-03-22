@@ -7,9 +7,13 @@
 import datetime
 import scrapy
 from scrapy.pipelines.images import ImagesPipeline
+from scrapy.utils.project import get_project_settings
 from .db import Database, String, mark_done, select
 from sqlalchemy.sql import cast
 import logging
+
+settings = get_project_settings()
+SPIDER_ID = settings['SPIDER_ID']
 
 log = logging.getLogger(__name__)
 
@@ -142,7 +146,7 @@ class NovelspiderDBPipeline(object):
                 # mark this novel done
                 tn = self.db.DB_table_novel
                 mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
-                self.db.unlock_novel(novel_id=novel_id)
+                self.db.unlock_novel(novel_id=novel_id, locker=SPIDER_ID)
                 log.info('Novel %s is finished downloading.' % table)
 
         else:

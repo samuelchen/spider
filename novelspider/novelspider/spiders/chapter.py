@@ -7,7 +7,6 @@ from scrapy.utils.project import get_project_settings
 
 settings = get_project_settings()
 LIMIT_NOVELS = settings['LIMIT_NOVELS']
-HOSTNAME = settings['HOSTNAME']
 SPIDER_ID = settings['SPIDER_ID']
 log = logging.getLogger(__name__)
 
@@ -145,7 +144,7 @@ class ChapterSpider(scrapy.Spider):
             tn = self.db.DB_table_novel
             mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
             log.info('Novel %s is finished downloading.' % table)
-            self.db.unlock_novel(novel_id=novel_id)
+            self.db.unlock_novel(novel_id=novel_id, locker=SPIDER_ID)
 
     def parse_content(self, response):
         item = response.meta['item']
