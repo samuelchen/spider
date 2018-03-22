@@ -115,7 +115,7 @@ def list_finished_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_ch
 def list_novels_has_chapters(name_as_key=False):
     novels = {}
     for name in db.engine.table_names():
-        if name.endswith('_conflict') or name in ['home', 'novel']:
+        if name.endswith('_conflict') or name in ['home', 'novel', 'novel_lock']:
             continue
         arr = name.split('_')
         novel_id = int(arr[1])
