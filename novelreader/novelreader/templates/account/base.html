@@ -1,0 +1,71 @@
+{% extends "../base_site.html" %}{% load account socialaccount i18n %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block head %}
+    <style>
+        .wrapper {
+{#            right: 0;#}
+            margin-top: 50px;
+            min-width: 400px;
+            min-height: 300px;
+            position: relative
+        }
+
+        .errorlist {
+            color: #c90000;
+        }
+        .form_text {
+            font-size: 16px;
+            min-height: 60px;
+        }
+
+        .main-body {
+            height: 100%;
+        }
+
+        .signup input {
+            float: right;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock head %}
+
+
+{% block content %}
+
+    {% get_providers as socialaccount_providers %}
+
+    <div class="row">
+
+        <div class="box london wrapper">
+            <div class="form login_form">
+                <section class="info float-container">
+                    <div class="london-title">
+                        <h1>{% block form_title %}{# -- BLOCK Form Title #}{% endblock %}</h1>
+                    </div>
+
+                    <div class="form_text">
+                        {% block form_text %}{# -- BLOCK Form text -- #}{% endblock %}
+                    </div>
+
+{#                    <ul class="text-danger">{% for err in form.errors.values %}{{ err }}{% endfor %}</ul>#}
+
+                    {% block form %}{# -- BLOCK Form -- #}{% endblock %}
+                    <div class="form_extra">
+                    {% block form_extra %}{# -- BLOCK Form -- #}{% endblock %}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block footer %}
+    <p style="height:100px"></p>
+{% endblock %}

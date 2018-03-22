@@ -94,8 +94,8 @@ class Database(object):
     DB_table_novel_lock = Table('novel_lock', meta,
         Column('id', Integer, primary_key=True, autoincrement=True),
         Column('novel_id', Integer, unique=True, index=True),
-        Column('name', String(100), unique=True),
-        Column('locker', String(100)),
+        Column('name', String(100)),
+        Column('locker', String(100), index=True),
         Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),
 
         schema=schema
@@ -181,17 +181,29 @@ class Database(object):
     #     self.DB_table_home.drop(self.engine, checkfirst=True)
     #     self.DB_table_novel.drop(self.engine, checkfirst=True)
 
-    def lock_novel(self, novel_id, novel_name=None, spider=None, conn=None):
+    def lock_novel(self, novel_id, locker, name=None, conn=None):
+        rc = 0      # succeed (unlocked novel is locked)
         tl = self.DB_table_novel_lock
-        stmt = tl.insert().values(novel_id=novel_id, name=novel_name, locker=spider)
+        stmt = tl.insert().values(novel_id=novel_id, name=name, locker=locker, timestamp=datetime.datetime.utcnow())
+        if not conn:
+            conn = self.engine
         try:
-            if conn:
-                conn.execute(stmt)
-            else:
-                self.engine.execute(stmt)
-            log.info('Locked novel %s(id=%s).' % (novel_name or '', novel_id))
-        except IntegrityError:
-            log.error('Fail to lock novel %s(id=%s). It was locked already.' % (novel_name or '', novel_id))
+            conn.execute(stmt)
+            log.info('Locked novel %s(id=%s).' % (name or '', novel_id))
+        except IntegrityError as err:
+            try:
+                stmt = select([tl.c.locker]).where(novel_id==novel_id)
+                lckr = conn.execute(stmt).scalar()
+                if lckr == locker:
+                    rc = 1      # novel was locked by self
+                    log.info('Novel %s(id=%s) is locked by self' % (name or '', novel_id))
+                else:
+                    rc = -1     # novel was locked by other
+                    log.info('Novel %s(id=%s) was locked by other.' % (name or '', novel_id))
+            except Exception as err:
+                log.error('Fail to lock novel %s(id=%s). %s.' % (name or '', novel_id, str(err)))
+
+        return rc
 
     def unlock_novel(self, novel_id, conn=None):
         tl = self.DB_table_novel_lock
@@ -212,6 +224,9 @@ class Database(object):
             log.warn('Unlocked more than 1 novels which has id=%s' % novel_id)
         else:
             log.info('Unlocked novel (id=%s).' % novel_id)
+
+        return count
+
 
 if __name__ == '__main__':
     db = Database()

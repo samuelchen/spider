@@ -44,19 +44,23 @@ class ChapterSpider(scrapy.Spider):
             stmt = stmt.limit(self.limit)
         rs = self.db.engine.execute(stmt)
 
-        # loop all novels index
-        novels = []     # to log novel id + name
+        # lock novels
+        novels = []
         for r in rs:
+            rc = self.db.lock_novel(novel_id=r['id'], locker=SPIDER_ID, name=r['name'])
+            if rc >= 0:
+                # only add unlocked or locked-by-self novels
+                novels.append(r)
+
+        # loop all locked novels' index page
+        for r in novels:
             table = r['chapter_table']
             t = self.db.get_chapter_table(table)
             t.create(self.db.engine, checkfirst=True)
 
-            novels.append('%s_%s' % (r[tn.c.id], r[tn.c.name]))
-
             self.chapter_counters[r['id']] = {'count': 0, 'saved': 0, 'done': False}
             log.info('Parsing chapters for novel %(name)s(id=%(id)s) %(url_index)s' % r)
 
-            self.db.lock_novel(novel_id=r['id'], novel_name=r['name'], spider=SPIDER_ID)
             yield scrapy.Request(r['url_index'], meta={'table': table, 'novel_id': r['id']})
 
         self.log_novels(novels)
@@ -162,9 +166,9 @@ class ChapterSpider(scrapy.Spider):
         fname = os.path.join(base_dir, 'log', 'chapter_novels.log')
         with open(fname, 'w') as f:
             f.write('novel')
-            for n in novels:
+            for r in novels:
                 f.write('+')
-                f.write(n)
+                f.write('%s_%s' % (r['id'], r['name']))
             f.write('.log')
 
     def cache_finished_chapters(self, table):

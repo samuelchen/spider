@@ -1,0 +1,72 @@
+{% extends "account/base.html" %}
+
+{% load account socialaccount i18n %}
+
+{% block title %}用户登录{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+{% endblock head %}
+
+
+    {% block form_title %}登录{% endblock %}
+
+    {% block form_text %}
+                {% if socialaccount_providers %}
+                    <p>使用社交帐号登录：</p>
+
+                    <div class="">
+
+                        <ul class="socialaccount_providers list-inline">
+                            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+                        </ul>
+
+                        <div class="or">或者</div>
+
+                    </div>
+
+                    {% include "socialaccount/snippets/login_extra.html" %}
+
+                {% endif %}
+
+
+                <p class="change_link">初次来到 {{ website.name }} ?
+                    {#                <a href="#signup" class="to_register"> Create Account </a>#}
+                    <a href="{% url 'account_signup' %}" class="to_register"> 创建一个帐号 </a>
+                </p>
+    {% endblock %}
+
+
+    {% block form %}
+
+        <form method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+{#            <div>#}
+{#                <input id="id_login" name="login" type="text" class="form-control" placeholder="邮件地址/用户名" required=""/>#}
+{#            </div>#}
+{#            <div>#}
+{#                <input id="id_password" name="password" type="password" class="form-control" placeholder="密码"#}
+{#                       required=""/>#}
+{#            </div>#}
+{#            <div class="checkbox">#}
+{#                <label><input id="id_remember" name="remember" type="checkbox"/>记住登录状态</label>#}
+{#                <a class="float-right" href="{% url 'account_reset_password' %}">忘记密码 ?</a>#}
+{#            </div>#}
+            <div class="desc text-center">
+                <button class="submit" type="submit">登录</button>
+            </div>
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+
+        </form>
+
+    {% endblock %}
+
+    {% block form_extra %} {% endblock %}
+
+{% block footer %}
+{% endblock %}

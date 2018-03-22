@@ -1,0 +1,27 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block title %}退出登录{% endblock %}
+
+{% block form_title %}<i class="fa fa-sign-out"></i>退出登录{% endblock %}
+
+{% block form_text %}您确定要退出当前的登录用户 {{ request.user }} 吗 ？{% endblock %}
+
+{% block form %}
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        <div class="desc">
+            <button type="submit">登出</button>
+            <button type="button" onclick="window.history.back();">放弃</button>
+        </div>
+
+    </form>
+{% endblock %}
+
+{% block form_extra %}
+{% endblock %}
+
