@@ -192,7 +192,7 @@ class Database(object):
             log.info('Locked novel %s(id=%s).' % (name or '', novel_id))
         except IntegrityError as err:
             try:
-                stmt = select([tl.c.locker]).where(novel_id==novel_id)
+                stmt = select([tl.c.locker]).where(tl.c.novel_id==novel_id)
                 lckr = conn.execute(stmt).scalar()
                 if lckr == locker:
                     rc = 1      # novel was locked by self
@@ -207,7 +207,7 @@ class Database(object):
 
     def unlock_novel(self, novel_id, locker, conn=None):
         tl = self.DB_table_novel_lock
-        stmt = tl.delete().where(novel_id==novel_id, locker==locker)
+        stmt = tl.delete().where(and_(tl.c.novel_id==novel_id, tl.c.locker==locker))
         count = 0
         try:
             if conn:
@@ -221,7 +221,7 @@ class Database(object):
         if count == 0:
             log.warn('Novel (id=%s) was not locked by %s to unlock.' % (novel_id, locker))
         elif count > 1:
-            log.warn('Unlocked more than 1 novels which has id=%s locker=%s' % (novel_id, locker))
+            log.warn('Unlocked %s novels which has id=%s locker=%s' % (count, novel_id, locker))
         else:
             log.info('Unlocked novel (id=%s, locker=%s).' % (novel_id, locker))
 
