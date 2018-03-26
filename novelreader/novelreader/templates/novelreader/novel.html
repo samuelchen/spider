@@ -1,0 +1,242 @@
+{% extends "../base_site.html" %}{% load staticfiles static %}
+
+{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ novel.name }}最新章节_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+    {#  ===== Left column (Novel Info) =====  #}
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+{#        <h1 class="london-title text-warning">Left column</h1>#}
+
+        {#  ===== Novel info =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box london novel-info">
+                    <div class="info float-container col-sm-12">
+                        <div class="col-xxs-12 novel-cover">
+                            <img src="{% get_static_prefix %}albums/{{ novel.name }}.jpg" alt="{{ novel.name }} 封面"
+                                 onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                                 class="img-responsive">
+                        </div>
+                        <div class="london-title novel-title">
+                            <h2 class="novel-name">{{ novel.name }}</h2>
+                            <h3 class="text-uppercase">作者：{{ novel.author }}</h3>
+                        </div>
+                        <div class="novel-desc"><p>{{ novel.desc }}</p></div>
+                        <p>最新更新 ({{ novel.update_on|date:'Y-m-d H:i' }})：<a href="{{ novel.last_chapter_id }}/">{{ novel.last_chapter }}</a></p>
+                        <div class="clearfix"></div>
+                        <hr/>
+                        <div class="col-sm-12 location-main">
+                            <div class="pull-left location">
+                                <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
+                            </div>
+                            <div class="pull-right user-icons">
+                                <a href="#"><i class="fa fa-star fa-2x"></i></a>
+                                <a href="#"><i class="fa fa-user fa-2x"></i></a>
+                                <a href="#"><i class="fa fa-weibo fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+            </div>
+        </div>
+        {#  ===== Novel info DONE =====  #}
+
+
+        {#  ===== Updated chapters =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box">
+                    <div class="info float-container">
+                        <div class="col-sm-12 bottom-title">
+{#                            <h3 class="text-uppercase">最新更新</h3>#}
+                            <h4 class="text-uppercase">{{ novel.name }} 最新章节</h4>
+                        </div>
+                        <div class="row chapter-list">
+                            <ul>
+                            {% for r in latest_chapters %}
+                            <li class="col-xs-12 col-sm-6 col-md-6 col-lg-4"><a href="{{ r.id }}">{{ r.name }}</a></li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+{#                        <p class="">&nbsp;</p><hr>#}
+                        <div class="col-sm-12 location-main">
+                            <div class="text-center bottom-user">
+                                <a href="#full_chapters"><i class="fa fa-caret-right"></i><span>全部章节</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== updated chapters DONE ======  #}
+
+    </div>
+    {#  ===== END Left Column =====  #}
+
+
+    {#  ===== Right Column (Top N) ======  #}
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+{#        <h1 class="paris-title london-title text-danger">Right Column</h1>#}
+
+
+        {#  ===== Hot novels =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box novel-list-block">
+                    <div class="info float-container">
+                        <div class="col-sm-12 london-title">
+{#                            <h3 class="text-uppercase">热门小说</h3>#}
+                            <h4 class="text-uppercase">热门小说</h4>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="row novel-list">
+                            <ul>
+                                {% for r in hot_novels %}
+                                    <li class="row">
+                                        <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
+                                        <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-sm-12 location-main">
+                            <div class="pull-right bottom-user">
+                                <a href="#"><i class="fa fa-caret-right"></i><span>更多热门小说</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== Hot novels DONE ======  #}
+
+
+
+        {#  ===== Recommends novels =====  #}
+        <div id="#recTotal" class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box novel-list-block">
+                    <div class="info float-container">
+
+                        {# tabs #}
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#recTotal" data-toggle="tab" style="cursor: pointer;">
+                               <div class="london-title paris-title">
+{#                                    <h3 class="text-uppercase">总推荐榜</h3>#}
+                                    <h4 class="text-uppercase">总推荐榜</h4>
+                               </div>
+                            </a></li>
+                            <li><a href="#recMonth" data-toggle="tab" style="cursor: pointer;">
+                               <div class="london-title paris-title">
+{#                                    <h3 class="text-uppercase">月推荐榜</h3>#}
+                                    <h4 class="text-uppercase">月推荐榜</h4>
+                                </div>
+                            </a></li>
+                        </ul>
+
+                        {#  contents  #}
+                        <div class="tab-content">
+                            <div id="recTotal" class="tab-pane active">
+                                <div class="row novel-list">
+                                    <ul>
+                                        {% for r in hot_novels %}
+                                            <li class="row">
+                                                <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
+                                                <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-sm-12 location-main">
+                                    <div class="pull-right bottom-user">
+                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多推荐小说</span></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="recMonth" class="tab-pane">
+                                <div class="row novel-list">
+                                    <ul>
+                                        {% for r in hot_novels %}
+                                            <li class="row">
+                                                <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
+                                                <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-sm-12 location-main">
+                                    <div class="pull-right bottom-user">
+                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多月推荐小说</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== Recommends novels DONE ======  #}
+
+
+    </div>
+    {#  ===== END Right Column =====  #}
+
+
+    {#  ===== Bottom column (Chapters) =====  #}
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+        {#  ===== Full chapters =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div id="full_chapters" class="box">
+                    <div class="info float-container">
+                        <div class="col-sm-12 bottom-title">
+{#                            <h3 class="text-uppercase">最新更新</h3>#}
+                            <h4 class="text-uppercase">{{ novel.name }} 全部章节</h4>
+                        </div>
+                        <div class="row chapter-list">
+                            <ul>
+                            {% for r in chapters %}
+                            {% if r.is_section %}
+                            <li class="col-xs-12 text-center bg-info">{{ r.name }}</li>
+                                {% else %}
+                            <li class="col-xs-12 col-sm-6 col-md-4 col-lg-3"><a href="{{ r.id }}">{{ r.name }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        </div>
+{#                        <p class="">&nbsp;</p><hr>#}
+{#                        <div class="col-sm-12 location-main">#}
+{#                            <div class="pull-right bottom-user">#}
+{#                                <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>#}
+{#                            </div>#}
+{#                        </div>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== Full chapters DONE ======  #}
+
+    </div>
+    {#  ===== END Bottom Column =====  #}
+
+
+</div>
+
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+{% endblock %}
