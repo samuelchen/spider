@@ -2,6 +2,8 @@
 
 from django.conf import settings
 import os, sys
+from django.http import Http404
+
 sys.path.append(os.path.join(settings.BASE_DIR, '..', 'novelspider'))
 from novelspider.db import Database, select, and_, or_, true_
 import logging
@@ -35,26 +37,26 @@ def list_novels(where_clause=None, order_clause=None,
                   ).order_by(oclause
                   ).limit(page_items
                   ).offset(page * page_items)
-    print(stmt)
+    # print(stmt)
     novels = []
+    rs = None
+    conn = None
     try:
         conn = db.create_connection()
         rs = conn.execute(stmt)
 
         for r in rs:
-            if add_last_chapter and db.exist_table(r[tn.c.chapter_table]):
-                t = db.get_chapter_table(r[tn.c.chapter_table])
-                stmt = select([t.c.name]).order_by(t.c.id.desc()).limit(1)
-                last_chapter = conn.execute(stmt).scalar()
-            else:
-                last_chapter = ''
-            novel = {item[0]: item[1] for item in r.items()}
-            novel["last_chapter"] = last_chapter
+            novel = dict(r)
+            if add_last_chapter:
+                last_chapter_id, last_chapter = get_last_chapter(chapter_table=r[tn.c.chapter_table], conn=conn)
+                novel["last_chapter"] = last_chapter
+                novel['last_chapter_id'] = last_chapter_id
             novels.append(novel)
-    except:
+    except Exception:
         log.exception('Fail to list novels.')
     finally:
-        conn.close()
+        if rs is not None: rs.close()
+        if conn is not None: conn.close()
 
     return novels
 
@@ -83,7 +85,7 @@ def list_recommend_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_c
 # 总点击，点击数倒序
 def list_hot_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
     # TODO: return real
-    return list_recommend_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+    return list_favorite_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
 # 月点击
@@ -126,3 +128,103 @@ def list_novels_has_chapters(name_as_key=False):
             novels[novel_id] = novel_name
     return novels
 novels_has_chapters = list_novels_has_chapters()
+
+
+def get_novel_info(nid, add_last_chapter=False):
+    info = {}
+    tn = db.DB_table_novel
+    stmt = select(tn.c).where(tn.c.id==nid)
+
+    try:
+        # since there is pool. use engine.execute directly
+        rs = db.engine.execute(stmt)
+        if rs.rowcount <= 0:
+            raise Http404('Novel (id=%s) is not found' % nid)
+        r = rs.fetchone()
+        info = dict(r)
+        rs.close()
+
+        if add_last_chapter:
+            last_chapter_id, last_chapter = get_last_chapter(chapter_table=r[tn.c.chapter_table])
+            info['last_chapter'] = last_chapter
+            info['last_chapter_id'] = last_chapter_id
+    except Http404:
+        raise
+    except Exception as err:
+        log.exception(err)
+
+    return info
+
+
+def get_last_chapter(nid=None, chapter_table=None, conn=None):
+
+    if nid is None and chapter_table is None:
+        raise ValueError('Must specify either novel id or chapter table name.')
+
+    tn = db.DB_table_novel
+    last_chapter_id = -1
+    last_chapter = ''
+
+    if conn is None:
+        conn = db.engine
+
+    try:
+        if not chapter_table:
+            stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
+            chapter_table = conn.execute(stmt).scalar()
+
+        if db.exist_table(chapter_table):
+            t = db.get_chapter_table(chapter_table)
+            stmt = select([t.c.id, t.c.name]).order_by(t.c.id.desc()).limit(1)
+            rs = conn.execute(stmt)
+            r = rs.fetchone()
+            if r is not None:
+                last_chapter_id = r[t.c.id]
+                last_chapter = r[t.c.name]
+    except Exception as err:
+        log.exception(err)
+
+    return last_chapter_id, last_chapter
+
+
+def get_latest_chapters(nid):
+    tn = db.DB_table_novel
+    stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
+    chapters = []
+    try:
+        # since there is pool, use engine.execute directly
+        table = db.engine.execute(stmt).scalar()
+        if db.exist_table(table):
+            t = db.get_chapter_table(table)
+            stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]
+                          ).where(t.c.is_section==False
+                          ).order_by(t.c.id.desc()
+                          ).limit(12)
+
+            rs = db.engine.execute(stmt)
+            for r in rs:
+                chapters.append(r)
+            rs.close()
+    except Exception as err:
+        log.exception(err)
+
+    return chapters
+
+
+def get_chapters(nid):
+    tn = db.DB_table_novel
+    stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
+    # chapters = []
+    rs = []
+    try:
+        # since there is pool, use engine.execute directly
+        table = db.engine.execute(stmt).scalar()
+        if db.exist_table(table):
+            t = db.get_chapter_table(table)
+            stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]
+                          ).order_by(t.c.id)
+            rs = db.engine.execute(stmt)
+    except Exception as err:
+        log.exception(err)
+
+    return rs

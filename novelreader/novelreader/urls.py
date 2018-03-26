@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from .views import IndexView
+from .views import IndexView, NovelView, ChapterView
 from .views.test import TestView
 
 
@@ -26,6 +26,8 @@ def t(name):
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', IndexView.as_view(template_name=t('index.html')), name='index'),
+    url(r'^(?P<nid>\d+)/$', NovelView.as_view(template_name=t('novel.html')), name='novel'),
+    url(r'^(?P<nid>\d+)/(?P<cid>\d+)/$', ChapterView.as_view(template_name=t('chapter.html')), name='chapter'),
 
     url(r"^test/(?P<name>\w+)/$", TestView.as_view()),
 

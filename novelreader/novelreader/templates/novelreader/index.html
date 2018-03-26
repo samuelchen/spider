@@ -39,7 +39,7 @@
                                          class="img-responsive">
                                 </div>
                                 <div class="london-title novel-title">
-                                    <h3 class="novel-name"><a href="#{{ r.id }}">{{ r.name }}</a></h3>
+                                    <h3 class="novel-name"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></h3>
                                     <h4 class="text-uppercase">{{ r.author }}</h4>
     {#                                <h4 class="text-uppercase">{{ r.status }}</h4>#}
     {#                                <h4>&nbsp;</h4>#}
@@ -82,6 +82,7 @@
                             {% for r in update_novels_top %}
                             <div class="col-xxs-12 col-xs-6 col-sm-3 col-md-3 col-lg-3">
                                 <div class="bottom-img">
+                                    <a href="{% url 'novel' r.id %}">
                                     <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg"
                                          onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
                                          alt="{{ r.name }}.jpg">
@@ -91,7 +92,7 @@
                                         {{ r.last_chapter }} <br>
                                         {{ r.author }} {{ r.update_on|date:"m-y" }}
                                     </p>
-
+                                    </a>
                                 </div>
                             </div>
                             {% endfor %}
@@ -100,8 +101,8 @@
                             <ul>
                                 {% for r in update_novels %}
                                     <li class="row">
-                                        <span class="a col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-3"><a href="#">{{ r.name }}</a></span>
-                                        <span class="b col-xxs-12 col-xs-6 col-sm-6 col-md-6 col-lg-5"><a href="#">{{ r.last_chapter }}</a></span>
+                                        <span class="a col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-3"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
+                                        <span class="b col-xxs-12 col-xs-6 col-sm-6 col-md-6 col-lg-5">{% if r.last_chapter %}<a href="{% url 'chapter' r.id r.last_chapter_id %}">{{ r.last_chapter }}</a>{% endif %}</span>
                                         <span class="c hidden-xs hidden-xs col-sm-2 col-md-2 col-lg-2">{{ r.author }}</span>
                                         <span class="d hidden-xs hidden-xs hidden-sm hidden-md col-lg-2">{{ r.update_on|date:"d-m-y" }}</span>
                                     </li>
@@ -143,7 +144,7 @@
                             <ul>
                                 {% for r in hot_novels %}
                                     <li class="row">
-                                        <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
+                                        <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
                                         <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
                                     </li>
                                 {% endfor %}
@@ -151,7 +152,7 @@
                         </div>
                         <div class="col-sm-12 location-main">
                             <div class="pull-right bottom-user">
-                                <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>
+                                <a href="#"><i class="fa fa-caret-right"></i><span>更多热门小说</span></a>
                             </div>
                         </div>
                     </div>
@@ -199,7 +200,7 @@
                                 </div>
                                 <div class="col-sm-12 location-main">
                                     <div class="pull-right bottom-user">
-                                        <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>
+                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多推荐小说</span></a>
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +218,7 @@
                                 </div>
                                 <div class="col-sm-12 location-main">
                                     <div class="pull-right bottom-user">
-                                        <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>
+                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多月推荐小说</span></a>
                                     </div>
                                 </div>
                             </div>

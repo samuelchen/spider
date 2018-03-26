@@ -98,7 +98,7 @@
     margin: 10px 0 0 0;
     padding: 0;
     display: block;
-    list-style-type: disc;
+    /*list-style-type: disc;*/
     /*-webkit-margin-before: 1em;*/
     /*-webkit-margin-after: 1em;*/
     /*-webkit-margin-start: 0px;*/
@@ -107,13 +107,13 @@
 }
 
 .novel-list ul {
-    line-height: 30px;
+    line-height: 25px;
     padding: 0;
     margin: 0;
 }
 .novel-list li {
     list-style: none;
-    margin: 10px 0 0 0px;
+    margin: 5px 0 0 0;
 }
 .novel-list li span {
     font-size: 16px;
@@ -170,8 +170,23 @@
 	margin: 0 0 5px 10px;
 }
 
+.novel-info .novel-cover {
+    display: inline;
+    float: right;
+    width: 150px;
+    height: 180px;
+    padding: 3px;
+    border: 1px solid #efefef;
+    background: #fff;
+	margin: 0 0 5px 10px;
+}
+
 .novel-card .novel-title {
     margin-left: 120px;
+}
+
+.novel-info .novel-title {
+
 }
 
 .novel-desc {
@@ -196,6 +211,20 @@
 .novel-list .n {
     text-align: right;
 }
+
+.chapter-list ul {
+    padding-left: 10px;
+}
+.chapter-list li {
+    list-style: none;
+    display: list-item;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+
+}
+
+
 /* ------------------------- */
 
 /*@media (max-width:400px) {*/
