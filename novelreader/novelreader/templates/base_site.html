@@ -29,7 +29,11 @@
 <body>
 
     <div class="main-body">
-        {% include './inc/toolbar.html' %}
+
+        {% block toolbar %}
+            {% include './inc/toolbar.html' %}
+        {% endblock %}
+
         <div class="col-sm-12 col-md-12 col-lg-offset-1 col-lg-10">
             <div class="row">
                 <div class="main-page">
@@ -43,11 +47,11 @@
 
 
             {% block footer %}
-                <footer class="row">
+                <footer class="row text-center text-muted">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 footer">
                         <ul class="list-inline">
-                            <li class="copyright">© 2018 {{ website.name }} {{ website.domain }}. All rights reserved.</li>
-                            <li><p>Content are uploaded by users. Please send email to contact#{{ website.domain }} to remove un-licensed content.</p></li>
+                            <li class="copyright">© 2018 {{ website.name }} {{ website.domain }}.</li>
+                            <li><p>本站内容由用户上传，如有侵权请联系 contact#{{ website.domain }} 删除.</p></li>
             {#                <li><a href="#">Terms</a></li>#}
             {#                <li><a href="#">Privacy</a></li>#}
             {#                <li><a href="#">About</a></li>#}

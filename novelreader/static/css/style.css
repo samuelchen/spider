@@ -278,7 +278,7 @@ body {
 .heading h1, .heading2 h1 {
 	margin: 0 10px;
 	font-weight: 600;
-	font-size: 72px;
+	font-size: 48px;
 }
 .heading p, .heading2 p {
 	margin: 0 10px;
@@ -328,6 +328,7 @@ body {
 	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 	display: block;
 	background-color: #fff;
+
 }
 .london { border-top: 7px solid #19beb6; }
 .paris { border-top: 7px solid #df9801; }
@@ -906,7 +907,7 @@ textarea.form-control {	height:135px; }
 	.heading, .heading2 { margin: 15px 0px;	}
 	.carousel { min-height: auto; }
 	
-	.heading h1, .heading2 h1 {	font-size: 46px; }
+	.heading h1, .heading2 h1 {	font-size: 40px; }
 	.heading p, .heading2 p { font-size: 15px; }
 	
 	.content-main {

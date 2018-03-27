@@ -1,0 +1,232 @@
+{% extends "../base_site.html" %}{% load staticfiles static %}
+
+{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ chapter.name }}_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书{% endblock %}
+
+{% block head %}
+<style>
+    .box {
+        margin-bottom: 0;
+        background-color: rgba(255,255,255, 0.95);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+    {#  ===== Bottom column (Chapters) =====  #}
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+        {#  ===== Full chapters =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box">
+                    <div class="info float-container chapter-block">
+                        <div class="col-sm-12 text-center">
+                            <h2 class="text-uppercase">{{ chapter.name }}</h2>
+{#                            <h4 class="text-uppercase">《{{ novel.name }}》</h4>#}
+                        </div>
+                        <ul class="list-inline text-center">
+                            <li>作者：{{ novel.author }}</li>
+                            <li>类型：{{ novel.category }}</li>
+                            <li>字数：{{ novel.length }}</li>
+                        </ul>
+                        <ul class="list-inline text-center">
+                            {% if chapter.prev  %}
+                            <li title="快捷键：左键"><a id="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            {% endif %}
+                            <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+                            <li><i class="fa fa-book"></i>《<a id="novel_page" href="{% url 'novel' novel.id %}">{{ novel.name }}</a>》</li>
+                            {% if chapter.next %}
+                            <li title="快捷键：右键"><a id="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            {% endif %}
+                            <li><label for="font">字体</label> <select id="font">
+                                <option value="KaiTi">楷体</option>
+                                <option value="Microsoft YaHei">雅黑</option>
+                                <option value="SimSun">宋体</option>
+                                <option value="NSimSun">新宋体</option>
+                                <option value="FangSong">仿宋</option>
+                                <option value="PMingLiU">新细明体</option>
+                                <option value="YouYuan">幼圆</option>
+                            </select></li>
+                            <li title="快捷键：+ - =">大小
+                                <a id="plus" href="#"><i class="fa fa-plus"></i></a>
+                                <a id="minus" href="#"><i class="fa fa-minus"></i></a>
+                            </li>
+                            <li><label for="color">背景色</label> <select id="color"></select></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="london">
+                        <p class="article">{{ chapter.content|safe }}</p>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== Full chapters DONE ======  #}
+
+    </div>
+    {#  ===== END Bottom Column =====  #}
+
+
+</div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+
+    <script language="javascript">
+        var container = $(".chapter-block");
+        var article = $(".article");
+        var sel_color = $("#color");
+        var sel_font = $("#font");
+
+        var colors = {
+                    smoke: ["rgba(230, 230, 230, 0.9)", "烟灰", "black"],
+                    light_green: ["rgba(182, 215, 168, 0.9)", "淡绿", "#073763"],
+                    light_blue: ["rgba(159, 197, 232, 0.9)", "淡蓝", "black"],
+                    dark_gray: ["rgba(80, 80, 80, 0.9)", "深灰", "silver"],
+                    light_gray: ["rgba(200, 200, 200, 0.9)", "浅灰", "black"],
+                    old_yellow: ["rgba(237, 223, 169, 0.9)", "旧黄", "black"]
+        };
+        var default_conf = {
+            "font-family": "KaiTi",
+            "font-size": "26px",
+            "bgcolor": "smoke"
+        };
+
+        function key_pressed(event) {
+            var size = 26;
+
+            if (event.keyCode == 37) {
+                {# left arrow "<" pressed #}
+                {% if chapter.prev %}
+                window.location = $('#prev_page').attr('href');
+                {% else %}
+                alert('已经是第一页');
+                {% endif %}
+            }
+
+            else if (event.keyCode == 39) {
+                {# right arrow ">" pressed #}
+                {% if chapter.next %}
+                window.location = $('#next_page').attr('href');
+                {% else %}
+                alert('已经是最后一页');
+                {% endif %}
+            }
+
+            else if (event.keyCode == 189 || event.keyCode == 109) {
+                {# "-" pressed #}
+                decrease_font_size()
+            }
+
+            else if (event.keyCode == 187 || event.keyCode == 107) {
+                {# "+"(=) pressed #}
+                increase_font_size()
+            }
+
+            else if (event.keyCode == 48) {
+                {# "0" pressed #}
+                set_font_size(26);
+            }
+
+        }
+
+        function set_font_size(size) {
+            article.css('font-size', size + 'px');
+            save_config();
+        }
+
+        function increase_font_size() {
+            var size = parseInt(article.css('font-size'));
+            size += 2;
+            if (size >= 48) size = 68;
+            set_font_size(size);
+        }
+
+        function decrease_font_size() {
+            var size = parseInt(article.css('font-size'));
+            size -= 2;
+            if (size <= 8) size = 8;
+            article.css('font-size', size + 'px');
+            set_font_size(size);
+
+        }
+
+        function save_config(){
+{#            var article = $(".article");#}
+{#            var chapter = $(".chapter-block");#}
+            var conf = {
+                'font-family': article.css("font-family"),
+                'font-size': parseInt(article.css('font-size')),
+                'bgcolor':sel_color.val()
+            };
+            Cookies.set('config', conf, {expires: 36500});
+        }
+
+        function load_config(){
+{#            var article = $(".article");#}
+{#            var chapter = $(".chapter-block");#}
+            var conf = Cookies.getJSON('config');
+            if (!conf) conf = default_conf;
+            return conf;
+        }
+
+        function set_color(key) {
+            container.css("background-color", colors[key][0]);
+            article.css("color", colors[key][2]);
+            save_config()
+        }
+
+        function set_font(font_name) {
+            article.css("font-family", font_name);
+            save_config();
+        }
+
+        $(document).ready(function(){
+            document.onkeydown = key_pressed;
+
+{#            var container = $(".chapter-block");#}
+{#            var article = $(".article");#}
+{#            var sel_color = $("#color");#}
+{#            var sel_font = $("#font");#}
+
+            var conf = load_config();
+            console.log(conf);
+            var name, append_attr;
+            // init colors
+            for (k in colors){
+                append_attr = '';
+                if (k == conf['bgcolor']) {
+                    append_attr = 'selected';
+                    set_color(k);
+                }
+                name = colors[k][1];
+                sel_color.append('<option value="' + k + '" ' + append_attr + '>' + name + '</option>');
+            }
+            set_font(conf['font-family']);
+            set_font_size(conf['font-size']);
+
+            sel_color.change(function(){
+                var k = $(this).val();
+                set_color(k);
+            });
+
+            sel_font.change(function(){
+                set_font($(this).val());
+            });
+
+            $("#plus").click(increase_font_size);
+            $("#minus").click(decrease_font_size);
+
+        });
+    </script>
+{% endblock %}

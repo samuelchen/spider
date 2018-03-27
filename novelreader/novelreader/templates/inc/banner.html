@@ -10,14 +10,19 @@
 {#                    <div class="desc">#}
 {#                        <button type="button" class="">Subscribe</button>#}
 {#                    </div>#}
-                        <form class="search">
-                            <input type="text" placeholder="Search: Book-Name or Author-Name">
-                            <button type="submit"><i class="fa fa-search fa-2x"></i></button>
-                        </form>
+
 
                 </div>
 {#                <img src="/s/images/home-img-1.png" alt="Image" class="img-responsive">#}
-                {% include '../inc/actions.html' %}
+                <div class="pull-right">
+                    {% include '../inc/actions.html' %}
+                    <form class="search">
+                        <div class="form-inline form-row">
+                        <input type="text" class="form-control" placeholder="搜索：输入 小说名 或 作者名">
+                        <button type="submit" class="form-control"><i class="fa fa-search"></i></button>
+                            </div>
+                    </form>
+                </div>
                 <div class="clearfix"></div>
                 <div class="row category">
                     <ul class="row list-inline text-center">
@@ -31,7 +36,7 @@
                         <li><a href="#">同人漫画</a></li>
                         <li><a href="#">其他类型</a></li>
                         <li><a href="#">全本小说</a></li>
-                        <li><a href="#">全部文章</a></li>
+                        <li><a href="#">全部小说</a></li>
                     </ul>
                 </div>
 

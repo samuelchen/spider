@@ -4,7 +4,7 @@ import logging
 from django.http import Http404
 from django.views.generic import TemplateView
 from ..models.novelutil import (
-    get_novel_info, get_latest_chapters, get_chapters,
+    get_novel_info, get_latest_chapters, get_all_chapters,
     list_hot_novels, list_recommend_novels
 )
 from .base import BaseViewMixin
@@ -26,7 +26,7 @@ class NovelView(TemplateView, BaseViewMixin):
             raise Http404('Novel does not exist.')
         context['novel'] = get_novel_info(nid, add_last_chapter=True)
         context['latest_chapters'] = get_latest_chapters(nid)
-        context['chapters'] = get_chapters(nid)
+        context['chapters'] = get_all_chapters(nid)
         context['hot_novels'] = list_hot_novels(page_items=5)
         context['recommend_novels'] = list_recommend_novels(page_items=5)
 

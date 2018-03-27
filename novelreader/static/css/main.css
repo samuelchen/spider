@@ -34,7 +34,7 @@
 }
 .banner-main-home .actions i {
     display: block;
-    font-size: 3em;
+    font-size: 2em;
 }
 
 .banner-main-home .category ul {
@@ -42,7 +42,7 @@
     padding-right: 30px;
 }
 .banner-main-home .category li {
-    font-size: 18px;
+    font-size: 16px;
     color: #10a5cd;
     line-height: 40px;
 }
@@ -59,6 +59,22 @@
 .banner-main-home .category li a:hover {
         background-color: #777;
 }
+
+.banner-main-home .search {
+    font-size: 14px;
+}
+.banner-main-home .search .form-control {
+    height: 26px;
+    padding: 6px;
+}
+.banner-main-home .search input {
+    width: 80%;
+}
+
+/* ----- for toolbar ----- */
+
+
+
 /* ----- for novel block ----- */
 
 .novel-list-block {
@@ -225,6 +241,18 @@
 }
 
 
+.chapter-block {
+    background-color: rgba(230,230,230,0.9);
+}
+
+.article {
+    font-family: KaiTi;
+    font-size: 26px;
+    width: 90%;
+    min-width: 320px;
+    margin: auto;
+}
+
 /* ------------------------- */
 
 /*@media (max-width:400px) {*/
@@ -263,5 +291,5 @@
 }
 
 @media  (max-width: 1024px) {
-    .banner-main-home .category li {font-size: 16px; line-height: 36px;}
+    .banner-main-home .category li {font-size: 14px; line-height: 36px;}
 }

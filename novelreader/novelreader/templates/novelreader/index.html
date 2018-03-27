@@ -5,11 +5,20 @@
 {% block head %}
 {% endblock %}
 
+{% block toolbar %}
+    <div class="hidden-sm hidden-md hidden-lg">
+    {{ block.super }}
+    </div>
+{% endblock %}
+
+
 {% block content %}
 
 <div class="row">
 
+    <div class="hidden-xs">
     {% include '../inc/banner.html' %}
+    </div>
 
     {#  ===== Left column =====  #}
     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
@@ -133,7 +142,7 @@
         {#  ===== Hot novels =====  #}
         <div class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="box london novel-list-block">
+                <div class="box paris novel-list-block">
                     <div class="info float-container">
                         <div class="col-sm-12 london-title">
                             <h3 class="text-uppercase">热门小说</h3>

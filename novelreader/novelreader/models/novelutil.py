@@ -156,9 +156,57 @@ def get_novel_info(nid, add_last_chapter=False):
     return info
 
 
+def get_chapter(cid, nid=None, chapter_table=None, conn=None, with_prev=False, with_next=False):
+
+    if nid is None and not chapter_table:
+        raise ValueError('Must specify either novel id or chapter table name.')
+
+    tn = db.DB_table_novel
+    chapter = {}
+
+    if conn is None:
+        conn = db.engine
+
+    try:
+        if not chapter_table:
+            stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
+            chapter_table = conn.execute(stmt).scalar()
+
+        if db.exist_table(chapter_table):
+            t = db.get_chapter_table(chapter_table)
+            stmt = select(t.c).where(t.c.id==cid).order_by(t.c.id.desc()).limit(1)
+            rs = conn.execute(stmt)
+            r = rs.fetchone()
+            if r is None:
+                raise Http404('Chapter %s of novel %s not found.' % (cid, nid))
+            chapter = dict(r)
+            rs.close()
+
+            if with_next:
+                stmt = select(t.c).where(t.c.id>cid).order_by(t.c.id.desc()).limit(1)
+                rs = conn.execute(stmt)
+                r = rs.fetchone()
+                chapter['next'] = dict(r) if r else None
+                rs.close()
+
+            if with_prev:
+                stmt = select(t.c).where(t.c.id<cid).order_by(t.c.id.desc()).limit(1)
+                rs = conn.execute(stmt)
+                r = rs.fetchone()
+                chapter['prev'] = dict(r) if r else None
+                rs.close()
+
+    except Http404:
+        raise
+    except Exception as err:
+        log.exception(err)
+
+    return chapter
+
+
 def get_last_chapter(nid=None, chapter_table=None, conn=None):
 
-    if nid is None and chapter_table is None:
+    if nid is None and not chapter_table:
         raise ValueError('Must specify either novel id or chapter table name.')
 
     tn = db.DB_table_novel
@@ -211,7 +259,7 @@ def get_latest_chapters(nid):
     return chapters
 
 
-def get_chapters(nid):
+def get_all_chapters(nid):
     tn = db.DB_table_novel
     stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
     # chapters = []

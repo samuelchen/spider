@@ -1,9 +1,9 @@
 {% load socialaccount %}
-<div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12 toolbar margin-b-10">
-    <div class="row">
-        <div class="text-left col-lg-7">
+<div class="row margin-b-10">
+    <div class=" box col-xs-12 col-sm-12 col-md-12 col-lg-12 toolbar ">
+        <div class="text-left col-sm-12 col-md-7 col-lg-7">
             <ul class="list-inline category">
-                <li><a href="/">{{ website.name }}</a></li>
+                <li><a href="/"><i class="fa fa-home"></i> <strong>{{ website.name }}</strong></a></li>
                 <li><a href="#">玄幻魔法</a></li>
                 <li><a href="#">武侠修真</a></li>
                 <li><a href="#">都市言情</a></li>
@@ -14,10 +14,10 @@
                 <li><a href="#">同人漫画</a></li>
                 <li><a href="#">其他类型</a></li>
                 <li><a href="#">全本小说</a></li>
-                <li><a href="#">全部文章</a></li>
+                <li><a href="#">全部小说</a></li>
             </ul>
         </div>
-        <div class="text-right col-lg-5">
+        <div class="pull-right text-right col-sm-12 col-md-5 col-lg-5">
             {% include '../inc/actions.html' %}
         </div>
     </div>
