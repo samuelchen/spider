@@ -174,7 +174,7 @@ def get_chapter(cid, nid=None, chapter_table=None, conn=None, with_prev=False, w
 
         if db.exist_table(chapter_table):
             t = db.get_chapter_table(chapter_table)
-            stmt = select(t.c).where(t.c.id==cid).order_by(t.c.id.desc()).limit(1)
+            stmt = select(t.c).where(and_(t.c.id==cid, t.c.is_section==False)).order_by(t.c.id.desc()).limit(1)
             rs = conn.execute(stmt)
             r = rs.fetchone()
             if r is None:
@@ -183,14 +183,14 @@ def get_chapter(cid, nid=None, chapter_table=None, conn=None, with_prev=False, w
             rs.close()
 
             if with_next:
-                stmt = select(t.c).where(t.c.id>cid).order_by(t.c.id.desc()).limit(1)
+                stmt = select(t.c).where(and_(t.c.id>cid, t.c.is_section==False)).order_by(t.c.id.desc()).limit(1)
                 rs = conn.execute(stmt)
                 r = rs.fetchone()
                 chapter['next'] = dict(r) if r else None
                 rs.close()
 
             if with_prev:
-                stmt = select(t.c).where(t.c.id<cid).order_by(t.c.id.desc()).limit(1)
+                stmt = select(t.c).where(and_(t.c.id<cid, t.c.is_section==False)).order_by(t.c.id.desc()).limit(1)
                 rs = conn.execute(stmt)
                 r = rs.fetchone()
                 chapter['prev'] = dict(r) if r else None
@@ -223,7 +223,7 @@ def get_last_chapter(nid=None, chapter_table=None, conn=None):
 
         if db.exist_table(chapter_table):
             t = db.get_chapter_table(chapter_table)
-            stmt = select([t.c.id, t.c.name]).order_by(t.c.id.desc()).limit(1)
+            stmt = select([t.c.id, t.c.name]).where(t.c.is_section==False).order_by(t.c.id.desc()).limit(1)
             rs = conn.execute(stmt)
             r = rs.fetchone()
             if r is not None:
@@ -235,7 +235,7 @@ def get_last_chapter(nid=None, chapter_table=None, conn=None):
     return last_chapter_id, last_chapter
 
 
-def get_latest_chapters(nid):
+def get_latest_chapters(nid, count=12):
     tn = db.DB_table_novel
     stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
     chapters = []
@@ -247,7 +247,7 @@ def get_latest_chapters(nid):
             stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]
                           ).where(t.c.is_section==False
                           ).order_by(t.c.id.desc()
-                          ).limit(12)
+                          ).limit(count)
 
             rs = db.engine.execute(stmt)
             for r in rs:
