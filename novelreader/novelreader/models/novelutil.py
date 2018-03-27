@@ -183,7 +183,7 @@ def get_chapter(cid, nid=None, chapter_table=None, conn=None, with_prev=False, w
             rs.close()
 
             if with_next:
-                stmt = select(t.c).where(and_(t.c.id>cid, t.c.is_section==False)).order_by(t.c.id.desc()).limit(1)
+                stmt = select(t.c).where(and_(t.c.id>cid, t.c.is_section==False)).order_by(t.c.id).limit(1)
                 rs = conn.execute(stmt)
                 r = rs.fetchone()
                 chapter['next'] = dict(r) if r else None
