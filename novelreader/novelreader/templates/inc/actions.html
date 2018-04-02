@@ -4,7 +4,7 @@
                     <ul class="list-inline text-nowrap">
 
                         {% if request.user.is_authenticated %}
-                        <li class="bottom-title"><a href="#"><i class="fa fa-user-md"></i> <b>{{ request.user }}<!--用户信息--></b></a></li>
+                        <li class="bottom-title"><a href="{% url 'profile' %}"><i class="fa fa-user-md"></i> <b>{{ request.user }}<!--用户信息--></b></a></li>
                         <li class="bottom-title"><a href="#"><i class="fa fa-bookmark-o"></i> <b>书签</b></a></li>
                         <li class="bottom-title"><a href="#"><i class="fa fa-book"></i> <b>书架</b></a></li>
                         <li class="bottom-title"><a href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i> <b>退出</b></a></li>

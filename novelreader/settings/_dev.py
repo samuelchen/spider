@@ -21,6 +21,11 @@ STATICFILES_DIRS = [
     ('albums', os.path.abspath(os.path.join(BASE_DIR, '..', 'novelspider', 'albums'))),
 ]
 
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'data', 'email')
+
+
 NOVEL_DB_CONNECTION_STRING = 'postgresql://postgres:postgres@localhost/novel'
 DATABASES = {
     'default': {

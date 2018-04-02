@@ -1,1 +1,1 @@
-__author__ = 'samuel'
+from .novel import UserFavorite

@@ -1,6 +1,6 @@
 {% extends "../base_site.html" %}{% load staticfiles static %}
 
-{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ chapter.name }}_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书{% endblock %}
+{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ chapter.name }}_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书 {{ block.super }}{% endblock %}
 
 {% block head %}
 <style>
@@ -41,18 +41,11 @@
                             {% if chapter.next %}
                             <li title="快捷键：右键"><a id="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
                             {% endif %}
-                            <li><label for="font">字体</label> <select id="font">
-                                <option value="KaiTi">楷体</option>
-                                <option value="Microsoft YaHei">雅黑</option>
-                                <option value="SimSun">宋体</option>
-                                <option value="NSimSun">新宋体</option>
-                                <option value="FangSong">仿宋</option>
-                                <option value="PMingLiU">新细明体</option>
-                                <option value="YouYuan">幼圆</option>
-                            </select></li>
-                            <li title="快捷键：+ - =">大小
-                                <a id="plus" href="#"><i class="fa fa-plus"></i></a>
-                                <a id="minus" href="#"><i class="fa fa-minus"></i></a>
+                            <li><label for="font">字体</label> <select id="font"></select></li>
+                            <li title="快捷键：+(=)增大 - 减小 0 还原 ">大小
+                                <a id="fs_plus" href="#"><i class="fa fa-plus"></i></a>
+                                <a id="fs_minus" href="#"><i class="fa fa-minus"></i></a>
+                                <a id="fs_reset" href="#"><i class="fa fa-refresh"></i></a>
                             </li>
                             <li><label for="color">背景色</label> <select id="color"></select></li>
                         </ul>
@@ -87,6 +80,19 @@
         var article = $(".article");
         var sel_color = $("#color");
         var sel_font = $("#font");
+        var fs_plus = $("#fs_plus");
+        var fs_minus = $("#fs_minus");
+        var fs_reset = $("#fs_reset");
+
+        var fonts = {
+            "KaiTi": "楷体",
+            "Microsoft YaHei": "雅黑",
+            "SimSun": "宋体",
+            "NSimSun": "新宋体",
+            "FangSong": "仿宋",
+            "PMingLiU": "新细明体",
+            "YouYuan": "幼圆"
+        };
 
         var colors = {
                     smoke: ["rgba(230, 230, 230, 0.9)", "烟灰", "black"],
@@ -98,12 +104,11 @@
         };
         var default_conf = {
             "font-family": "KaiTi",
-            "font-size": "26px",
+            "font-size": 26,
             "bgcolor": "smoke"
         };
 
         function key_pressed(event) {
-            var size = 26;
 
             if (event.keyCode == 37) {
                 {# left arrow "<" pressed #}
@@ -135,7 +140,7 @@
 
             else if (event.keyCode == 48) {
                 {# "0" pressed #}
-                set_font_size(26);
+                reset_font_size();
             }
 
         }
@@ -159,6 +164,10 @@
             article.css('font-size', size + 'px');
             set_font_size(size);
 
+        }
+
+        function reset_font_size() {
+            set_font_size(default_conf['font-size']);
         }
 
         function save_config(){
@@ -215,6 +224,16 @@
             set_font(conf['font-family']);
             set_font_size(conf['font-size']);
 
+            // init fonts
+            for (f in fonts) {
+                if (f == conf['font-family']) {
+                    append_attr = 'selected';
+                    set_font(f);
+                }
+                name = fonts[f];
+                sel_font.append('<option value="' + f + '" ' + append_attr + '>' + name + '</option>');
+            }
+
             sel_color.change(function(){
                 var k = $(this).val();
                 set_color(k);
@@ -224,9 +243,9 @@
                 set_font($(this).val());
             });
 
-            $("#plus").click(increase_font_size);
-            $("#minus").click(decrease_font_size);
-
+            fs_plus.click(increase_font_size);
+            fs_minus.click(decrease_font_size);
+            fs_reset.click(reset_font_size);
         });
     </script>
 {% endblock %}

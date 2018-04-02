@@ -1,0 +1,98 @@
+{% extends "../base_site.html" %}{% load staticfiles static %}
+
+{% block title %}会员中心 {{ block.super }}{% endblock %}
+
+{% block head %}
+<style>
+    .box {
+        margin-bottom: 0;
+        background-color: rgba(255,255,255, 0.95);
+    }
+    .user-avatar {
+        width: 100px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+    {#  ===== Full column =====  #}
+    <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+        {#  ===== User info =====  #}
+        <div class="box info float-container">
+            <div class="user-avatar">
+                <img src="{% get_static_prefix %}albums/{{ user.name }}.jpg" alt="{{ user }}"
+                     onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                     class="img-responsive">
+            </div>
+            <div class="london-title">
+                <h2 class="text-uppercase">{{ user }}</h2>
+            </div>
+            <div class="novel-desc"><p>{{ user }}</p></div>
+            <div class="clearfix"></div>
+            <hr/>
+{#                <div class="col-sm-12 location-main">#}
+{#                    <div class="pull-left location">#}
+{#                        <i class="fa fa-tag fa-2x"></i><span>{{ user }}</span>#}
+{#                    </div>#}
+{#                    <div class="pull-right user-icons">#}
+{#                        <a href="#"><i class="fa fa-star fa-2x"></i></a>#}
+{#                        <a href="#"><i class="fa fa-user fa-2x"></i></a>#}
+{#                        <a href="#"><i class="fa fa-weibo fa-2x"></i></a>#}
+{#                    </div>#}
+{#                </div>#}
+
+            {# tabs #}
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#recTotal" data-toggle="tab" style="cursor: pointer;">
+                   <div class="">
+                        <span class="text-uppercase">我的收藏</span>
+                   </div>
+                </a></li>
+                <li><a href="#recMonth" data-toggle="tab" style="cursor: pointer;">
+                   <div class="">
+                        <span class="text-uppercase">个人资料</span>
+                    </div>
+                </a></li>
+            </ul>
+
+            {#  contents  #}
+            <div class="tab-content">
+                <div id="recTotal" class="tab-pane active">
+                    <div class="row">
+                        <ul>
+                            {% for r in hot_novels %}
+                                <li class="row">
+                                    <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
+                                    <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+{#                    <div class="col-sm-12 location-main">#}
+{#                        <div class="pull-right bottom-user">#}
+{#                            <a href="#"><i class="fa fa-caret-right"></i><span>更多推荐小说</span></a>#}
+{#                        </div>#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+        {#  ===== User info DONE =====  #}
+
+         </div>
+    {#  ===== END Full Column =====  #}
+
+
+    </div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+{% endblock %}

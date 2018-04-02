@@ -9,6 +9,7 @@
             margin-top: 50px;
             min-width: 400px;
             min-height: 300px;
+            padding: 0 30px;
             position: relative
         }
 
@@ -34,14 +35,15 @@
     </style>
 {% endblock head %}
 
-
+{% block content_wrapper %}
+<div class="box london wrapper">
 {% block content %}
 
     {% get_providers as socialaccount_providers %}
 
     <div class="row">
 
-        <div class="box london wrapper">
+{#        <div class="box london wrapper">#}
             <div class="form login_form">
                 <section class="info float-container">
                     <div class="london-title">
@@ -60,10 +62,12 @@
                     </div>
                 </section>
             </div>
-        </div>
+{#        </div>#}
     </div>
 
 
+{% endblock %}
+</div>
 {% endblock %}
 
 {% block footer %}

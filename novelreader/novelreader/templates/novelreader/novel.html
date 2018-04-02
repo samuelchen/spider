@@ -1,6 +1,6 @@
 {% extends "../base_site.html" %}{% load staticfiles static %}
 
-{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ novel.name }}最新章节_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书{% endblock %}
+{% block title %}{{ novel.name }}({{ novel.author }})小说_{{ novel.name }}最新章节_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书 {{ block.super }}{% endblock %}
 
 {% block head %}
 <style>
@@ -42,8 +42,8 @@
                                 <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                             </div>
                             <div class="pull-right user-icons">
-                                <a href="#"><i class="fa fa-star fa-2x"></i></a>
-                                <a href="#"><i class="fa fa-user fa-2x"></i></a>
+                                <a href="#" data-toggle="favorite" data-novel-id="{{ novel.id }}" data-novel-name="{{ novel.name }}"><i class="fa fa-star fa-2x"></i></a>
+                                <a href="#"><i class="fa fa-thumbs-up fa-2x"></i></a>
                                 <a href="#"><i class="fa fa-weibo fa-2x"></i></a>
                             </div>
                         </div>
@@ -245,4 +245,22 @@
 
 {% block script %}
     {{ block.super }}
+
+    <script src="{% static 'js/stat.js' %}"></script>
+
+{#    <script>#}
+{#    $(document).ready(function(){#}
+{#       $("#favorite").click(function(){#}
+{#           add_favorite({{ novel.id }}, "{{ novel.name }}",#}
+{#                   function(){#}
+{#                        $(this).find("i").css('color', 'yellow');#}
+{#                   },#}
+{#                   function(resp){#}
+{#                       console.log(resp);#}
+{#                        alert('Error: ' + resp.status + ' ' + resp.statusText);#}
+{#                   }#}
+{#           )#}
+{#       });#}
+{#    });#}
+{#    </script>#}
 {% endblock %}

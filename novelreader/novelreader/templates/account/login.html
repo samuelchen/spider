@@ -42,18 +42,24 @@
         <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
 
-            {{ form.as_p }}
-{#            <div>#}
-{#                <input id="id_login" name="login" type="text" class="form-control" placeholder="邮件地址/用户名" required=""/>#}
-{#            </div>#}
-{#            <div>#}
-{#                <input id="id_password" name="password" type="password" class="form-control" placeholder="密码"#}
-{#                       required=""/>#}
-{#            </div>#}
-{#            <div class="checkbox">#}
-{#                <label><input id="id_remember" name="remember" type="checkbox"/>记住登录状态</label>#}
-{#                <a class="float-right" href="{% url 'account_reset_password' %}">忘记密码 ?</a>#}
-{#            </div>#}
+{#            {{ form.as_p }}#}
+
+            <div>
+                {% for e in form.errors.values %}
+                    {{ e }}
+                {% endfor %}
+            </div>
+            <div>
+                <input id="id_login" name="login" type="text" class="form-control" placeholder="邮件地址/用户名" required=""/>
+            </div>
+            <div>
+                <input id="id_password" name="password" type="password" class="form-control" placeholder="密码"
+                       required=""/>
+            </div>
+            <div class="checkbox">
+                <label><input id="id_remember" name="remember" type="checkbox"/>记住登录状态</label>
+                <a class="float-right" href="{% url 'account_reset_password' %}">忘记密码 ?</a>
+            </div>
             <div class="desc text-center">
                 <button class="submit" type="submit">登录</button>
             </div>

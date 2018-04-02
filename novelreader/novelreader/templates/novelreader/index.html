@@ -1,6 +1,6 @@
 {% extends "../base_site.html" %}{% load staticfiles static %}
 
-{% block title %}{{ choice_novels.0.name }} {{ choice_novels.0.last_chapter }} {{ choice_novels.0.author }} 最新章节{% endblock %}
+{% block title %}{{ choice_novels.0.name }} {{ choice_novels.0.last_chapter }} {{ choice_novels.0.author }} 最新章节 {{ block.super }}{% endblock %}
 
 {% block head %}
 {% endblock %}
