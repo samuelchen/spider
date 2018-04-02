@@ -5,6 +5,7 @@
 albums/
 log/
 data/
+migrations/
 
 # TODO: copy settings.template.py to settings.py
 settings.py
