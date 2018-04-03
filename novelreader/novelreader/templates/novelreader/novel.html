@@ -42,9 +42,8 @@
                                 <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                             </div>
                             <div class="pull-right user-icons">
-                                <a href="#" data-toggle="favorite" data-novel-id="{{ novel.id }}" data-novel-name="{{ novel.name }}"><i class="fa fa-star fa-2x"></i></a>
-                                <a href="#"><i class="fa fa-thumbs-up fa-2x"></i></a>
-                                <a href="#"><i class="fa fa-weibo fa-2x"></i></a>
+                                {% include '../inc/stat_actions.html' with novel=novel state=state %}
+                                {% include '../inc/share_actions.html' with novel=novel %}
                             </div>
                         </div>
                     </div>
@@ -95,28 +94,7 @@
         <div class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="box novel-list-block">
-                    <div class="info float-container">
-                        <div class="col-sm-12 london-title">
-{#                            <h3 class="text-uppercase">热门小说</h3>#}
-                            <h4 class="text-uppercase">热门小说</h4>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row novel-list">
-                            <ul>
-                                {% for r in hot_novels %}
-                                    <li class="row">
-                                        <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
-                                        <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-sm-12 location-main">
-                            <div class="pull-right bottom-user">
-                                <a href="#"><i class="fa fa-caret-right"></i><span>更多热门小说</span></a>
-                            </div>
-                        </div>
-                    </div>
+                    {% include '../inc/top_list.html' with top=top_a small=True %}
                 </div>
             </div>
         </div>
@@ -128,63 +106,7 @@
         <div id="#recTotal" class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="box novel-list-block">
-                    <div class="info float-container">
-
-                        {# tabs #}
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#recTotal" data-toggle="tab" style="cursor: pointer;">
-                               <div class="london-title paris-title">
-{#                                    <h3 class="text-uppercase">总推荐榜</h3>#}
-                                    <h4 class="text-uppercase">总推荐榜</h4>
-                               </div>
-                            </a></li>
-                            <li><a href="#recMonth" data-toggle="tab" style="cursor: pointer;">
-                               <div class="london-title paris-title">
-{#                                    <h3 class="text-uppercase">月推荐榜</h3>#}
-                                    <h4 class="text-uppercase">月推荐榜</h4>
-                                </div>
-                            </a></li>
-                        </ul>
-
-                        {#  contents  #}
-                        <div class="tab-content">
-                            <div id="recTotal" class="tab-pane active">
-                                <div class="row novel-list">
-                                    <ul>
-                                        {% for r in hot_novels %}
-                                            <li class="row">
-                                                <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
-                                                <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <div class="col-sm-12 location-main">
-                                    <div class="pull-right bottom-user">
-                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多推荐小说</span></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="recMonth" class="tab-pane">
-                                <div class="row novel-list">
-                                    <ul>
-                                        {% for r in hot_novels %}
-                                            <li class="row">
-                                                <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
-                                                <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <div class="col-sm-12 location-main">
-                                    <div class="pull-right bottom-user">
-                                        <a href="#"><i class="fa fa-caret-right"></i><span>更多月推荐小说</span></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% include '../inc/top_tabs.html' with tops=tops_b small=True %}
                 </div>
             </div>
         </div>
@@ -248,19 +170,4 @@
 
     <script src="{% static 'js/stat.js' %}"></script>
 
-{#    <script>#}
-{#    $(document).ready(function(){#}
-{#       $("#favorite").click(function(){#}
-{#           add_favorite({{ novel.id }}, "{{ novel.name }}",#}
-{#                   function(){#}
-{#                        $(this).find("i").css('color', 'yellow');#}
-{#                   },#}
-{#                   function(resp){#}
-{#                       console.log(resp);#}
-{#                        alert('Error: ' + resp.status + ' ' + resp.statusText);#}
-{#                   }#}
-{#           )#}
-{#       });#}
-{#    });#}
-{#    </script>#}
 {% endblock %}

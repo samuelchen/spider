@@ -1,0 +1,17 @@
+{% load static %}
+{# Simple list novels #}
+{# args: #}
+{#      novels: novels to be listed #}
+
+                <div class="row novel-list">
+                    <ul>
+                        {% for r in novels %}
+                            <li class="row">
+                                <span class="a col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-3"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
+                                <span class="b col-xxs-12 col-xs-6 col-sm-6 col-md-6 col-lg-5">{% if r.last_chapter %}<a href="{% url 'chapter' r.id r.last_chapter_id %}">{{ r.last_chapter }}</a>{% endif %}</span>
+                                <span class="c hidden-xs hidden-xs col-sm-2 col-md-2 col-lg-2">{{ r.author }}</span>
+                                <span class="d hidden-xs hidden-xs hidden-sm hidden-md col-lg-2">{{ r.update_on|date:"d-m-y" }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>

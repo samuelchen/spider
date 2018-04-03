@@ -21,6 +21,7 @@ from .views import (
     ChapterView,
     ProfileView,
     StatView,
+    CategoryView,
 )
 from .views.test import TestView
 
@@ -34,6 +35,7 @@ urlpatterns = [
     url(r'^$', IndexView.as_view(template_name=t('index.html')), name='index'),
     url(r'^(?P<nid>\d+)/$', NovelView.as_view(template_name=t('novel.html')), name='novel'),
     url(r'^(?P<nid>\d+)/(?P<cid>\d+)/$', ChapterView.as_view(template_name=t('chapter.html')), name='chapter'),
+    url(r'^category/(?P<category>[^/]+)/$', CategoryView.as_view(template_name=t('category.html')), name='category'),
     url(r'^profile/$', ProfileView.as_view(template_name=t('profile.html')), name='profile'),
 
     url(r'^stat/$', StatView.as_view(), name='stat'),

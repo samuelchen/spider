@@ -1,0 +1,10 @@
+{# pager for list (must be paginate with ?p=) #}
+{# args: #}
+{#      prev_page: previous page number #}
+{#      next_page: next page number #}
+                <div class="col-sm-12 location-main">
+                    <div class="pull-right bottom-user">
+                        {% if prev_page >= 0 %}<a href="?p={{ prev_page }}"><i class="fa fa-caret-right"></i><span>上一页</span></a>{% endif %}
+                        {% if next_page >= 0 %}<a href="?p={{ next_page }}"><i class="fa fa-caret-right"></i><span>下一页</span></a>{% endif %}
+                    </div>
+                </div>

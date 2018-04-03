@@ -1,0 +1,8 @@
+{# args: #}
+{#      novel: dict/object like. novel record/row with id, name   #}
+{#      state.is_favor: bool. whether this book is current user's favorite #}
+{#      state.is_recommend: bool. whether this book is current user's recommendation #}
+            <a href="#" title="收藏" data-toggle="favorite" data-novel-id="{{ novel.id }}" data-novel-name="{{ novel.name }}">
+                <i class="fa fa-star fa-2x {% if state.is_favor %}flag-on{% endif %}"></i></a>
+            <a href="#" title="推荐" data-toggle="recommend" data-novel-id="{{ novel.id }}" data-novel-name="{{ novel.name }}">
+                <i class="fa fa-thumbs-up fa-2x {% if state.is_recommend %}flag-on{% endif %}"></i></a>

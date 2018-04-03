@@ -1,0 +1,40 @@
+{# Top N novels in tabs #}
+{# args: #}
+{#      tops: list of dict. [ {"title":"Hot", "subtitle":"hots", "novels": novels-iter}, ... ] #}
+
+{% if tops %}
+                    <div class="info float-container">
+
+                        {# tabs #}
+                        <ul class="nav nav-tabs">
+                            {% for tab in tops %}
+                                <li class="{% if forloop.counter == 1 %}active{% endif %}">
+                                    <a href="#top{{ forloop.counter }}" data-toggle="tab">
+                                        <div class="london-title paris-title">
+                                            {% if small %}<h4 class="text-uppercase">{% else %}<h3 class="text-uppercase">{% endif %}
+                                                {% if tab.icon %}<i class="{{ tab.icon }}"></i> {% endif %}{{ tab.title }}
+                                            {% if small %}</h4>{% else %}</h3>{% endif %}
+                                            <h4 class="text-uppercase">{{ tab.subtitle }}</h4>
+                                        </div>
+                                    </a></li>
+                            {% endfor %}
+                        </ul>
+
+                        {#  contents  #}
+                        <div class="tab-content">
+                            {% for tab in tops %}
+                                <div id="top{{ forloop.counter }}" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}">
+
+                                    {% include './novel_list_in_top.html' with novels=tab.novels %}
+
+                                    <div class="col-sm-12 location-main">
+                                        <div class="pull-right bottom-user">
+                                            <a href="#"><i class="fa fa-caret-right"></i><span>更多</span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+{% endif %}

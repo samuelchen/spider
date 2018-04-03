@@ -1,0 +1,23 @@
+{# Top N list #}
+{# args: #}
+{#      top: dict. {"title":"Hot", "subtitle":"hots", "novels": novels-iter}  #}
+{#      small: bool. simpler #}
+{% if top %}
+                    <div class="info float-container">
+                        <div class="col-sm-12 london-title">
+                            {% if small %}<h4 class="text-uppercase">{% else %}<h3 class="text-uppercase">{% endif %}
+                                {% if top.icon %}<i class="{{ top.icon }}"></i> {% endif %}{{ top.title }}
+                            {% if small %}</h4>{% else %}</h3>{% endif %}
+                            <h4 class="text-uppercase">{{ top.subtitle }}</h4>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        {% include './novel_list_in_top.html' with novels=top.novels %}
+
+                        <div class="col-sm-12 location-main">
+                            <div class="pull-right bottom-user">
+                                <a href="#"><i class="fa fa-caret-right"></i><span>更多</span></a>
+                            </div>
+                        </div>
+                    </div>
+{% endif %}

@@ -14,6 +14,8 @@ db = Database(conn_str=settings.NOVEL_DB_CONNECTION_STRING)
 log = logging.getLogger(__name__)
 
 
+# ===== Novel List functions =====
+
 # 列出所有小说，默认排序
 def list_novels(where_clause=None, order_clause=None,
                 page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
@@ -23,13 +25,11 @@ def list_novels(where_clause=None, order_clause=None,
     wclause = tn.c.id.in_(novels_has_chapters)
     if where_clause is not None:
         wclause = and_(wclause, where_clause)
-    # wclause = true_()
 
     # default order by clause
     oclause = tn.c.id.desc()
     if order_clause is not None:
         oclause = order_clause
-    oclause = None
 
     stmt = select([tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.status, tn.c.desc,
                    tn.c.update_on, tn.c.chapter_table]
@@ -61,11 +61,19 @@ def list_novels(where_clause=None, order_clause=None,
     return novels
 
 
-# 最近更新小说，默认排序
+# 最近更新小说，更新日期排序
 def list_update_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
     tn = db.DB_table_novel
     order_clause = tn.c.update_on.desc()
     return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
+# 最近更新小说（分类），更新日期排序
+def list_update_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.update_on.desc()
+    return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
 # 总收藏，收藏数倒序
@@ -75,6 +83,14 @@ def list_favorite_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_ch
     return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
+# 总收藏（分类），收藏数倒序
+def list_favorite_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.favorites.desc()
+    return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
 # 总推荐，推荐数倒序
 def list_recommend_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
     tn = db.DB_table_novel
@@ -82,19 +98,50 @@ def list_recommend_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_c
     return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
+# 总推荐（分类），推荐数倒序
+def list_recommend_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.recommends.desc()
+    return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
+# 月推荐，推荐数倒序
+def list_recommend_novels_month(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.recommends_month.desc()
+    return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
+# 月推荐（分类），推荐数倒序
+def list_recommend_novels_month_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.recommends_month.desc()
+    return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
 # 总点击，点击数倒序
 def list_hot_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
     # TODO: return real
-    return list_favorite_novels(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+    return list_recommend_novels_month(page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
+# 总点击（分类），点击数倒序
+def list_hot_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    # TODO: return real
+    return list_recommend_novels_month_by_category(category, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
 # 月点击
-def list_hot_novels_cur_month(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+def list_hot_novels_month(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    # TODO: return real
     pass
 
 
 # 周点击
-def list_hot_novels_cur_week(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+def list_hot_novels_week(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    # TODO: return real
     tn = db.DB_table_novel
     order_clause = tn.c.recommends.desc()
     return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
@@ -113,6 +160,21 @@ def list_finished_novels(page=0, page_items=settings.ITEMS_PER_PAGE, add_last_ch
     return list_novels(where_clause=where_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
 
 
+# 完本（分类）
+def list_finished_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    where_clause = and_(tn.c.status=='已完本', tn.c.category==category)
+    return list_novels(where_clause=where_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
+# 分类
+def list_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    order_clause = tn.c.update_on.desc()
+    return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
 # 所有已有章节小说
 def list_novels_has_chapters(name_as_key=False):
     novels = {}
@@ -128,6 +190,19 @@ def list_novels_has_chapters(name_as_key=False):
             novels[novel_id] = novel_name
     return novels
 novels_has_chapters = list_novels_has_chapters()
+
+
+def _get_category_where_clause(category):
+    tn = db.DB_table_novel
+    if category == '完本':
+        where_clause = and_(tn.c.status=='已完本')
+    else:
+        where_clause = and_(tn.c.category==category)
+
+    return where_clause
+
+
+# ===== Novel functions =====
 
 
 def get_novel_info(nid, add_last_chapter=False):
@@ -154,6 +229,9 @@ def get_novel_info(nid, add_last_chapter=False):
         log.exception(err)
 
     return info
+
+
+# ===== Chapter functions =====
 
 
 def get_chapter(cid, nid=None, chapter_table=None, conn=None, with_prev=False, with_next=False):
@@ -276,3 +354,5 @@ def get_all_chapters(nid):
         log.exception(err)
 
     return rs
+
+

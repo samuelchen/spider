@@ -11,6 +11,13 @@
     .user-avatar {
         width: 100px;
     }
+    .tab-content {
+        padding: 0 30px;
+        margin-top: 20px;
+    }
+    .form-control {
+        margin: 5px 0;
+    }
 </style>
 {% endblock %}
 
@@ -18,72 +25,102 @@
 
     <div class="row">
 
-    {#  ===== Full column =====  #}
-    <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {#  ===== Full column =====  #}
+        <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-        {#  ===== User info =====  #}
-        <div class="box info float-container">
-            <div class="user-avatar">
-                <img src="{% get_static_prefix %}albums/{{ user.name }}.jpg" alt="{{ user }}"
-                     onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
-                     class="img-responsive">
-            </div>
-            <div class="london-title">
-                <h2 class="text-uppercase">{{ user }}</h2>
-            </div>
-            <div class="novel-desc"><p>{{ user }}</p></div>
-            <div class="clearfix"></div>
-            <hr/>
-{#                <div class="col-sm-12 location-main">#}
-{#                    <div class="pull-left location">#}
-{#                        <i class="fa fa-tag fa-2x"></i><span>{{ user }}</span>#}
-{#                    </div>#}
-{#                    <div class="pull-right user-icons">#}
-{#                        <a href="#"><i class="fa fa-star fa-2x"></i></a>#}
-{#                        <a href="#"><i class="fa fa-user fa-2x"></i></a>#}
-{#                        <a href="#"><i class="fa fa-weibo fa-2x"></i></a>#}
-{#                    </div>#}
-{#                </div>#}
-
-            {# tabs #}
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#recTotal" data-toggle="tab" style="cursor: pointer;">
-                   <div class="">
-                        <span class="text-uppercase">我的收藏</span>
-                   </div>
-                </a></li>
-                <li><a href="#recMonth" data-toggle="tab" style="cursor: pointer;">
-                   <div class="">
-                        <span class="text-uppercase">个人资料</span>
-                    </div>
-                </a></li>
-            </ul>
-
-            {#  contents  #}
-            <div class="tab-content">
-                <div id="recTotal" class="tab-pane active">
-                    <div class="row">
-                        <ul>
-                            {% for r in hot_novels %}
-                                <li class="row">
-                                    <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8"><a href="#">{{ r.name }}</a></span>
-                                    <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">{{ r.author }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-{#                    <div class="col-sm-12 location-main">#}
-{#                        <div class="pull-right bottom-user">#}
-{#                            <a href="#"><i class="fa fa-caret-right"></i><span>更多推荐小说</span></a>#}
-{#                        </div>#}
-{#                    </div>#}
+            {#  ===== User info =====  #}
+            <div class="box info float-container">
+                <div class="user-avatar">
+                    <img src="{% get_static_prefix %}albums/{{ user.name }}.jpg" alt="{{ user }}"
+                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                         class="img-responsive">
                 </div>
+                <div class="london-title">
+                    <h2 class="text-uppercase">{{ user }}</h2>
+                </div>
+                <div class="novel-desc"><p>{{ user }}</p></div>
+                <div class="clearfix"></div>
+                <hr/>
+
+                {% include '../inc/message.html' %}
+
+                {# tabs #}
+                <ul class="nav nav-tabs">
+                    <li class="{% if tab == 'profile' or not tab %}active{% endif %}"><a href="#profile" data-toggle="tab">
+                       <div class="">
+                            <span class="text-uppercase">个人资料</span>
+                        </div>
+                    </a></li>
+                    <li class="{% if tab == 'favor' %}active{% endif %}"><a href="#favor" data-toggle="tab">
+                       <div class="">
+                            <span class="text-uppercase">我的收藏</span>
+                       </div>
+                    </a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    {#  tab content - favorites  #}
+                    <div id="favor" class="tab-pane {% if tab == 'favor' %}active{% endif %}">
+                        <div class="row" >
+                            <ul class="list-inline">
+                                {% for f in favorites %}
+                                <li class="text-center">
+                                    <img src="{% get_static_prefix %}albums/{{ f.novel_name }}.jpg" alt="{{ f.novel_name }} 封面"
+                                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                                         class="img-responsive">
+                                    <span class=""><a href="#">{{ f.novel_name }}</a></span>
+{#                                    <div class="pull-right user-icons">#}
+{#                                        <a href="#"><i class="fa fa-star fa"></i></a>#}
+{#                                        <a href="#"><i class="fa fa-user fa"></i></a>#}
+{#                                        <a href="#"><i class="fa fa-weibo fa"></i></a>#}
+{#                                    </div>#}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {#  tab content - profile  #}
+                    <div id="profile" class="tab-pane {% if tab == 'profile' or not tab %}active{% endif %}">
+                        <div class="form">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="col-lg-6 col-md-5 col-sm-7">
+                                    <div class="form-group">
+                                        <label class="form-label">修改名字：</label>
+                                        <input name="username" class="form-control" type="text" placeholder="名字">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">修改密码：</label>
+                                        <input name="password" class="form-control" type="password" placeholder="原密码">
+                                        <input name="password1" class="form-control" type="password" placeholder="新密码">
+                                        <input name="password2" class="form-control" type="password" placeholder="重复输入新密码">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-5">
+                                    <div class="form-group">
+                                        <label class="form-label">修改头像：</label>
+                                        <button class="form-control text-info" type="button">上传头像</button>
+                                        <button class="form-control text-warnning" type="button">保存头像</button>
+                                    </div>
+                                </div>
+                                <div class="desc text-center">
+                                    <button type="submit">提交</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-        </div>
-        {#  ===== User info DONE =====  #}
+
+
+            {#  ===== User info DONE =====  #}
 
          </div>
-    {#  ===== END Full Column =====  #}
+        {#  ===== END Full Column =====  #}
 
 
     </div>

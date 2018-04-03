@@ -2,28 +2,12 @@
  * Created by wchen8 on 4/3/2018.
  */
 
-//function add_favorite(novel_id, novel_name, cb_success, cb_error){
-//    $.ajax('/stat/', {
-//        type: 'POST',
-//        dataType: 'json',
-//        data: {
-//            novel_id: novel_id,
-//            novel_name: novel_name,
-//        },
-//        beforeSend: function(xhr, settings) {
-//            xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
-//        },
-//        success: cb_success,
-//        error: cb_error
-//    })
-//}
-
 $(document).ready(function() {
     var favorite_triggers = $("[data-toggle='favorite']");
-    console.log(favorite_triggers);
+    //console.log(favorite_triggers);
     favorite_triggers.click(function() {
         var icon = $(this).find("i");
-        console.log(icon);
+        //console.log(icon);
         $.ajax('/stat/', {
             type: 'POST',
             dataType: 'json',
@@ -35,7 +19,7 @@ $(document).ready(function() {
                 xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
             },
             success: function(resp) {
-                console.log(resp);
+                //console.log(resp);
                 //TODO: color change
                 if (resp.status == 'on') {
                     //icon.removeClass('user-icons');

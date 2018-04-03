@@ -4,16 +4,13 @@
             <div class="banner-main-home">
                 <div class="banner-main-home-text">
                     <div class="heading">
-                        <h1 class="text-nowrap">{{ website.name }}</h1>
-                        <p class="text-uppercase">{{ website.domain }}</p>
+                        <h1 class="text-nowrap"><a href="/">{{ website.name }}</a></h1>
+                        <p class="text-uppercase"><i class="fa fa-home"></i>{{ website.domain }}</p>
                     </div>
-{#                    <div class="desc">#}
-{#                        <button type="button" class="">Subscribe</button>#}
-{#                    </div>#}
-
-
                 </div>
-{#                <img src="/s/images/home-img-1.png" alt="Image" class="img-responsive">#}
+                <div class="">
+                    good novels
+                </div>
                 <div class="pull-right">
                     {% include '../inc/actions.html' %}
                     <form class="search">
@@ -26,17 +23,8 @@
                 <div class="clearfix"></div>
                 <div class="row category">
                     <ul class="row list-inline text-center">
-                        <li><a href="#">玄幻魔法</a></li>
-                        <li><a href="#">武侠修真</a></li>
-                        <li><a href="#">都市言情</a></li>
-                        <li><a href="#">历史军事</a></li>
-                        <li><a href="#">网游竞技</a></li>
-                        <li><a href="#">科幻小说</a></li>
-                        <li><a href="#">恐怖灵异</a></li>
-                        <li><a href="#">同人漫画</a></li>
-                        <li><a href="#">其他类型</a></li>
-                        <li><a href="#">全本小说</a></li>
-                        <li><a href="#">全部小说</a></li>
+                        {% include '../inc/categories.html' %}
+{#                        <li><a href="#">全部小说</a></li>#}
                     </ul>
                 </div>
 

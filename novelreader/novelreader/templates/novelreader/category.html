@@ -1,0 +1,96 @@
+{% extends "../base_site.html" %}{% load staticfiles static %}
+
+{% block title %} {{ category }} 小说 {{ block.super }}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+
+{#{% block toolbar %}#}
+{#    <div class="hidden-sm hidden-md hidden-lg">#}
+{#    {{ block.super }}#}
+{#    </div>#}
+{#{% endblock %}#}
+
+
+{% block content %}
+
+<div class="row">
+
+{#    <div class="hidden-xs">#}
+{#    {% include '../inc/banner.html' %}#}
+{#    </div>#}
+
+    {#  ===== Left column =====  #}
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+
+        {#  ===== Categroy novels =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 box margin-b-10 ">
+                    <div class="col-sm-12 london-title">
+                        <h3 class="text-uppercase"><i class="fa fa-tags"></i> {{ category }}</h3>
+                        <h4 class="text-uppercase">Category</h4>
+                    </div>
+                </div>
+                <div class="box novel-list-block">
+                    <div class="info float-container">
+{#                        <div class="col-sm-12 london-title">#}
+{#                            <h3 class="text-uppercase">{{ category }}</h3>#}
+{#                            <h4 class="text-uppercase">Category</h4>#}
+{#                        </div>#}
+        {#                        <p class="">&nbsp;</p><hr>#}
+                        {% include '../inc/novel_list_cover.html' with novels=novels_top %}
+                        {% include '../inc/novel_list.html' with novels=novels %}
+                        {% include '../inc/novel_list_pager.html' with next_page=np prev_page=pp %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#  ===== Category novels DONE ======  #}
+
+    </div>
+    {#  ===== END Left Column =====  #}
+
+
+    {#  ===== Right Column ======  #}
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        {#  ===== Hot novels =====  #}
+        <div class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box paris novel-list-block">
+                    {% include '../inc/top_list.html' with top=top_a %}
+                </div>
+            </div>
+        </div>
+        {#  ===== Hot novels DONE ======  #}
+
+
+
+        {#  ===== Recommends novels =====  #}
+        <div id="#recTotal" class="row margin-b-10">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="box paris  novel-list-block">
+                    {% include '../inc/top_tabs.html' with tops=tops_b %}
+                </div>
+            </div>
+        </div>
+        {#  ===== Recommends novels DONE ======  #}
+
+
+    </div>
+    {#  ===== END Right Column =====  #}
+
+</div>
+
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+{% endblock %}
