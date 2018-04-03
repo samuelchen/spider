@@ -16,5 +16,5 @@ def load_user_novel_list_states(user, novels):
 
 def load_user_novel_state(user, novel_id):
     state = {}
-    state['is_favor'] = len(UserFavorite.objects.filter(user=user, novel_id=novel_id).all()[:1]) > 0
+    state['is_favor'] = len(UserFavorite.objects.filter(user=user, novel_id=novel_id).all()) > 0
     return state
