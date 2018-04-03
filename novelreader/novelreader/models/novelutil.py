@@ -194,7 +194,7 @@ novels_has_chapters = list_novels_has_chapters()
 
 def _get_category_where_clause(category):
     tn = db.DB_table_novel
-    if category == '完本':
+    if category == '全本':
         where_clause = and_(tn.c.status=='已完本')
     else:
         where_clause = and_(tn.c.category==category)
