@@ -1,4 +1,4 @@
-{% extends "../base_site.html" %}{% load staticfiles static %}
+{% extends "../base_site.html" %}{% load i18n l10n staticfiles static %}
 
 {% block title %}会员中心 {{ block.super }}{% endblock %}
 
@@ -8,8 +8,23 @@
         margin-bottom: 0;
         background-color: rgba(255,255,255, 0.95);
     }
+    .user-card .london-title {
+        margin-left: 120px;
+
+    }
     .user-avatar {
         width: 100px;
+        height: 100px;
+        display: inline;
+        float: left;
+        padding: 3px;
+        border: 1px solid #efefef;
+        background: #fff;
+        margin: 0 0 5px 10px;
+    }
+    .stat {
+        font-family: 'Monaco', 'Comic Sans TW', 'Tw Cen MT';
+        font-size: 14px;
     }
     .tab-content {
         padding: 0 30px;
@@ -29,36 +44,100 @@
         <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
             {#  ===== User info =====  #}
-            <div class="box info float-container">
-                <div class="user-avatar">
-                    <img src="{% get_static_prefix %}albums/{{ user.name }}.jpg" alt="{{ user }}"
-                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
-                         class="img-responsive">
+            <div class="info float-container ">
+
+                <div class="col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-4">
+                    <div class="box user-card col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="info float-container col-sm-12">
+                            <div class="col-xxs-12 user-avatar">
+                                <img src="{% get_static_prefix %}albums/{{ user.username  }}.jpg" alt="{{ user.username  }}.jpg"
+                                     onerror="this.onerror=null;this.src='{% get_static_prefix %}images/noavatar.jpg'"
+                                     class="img-responsive">
+                            </div>
+                            <div class="london-title">
+                                <h2 class="text-uppercase">{{ user.username }}</h2>
+                                <h4 class="text-caplized">{{ user.first_name }} {{ user.last_name }}</h4>
+                            </div>
+                            <div class="clearfix"></div>
+                            <hr>
+                            <div class="stat">
+                                <p>注册：{{ user.date_joined|date:"Y-m-d H:i:s" }}</p>
+                                <p>上次登录：{{ user.last_login|date }} {{ user.last_login|time }}</p>
+                                <p>&nbsp;</p>
+                            </div>
+{#                            <hr/>#}
+{#                            <div class="col-sm-12 location-main">#}
+{#                                <div class="pull-left location">#}
+{#                                    <i class="fa fa-tag fa-2x"></i><span>{{ user }}</span>#}
+{#                                </div>#}
+{#                            </div>#}
+                        </div>
+                    </div>
                 </div>
-                <div class="london-title">
-                    <h2 class="text-uppercase">{{ user }}</h2>
+
+                {# some user information #}
+                <div class="col-xxs-12 col-xs-6 col-sm-8 col-md-8 col-lg-8">
+                    <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="info float-container col-sm-12">
+                            <ul class="stat record">
+                                <li class="clearfix">
+                                    <div style="width:20%"><b>总推荐数</b></div>
+                                    <div style="width:20%"><b>总评分数</b></div>
+                                    <div style="width:20%"><b>总评论数</b></div>
+                                    <div style="width:20%"><b>总邀请访问数</b></div>
+                                    <div style="width:20%"><b>总邀请注册数</b></div>
+                                </li>
+                                <li class="clearfix">
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                </li>
+                            </ul>
+
+                            <ul class="stat record">
+                                <li class="clearfix">
+                                    <div style="width:20%"><b>总收藏</b></div>
+                                    <div style="width:20%"><b>日推荐</b></div>
+                                    <div style="width:20%"><b>日评分</b></div>
+                                    <div style="width:20%"><b>日评论</b></div>
+                                    <div style="width:20%"><b>总阅读</b></div>
+                                </li>
+                                <li class="clearfix">
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                    <div style="width:20%">0</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="novel-desc"><p>{{ user }}</p></div>
+
+
                 <div class="clearfix"></div>
+
                 <hr/>
 
                 {% include '../inc/message.html' %}
 
                 {# tabs #}
-                <ul class="nav nav-tabs">
-                    <li class="{% if tab == 'profile' or not tab %}active{% endif %}"><a href="#profile" data-toggle="tab">
-                       <div class="">
-                            <span class="text-uppercase">个人资料</span>
-                        </div>
-                    </a></li>
-                    <li class="{% if tab == 'favor' %}active{% endif %}"><a href="#favor" data-toggle="tab">
-                       <div class="">
-                            <span class="text-uppercase">我的收藏</span>
-                       </div>
-                    </a></li>
-                </ul>
-
-                <div class="tab-content">
+                <div class=" col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ul class="nav nav-tabs">
+                        <li class="{% if tab == 'profile' or not tab %}active{% endif %}"><a href="#profile" data-toggle="tab">
+                           <div class="">
+                                <span class="text-uppercase">个人资料</span>
+                            </div>
+                        </a></li>
+                        <li class="{% if tab == 'favor' %}active{% endif %}"><a href="#favor" data-toggle="tab">
+                           <div class="">
+                                <span class="text-uppercase">我的书架</span>
+                           </div>
+                        </a></li>
+                    </ul>
+                    <div class="tab-content">
 
                     {#  tab content - favorites  #}
                     <div id="favor" class="tab-pane {% if tab == 'favor' %}active{% endif %}">
@@ -100,9 +179,9 @@
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-5">
                                     <div class="form-group">
-                                        <label class="form-label">修改头像：</label>
-                                        <button class="form-control text-info" type="button">上传头像</button>
-                                        <button class="form-control text-warnning" type="button">保存头像</button>
+                                        <label class="form-label">修改头像：</label><span>（暂时不支持）</span>
+                                        <button class="btn btn-default disabled" type="button">上传头像</button>
+                                        <button class="btn btn-info disabled" type="button">保存头像</button>
                                     </div>
                                 </div>
                                 <div class="desc text-center">
@@ -113,11 +192,12 @@
                     </div>
 
                 </div>
+                </div>
+
 
             </div>
-
-
             {#  ===== User info DONE =====  #}
+
 
          </div>
         {#  ===== END Full Column =====  #}

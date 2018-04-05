@@ -8,17 +8,9 @@
                         <p class="text-uppercase"><i class="fa fa-home"></i>{{ website.domain }}</p>
                     </div>
                 </div>
-                <div class="">
-                    good novels
-                </div>
                 <div class="pull-right">
                     {% include '../inc/actions.html' %}
-                    <form class="search">
-                        <div class="form-inline form-row">
-                        <input type="text" class="form-control" placeholder="搜索：输入 小说名 或 作者名">
-                        <button type="submit" class="form-control"><i class="fa fa-search"></i></button>
-                            </div>
-                    </form>
+                    {% include '../inc/search_box.html' with q=q small=True %}
                 </div>
                 <div class="clearfix"></div>
                 <div class="row category">

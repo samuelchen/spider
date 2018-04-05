@@ -26,6 +26,10 @@ def list_novels(where_clause=None, order_clause=None,
     if where_clause is not None:
         wclause = and_(wclause, where_clause)
 
+    # TODO: remove for production
+    if settings.DEBUG:
+        wclause = where_clause if where_clause is not None else true_()
+
     # default order by clause
     oclause = tn.c.id.desc()
     if order_clause is not None:
@@ -202,6 +206,20 @@ def _get_category_where_clause(category):
     return where_clause
 
 
+# ===== Search functions =====
+
+
+def search_novels(term, qtype=None, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    tn = db.DB_table_novel
+    if qtype == 'name':
+        where_clause = tn.c.name.like('%%%s%%' % term)
+    elif qtype == 'author':
+        where_clause = tn.c.author.like('%%%s%%' % term)
+    else:
+        where_clause = or_(tn.c.name.like('%%%s%%' % term), tn.c.author.like('%%%s%%' % term))
+    return list_novels(where_clause=where_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter)
+
+
 # ===== Novel functions =====
 
 
@@ -354,5 +372,6 @@ def get_all_chapters(nid):
         log.exception(err)
 
     return rs
+
 
 

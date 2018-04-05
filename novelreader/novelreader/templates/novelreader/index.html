@@ -16,8 +16,13 @@
 
 <div class="row">
 
+    {% include '../inc/message.html' %}
+
     <div class="hidden-xs">
-    {% include '../inc/banner.html' %}
+        {% include '../inc/banner.html' %}
+    </div>
+    <div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+        {% include '../inc/search_box.html' %}
     </div>
 
     {#  ===== Left column =====  #}
@@ -36,36 +41,7 @@
 
                     {% for r in choice_novels %}
 
-                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 margin-b-10">
-                        <div class="box london novel-card">
-{#                            <div class="box-icon">#}
-{#                            </div>#}
-                            <div class="info float-container col-sm-12">
-                                <div class="col-xxs-12 novel-cover">
-                                    <img src="{% get_static_prefix %}albums/{{ r.name }}.jpg" alt="{{ r.name }}.jpg"
-                                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
-                                         class="img-responsive">
-                                </div>
-                                <div class="london-title novel-title">
-                                    <h3 class="novel-name"><a href="{% url 'novel' r.id %}">{{ r.name }}</a></h3>
-                                    <h4 class="text-uppercase">{{ r.author }}</h4>
-    {#                                <h4 class="text-uppercase">{{ r.status }}</h4>#}
-    {#                                <h4>&nbsp;</h4>#}
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="novel-desc"><p>{{ r.desc }}</p></div>
-                                <hr/>
-                                <div class="col-sm-12 location-main">
-                                    <div class="pull-left location">
-                                        <i class="fa fa-tag fa-2x"></i><span>{{ r.category }}</span>
-                                    </div>
-                                    <div class="pull-right user-icons">
-                                        {% include '../inc/share_actions.html' with novel=r %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% include '../inc/novel_card.html' with novel=r %}
 
                     {% endfor %}
 

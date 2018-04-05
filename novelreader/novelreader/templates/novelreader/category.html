@@ -32,14 +32,10 @@
                         <h3 class="text-uppercase"><i class="fa fa-tags"></i> {{ category }}</h3>
                         <h4 class="text-uppercase">Category</h4>
                     </div>
+                    {% include '../inc/message.html' %}
                 </div>
                 <div class="box novel-list-block">
                     <div class="info float-container">
-{#                        <div class="col-sm-12 london-title">#}
-{#                            <h3 class="text-uppercase">{{ category }}</h3>#}
-{#                            <h4 class="text-uppercase">Category</h4>#}
-{#                        </div>#}
-        {#                        <p class="">&nbsp;</p><hr>#}
                         {% include '../inc/novel_list_cover.html' with novels=novels_top %}
                         {% include '../inc/novel_list.html' with novels=novels %}
                         {% include '../inc/novel_list_pager.html' with next_page=np prev_page=pp %}
@@ -56,6 +52,9 @@
 
     {#  ===== Right Column ======  #}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+
+        {% include '../inc/search_box.html' %}
+
         {#  ===== Hot novels =====  #}
         <div class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">

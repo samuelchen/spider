@@ -1,14 +1,13 @@
 {% load socialaccount %}
 <div class="row margin-b-10">
     <div class=" box col-xs-12 col-sm-12 col-md-12 col-lg-12 toolbar ">
-        <div class="text-left col-sm-12 col-md-7 col-lg-7">
+        <div class="text-left col-sm-12 col-md-7 col-lg-8">
             <ul class="list-inline category">
                 <li><a href="/"><i class="fa fa-home"></i> <strong>{{ website.name }}</strong></a></li>
                 {% include '../inc/categories.html' %}
-{#                <li><a href="#">全部小说</a></li>#}
             </ul>
         </div>
-        <div class="pull-right text-right col-sm-12 col-md-5 col-lg-5">
+        <div class="pull-right text-right col-sm-12 col-md-5 col-lg-4">
             {% include '../inc/actions.html' %}
         </div>
     </div>

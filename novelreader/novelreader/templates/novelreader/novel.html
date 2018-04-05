@@ -5,6 +5,7 @@
 {% block head %}
 <style>
     .box {
+        width: 100%;
         margin-bottom: 0;
         background-color: rgba(255,255,255, 0.95);
     }
@@ -52,8 +53,9 @@
         </div>
         {#  ===== Novel info DONE =====  #}
 
+        {% include '../inc/message.html' %}
 
-        {#  ===== Updated chapters =====  #}
+        {#  ===== New chapters =====  #}
         <div class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="box">
@@ -79,7 +81,7 @@
                 </div>
             </div>
         </div>
-        {#  ===== updated chapters DONE ======  #}
+        {#  ===== New chapters DONE ======  #}
 
     </div>
     {#  ===== END Left Column =====  #}
@@ -87,8 +89,6 @@
 
     {#  ===== Right Column (Top N) ======  #}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-{#        <h1 class="paris-title london-title text-danger">Right Column</h1>#}
-
 
         {#  ===== Hot novels =====  #}
         <div class="row margin-b-10">
@@ -99,7 +99,6 @@
             </div>
         </div>
         {#  ===== Hot novels DONE ======  #}
-
 
 
         {#  ===== Recommends novels =====  #}

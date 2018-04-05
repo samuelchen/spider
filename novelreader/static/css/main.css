@@ -11,8 +11,15 @@
     padding: 15px 15px 15px 15px;
 }
 
+.flag-on {
+    color: #df9801;
+    /*text-shadow:0 0 0.1em #75aaff,*/
+                /*-0 -0 0.1em #ff668d;*/
+}
+
 .user-icons .flag-on {
-    color: #dfa528;
+    color: #df9801;
+    /*#dfa528;*/
     text-shadow:0 0 0.2em #75aaff,
                 -0 -0 0.2em #ff668d;
 }
@@ -66,15 +73,13 @@
         background-color: #777;
 }
 
-.banner-main-home .search {
-    font-size: 14px;
-}
-.banner-main-home .search .form-control {
-    height: 26px;
+.search .form-control {
+    height: 40px;
     padding: 6px;
 }
-.banner-main-home .search input {
-    width: 80%;
+.search .form-group-sm .form-control {
+    height: 27px;
+    padding: 4px;
 }
 
 /* ----- for toolbar ----- */
@@ -104,6 +109,7 @@
     background-color: rgba(255, 255, 255, 0.85);
     /*opacity: 0.5;*/
 }
+
 
 .novel-card-block .paris-title {
     padding-left: 10px;
@@ -257,6 +263,29 @@
     width: 90%;
     min-width: 320px;
     margin: auto;
+}
+
+/* -------- Record (Div Table) ------- */
+
+.record {
+    display: block;
+    border: 1px solid #e5e5e5;
+    border-bottom: none;
+    margin-top: 20px;
+    list-style-type: none;
+    padding: 0;
+}
+.record li {
+    line-height: 25px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.record li div    {
+    float: left;
+    display: block;
+    padding: 10px;
+    border-right: 1px solid #e5e5e5;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 /* ------------------------- */

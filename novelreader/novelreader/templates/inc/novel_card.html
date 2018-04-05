@@ -1,0 +1,35 @@
+{% load static %}
+{# Novel card info #}
+{# args: #}
+{#      novel: novel to be displayed #}
+
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 margin-b-10">
+                        <div class="box london novel-card">
+{#                            <div class="box-icon">#}
+{#                            </div>#}
+                            <div class="info float-container col-sm-12">
+                                <div class="col-xxs-12 novel-cover">
+                                    <img src="{% get_static_prefix %}albums/{{ novel.name }}.jpg" alt="{{ novel.name }}.jpg"
+                                         onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
+                                         class="img-responsive">
+                                </div>
+                                <div class="london-title novel-title">
+                                    <h3 class="novel-name"><a target="_blank" href="{% url 'novel' novel.id %}">{{ novel.name }}</a></h3>
+                                    <h4 class="text-uppercase"><a href="{% url 'search' %}?q={{ novel.author }}&qtype=author">{{ novel.author }}</a></h4>
+    {#                                <h4 class="text-uppercase">{{ r.status }}</h4>#}
+    {#                                <h4>&nbsp;</h4>#}
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="novel-desc"><p>{{ novel.desc }}</p></div>
+                                <hr/>
+                                <div class="col-sm-12 location-main">
+                                    <div class="pull-left location">
+                                        <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
+                                    </div>
+                                    <div class="pull-right user-icons">
+                                        {% include '../inc/share_actions.html' with novel=novel %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>

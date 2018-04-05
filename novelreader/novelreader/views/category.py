@@ -37,10 +37,7 @@ class CategoryView(TemplateView, BaseViewMixin):
         else:
             raise Http404('未找到此类型小说')
 
-        if page > 0:
-            context['pp'] = page - 1
-        if len(context['novels']) >= PAGE_ITEMS:
-            context['np'] = page + 1
+        self.gen_pager_context(context, context['novels'], page_items=PAGE_ITEMS)
 
         context['top_a'] = {
             "title": "热门小说", "subtitle": category, "icon": "fa fa-fire",

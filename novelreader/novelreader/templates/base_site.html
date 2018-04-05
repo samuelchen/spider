@@ -1,5 +1,5 @@
 {% load staticfiles %}
-<html lang="zh-cn">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
     <meta http-equiv="mobile-agent" content="format=html5; url={{ website.mobile_url }}">
     <meta name="keywords" content="{{ website.name }},{{ website.short_name }},追书神器,小说搜索,小说搜索网" />
     <meta name="description" content="{{ website.name }}专注于小说搜索,我们是{{ website.name }},我们提供最全的小说网站收集,方便大家愉快地转码阅读." />
-    <meta name="author" content="{{ website.domain }}">
+    <meta name="author" content="{{ website.name }} {{ website.domain }}">
     <title>{% block title %}{# TITLE BLOCK #} - {{ website.name }}  {{ website.domain }}{% endblock %}</title>
 
     <!--<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic'>-->
@@ -70,6 +70,8 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/js.cookie.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/share.js' %}"></script>
+{#    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>#}
 
 {% block script %}<!-- SCRIPT BLOCK -->{% endblock %}
 

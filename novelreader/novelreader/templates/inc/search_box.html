@@ -1,0 +1,18 @@
+            <form class="search" method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+
+                <div class="form-inline ">
+                    <div class="input-group {% if small %}form-group-sm{% endif %} col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <input id="search_qtype" type="hidden" name="qtype" value="name">
+                        <input type="text" name="q" class="form-control " placeholder="小说名 或 作者名" value="{{ q }}">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default {% if not small %}btn-lg{% endif %}" title="搜索书名"
+                                    onclick="$('#search_qtype').val('name');this.form.submit();">
+                                <i class="fa fa-book"></i></button>
+                            <button type="button" class="btn btn-default {% if not small %}btn-lg{% endif %}" title="搜索作者名"
+                                    onclick="$('#search_qtype').val('author');this.form.submit();">
+                                <i class="fa fa-user"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
