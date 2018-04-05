@@ -14,8 +14,6 @@ __author__ = 'samuel'
 
 log = logging.getLogger(__name__)
 
-from utils import timeit
-
 
 class ChapterView(TemplateView, BaseViewMixin):
 
