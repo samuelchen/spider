@@ -151,9 +151,12 @@ class ChapterSpider(scrapy.Spider):
 
         txt = response.text
         i = txt.find('<br')
-        txt = txt[i:]
-        j = txt.find('<!-- 翻页上AD开始 -->')
-        txt = txt[:j]
+        # txt = txt[i:]
+        j = txt.find('<!-- 翻页上AD开始 -->', i)
+        # txt = txt[:j]
+        k = txt.rfind('</div>', i, j)
+        txt = txt[i:k if k > 0 else j]
+
         # TODO: remove source site name/link lines
         item['content'] = txt
         return item

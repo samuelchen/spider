@@ -32,7 +32,7 @@
                         </div>
                         <div class="london-title novel-title">
                             <h2 class="novel-name">{{ novel.name }}</h2>
-                            <h3 class="text-uppercase">作者：{{ novel.author }}</h3>
+                            <h3 class="text-uppercase">作者：<a href="{% url 'search' %}?q={{ r.author }}&qtype=author">{{ novel.author }}</a></h3>
                         </div>
                         <div class="novel-desc"><p>{{ novel.desc }}</p></div>
                         <p>最新更新 ({{ novel.update_on|date:'Y-m-d H:i' }})：<a href="{{ novel.last_chapter_id }}/">{{ novel.last_chapter }}</a></p>
@@ -169,4 +169,9 @@
 
     <script src="{% static 'js/stat.js' %}"></script>
 
+    <script>
+        $(document).ready(function(){
+           save_history("{{ novel.id }}", "{{ novel.name }}", null, null);
+        });
+    </script>
 {% endblock %}

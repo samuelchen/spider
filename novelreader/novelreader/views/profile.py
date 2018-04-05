@@ -17,17 +17,18 @@ log = logging.getLogger(__name__)
 class ProfileView(TemplateView, BaseViewMixin, LoginRequiredMixin):
 
     def get(self, request, *args, **kwargs):
-        warning(request, '暂时不支持修改个人资料')
         return super(ProfileView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        error(request, "暂时不支持修改个人资料")
         return super(ProfileView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
         context['tab'] = self.request.GET.get('t')
         context['user'] = self.request.user
-        context['favorites'] = UserFavorite.objects.filter(user=self.request.user)
+
+        if self.request.user.is_authenticated:
+            error(self.request, "暂时不支持修改个人资料")
+            context['favorites'] = UserFavorite.objects.filter(user=self.request.user)
 
         return context

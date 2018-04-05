@@ -14,6 +14,8 @@ __author__ = 'samuel'
 
 log = logging.getLogger(__name__)
 
+from utils import timeit
+
 
 class ChapterView(TemplateView, BaseViewMixin):
 
@@ -30,4 +32,12 @@ class ChapterView(TemplateView, BaseViewMixin):
         context['novel'] = novel
         context['chapter'] = get_chapter(cid, chapter_table=novel['chapter_table'], with_next=True, with_prev=True)
         context['state'] = load_user_novel_state(self.request.user, nid)
+
+        # TODO: temporally for un-cleaned html tags in content.(NEED REMOVE if cleaned)
+        s = context['chapter']['content']
+        if s:
+            idx = s.rfind('</div>')
+            if idx > 0:
+                context['chapter']['content'] = s[0:idx]
+
         return context

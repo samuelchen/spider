@@ -8,12 +8,25 @@
         margin-bottom: 0;
         background-color: rgba(255,255,255, 0.95);
     }
+
+    .chapter-block {
+        background-color: rgba(230,230,230,0.9);
+    }
+
+    .article {
+        font-family: KaiTi;
+        font-size: 26px;
+        width: 90%;
+        min-width: 320px;
+        margin: auto;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
 
-    <div class="row">
+<div class="row">
 
     {#  ===== Bottom column (Chapters) =====  #}
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -28,36 +41,60 @@
 {#                            <h4 class="text-uppercase">《{{ novel.name }}》</h4>#}
                         </div>
                         <ul class="list-inline text-center">
-                            <li>作者：{{ novel.author }}</li>
-                            <li>类型：{{ novel.category }}</li>
-                            <li>字数：{{ novel.length }}</li>
+                            <li><a id="novel_page" title="书名" href="{% url 'novel' novel.id %}"><i class="fa fa-book"></i> 《{{ novel.name }}》</a></li>
+                            <li><a title="作者" href="{% url 'search' %}?q={{ novel.author }}&qtype=author"><i class="fa fa-user"></i> {{ novel.author }}</a></li>
+                            <li><a title="类型" href="{% url 'category' novel.category %}"><i class="fa fa-tags"></i> {{ novel.category }}</a></li>
+                            <li><i class="fa fa-thumbs-up"></i> {{ novel.recommends }}</li>
                             <li class="user-icons">
                                 {% include '../inc/stat_actions.html' with novel=novel state=state %}
-                                {% include '../inc/share_actions.html' with novel=novel %}
+                                {% include '../inc/share_actions.html' with novel=novel chapter=chapter%}
                             </li>
                         </ul>
                         <ul class="list-inline text-center">
                             {% if chapter.prev  %}
-                            <li title="快捷键：左键"><a id="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            <li title="快捷键：左键"><a class="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            {% else %}
+                            <i class="fa fa-arrow-circle-left"></i> 已是第一章
                             {% endif %}
-{#                            <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>#}
-                            <li><a id="novel_page" href="{% url 'novel' novel.id %}"><i class="fa fa-book"></i>《{{ novel.name }}》</a></li>
                             {% if chapter.next %}
-                            <li title="快捷键：右键"><a id="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            <li title="快捷键：右键"><a class="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            {% else %}
+                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
                             {% endif %}
-                            <li><label for="font">字体</label> <select id="font"></select></li>
-                            <li title="快捷键：+(=)增大 - 减小 0 还原 ">大小
-                                <a id="fs_plus" href="#"><i class="fa fa-plus"></i></a>
-                                <a id="fs_minus" href="#"><i class="fa fa-minus"></i></a>
-                                <a id="fs_reset" href="#"><i class="fa fa-refresh"></i></a>
+
+                            <li><label>字体 <select id="font_sel"></select></label></li>
+                            <li title="字体增大 快捷键：+(=)">
+                                <a class="fs_plus" href="#"><i class="fa fa-plus"></i> 增大</a>
                             </li>
-                            <li><label for="color">背景色</label> <select id="color"></select></li>
+                            <li title="字体减小 快捷键：- （减号）">
+                                <a class="fs_minus" href="#"><i class="fa fa-minus"></i> 减小</a>
+                            </li>
+                            <li title="字体还原 快捷键：0 （数字0） ">
+                                <a class="fs_reset" href="#"><i class="fa fa-refresh"></i> 还原</a>
+                            </li>
+                            <li><label>背景色 <select id="color_sel"></select></label></li>
                         </ul>
-                        <div class="clearfix"></div>
+
                         <div class="london">
                         <p class="article">{{ chapter.content|safe }}</p>
                         </div>
 
+                        <ul class="list-inline text-center">
+                            {% if chapter.prev  %}
+                            <li title="快捷键：左键"><a class="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            {% else %}
+                            <i class="fa fa-arrow-circle-left"></i> 已是第一章
+                            {% endif %}
+                            {% if chapter.next %}
+                            <li title="快捷键：右键"><a class="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            {% else %}
+                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
+                            {% endif %}
+                            <li class="user-icons">
+                                {% include '../inc/stat_actions.html' with novel=novel state=state %}
+                                {% include '../inc/share_actions.html' with novel=novel chapter=chapter%}
+                            </li>
+                        </ul>
 
                     </div>
                 </div>
@@ -71,9 +108,6 @@
 
 </div>
 
-
-
-
 {% endblock %}
 
 {% block script %}
@@ -83,11 +117,11 @@
     <script language="javascript">
         var container = $(".chapter-block");
         var article = $(".article");
-        var sel_color = $("#color");
-        var sel_font = $("#font");
-        var fs_plus = $("#fs_plus");
-        var fs_minus = $("#fs_minus");
-        var fs_reset = $("#fs_reset");
+        var sel_color = $("#color_sel");
+        var sel_font = $("#font_sel");
+        var fs_plus = $(".fs_plus");
+        var fs_minus = $(".fs_minus");
+        var fs_reset = $(".fs_reset");
 
         var fonts = {
             "KaiTi": "楷体",
@@ -143,7 +177,7 @@
                 increase_font_size()
             }
 
-            else if (event.keyCode == 48) {
+            else if (event.keyCode == 48 || event.keyCode == 96) {
                 {# "0" pressed #}
                 reset_font_size();
             }
@@ -176,8 +210,6 @@
         }
 
         function save_config(){
-{#            var article = $(".article");#}
-{#            var chapter = $(".chapter-block");#}
             var conf = {
                 'font-family': article.css("font-family"),
                 'font-size': parseInt(article.css('font-size')),
@@ -187,8 +219,6 @@
         }
 
         function load_config(){
-{#            var article = $(".article");#}
-{#            var chapter = $(".chapter-block");#}
             var conf = Cookies.getJSON('config');
             if (!conf) conf = default_conf;
             return conf;
@@ -207,11 +237,6 @@
 
         $(document).ready(function(){
             document.onkeydown = key_pressed;
-
-{#            var container = $(".chapter-block");#}
-{#            var article = $(".article");#}
-{#            var sel_color = $("#color");#}
-{#            var sel_font = $("#font");#}
 
             var conf = load_config();
             console.log(conf);

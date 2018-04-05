@@ -253,18 +253,6 @@
 }
 
 
-.chapter-block {
-    background-color: rgba(230,230,230,0.9);
-}
-
-.article {
-    font-family: KaiTi;
-    font-size: 26px;
-    width: 90%;
-    min-width: 320px;
-    margin: auto;
-}
-
 /* -------- Record (Div Table) ------- */
 
 .record {
