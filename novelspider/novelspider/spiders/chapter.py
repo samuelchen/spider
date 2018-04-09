@@ -177,7 +177,7 @@ class ChapterSpider(scrapy.Spider):
 
         base_dir = self.settings.get('BASE_DIR', '../')
         fname = os.path.join(base_dir, 'log', 'chapter_novels.log')
-        os.mkdir(os.path.dirname(fname))
+        os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, 'w') as f:
             f.write('novel')
             for r in novels:
