@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os
 import scrapy
 import logging
 from ..db import Database, select, and_, not_, mark_done
-from scrapy.utils.project import get_project_settings
-
-settings = get_project_settings()
-LIMIT_NOVELS = settings['LIMIT_NOVELS']
-SPIDER_ID = settings['SPIDER_ID']
+# from scrapy.utils.project import get_project_settings
+#
+# settings = get_project_settings()
+# LIMIT_NOVELS = settings['LIMIT_NOVELS']
+# SPIDER_ID = settings['SPIDER_ID']
 log = logging.getLogger(__name__)
 
 
@@ -19,7 +20,9 @@ class ChapterSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.db = Database()
         self.start_urls = []
-        self.limit = LIMIT_NOVELS
+        # # self.limit = LIMIT_NOVELS
+        # self.limit = self.settings.get('LIMIT_NOVELS', 1)
+        # self.SPIDER_ID = self.settings.get('SPIDER_ID')
 
         # chapter counters for novel {novel_id: {'count': 0, 'saved': 0, 'done': False} }
         # "count": used to calculate total chapters count
@@ -29,24 +32,32 @@ class ChapterSpider(scrapy.Spider):
 
         super(ChapterSpider, self).__init__(*args, **kwargs)
 
+    @property
+    def SPIDER_ID(self):
+        self.settings.get('SPIDER_ID')
+
+    @property
+    def LIMIT_NOVELS(self):
+        return self.settings.get('LIMIT_NOVELS', 1)
+
     def start_requests(self):
 
         # novels to be downloaded
         tn = self.db.DB_table_novel
         tl = self.db.DB_table_novel_lock
         # noinspection PyComparisonWithNone
-        stmt1 = select([tl.c.novel_id]).where(tl.c.locker!=SPIDER_ID)
+        stmt1 = select([tl.c.novel_id]).where(tl.c.locker!=self.SPIDER_ID)
         stmt = select([tn.c.id, tn.c.name, tn.c.url_index, tn.c.chapter_table]
                     ).where(and_(tn.c.done==False, not_(tn.c.url_index==None), not_(tn.c.id.in_(stmt1)))
                     ).order_by(tn.c.recommends.desc())
-        if self.limit > 0:
-            stmt = stmt.limit(self.limit)
+        if self.LIMIT_NOVELS > 0:
+            stmt = stmt.limit(self.LIMIT_NOVELS)
         rs = self.db.engine.execute(stmt)
 
         # lock novels
         novels = []
         for r in rs:
-            rc = self.db.lock_novel(novel_id=r['id'], locker=SPIDER_ID, name=r['name'])
+            rc = self.db.lock_novel(novel_id=r['id'], locker=self.SPIDER_ID, name=r['name'])
             if rc >= 0:
                 # only add unlocked or locked-by-self novels
                 novels.append(r)
@@ -144,7 +155,7 @@ class ChapterSpider(scrapy.Spider):
             tn = self.db.DB_table_novel
             mark_done(self.db.engine, tn, tn.c.id, [novel_id, ])
             log.info('Novel %s is finished downloading.' % table)
-            self.db.unlock_novel(novel_id=novel_id, locker=SPIDER_ID)
+            self.db.unlock_novel(novel_id=novel_id, locker=self.SPIDER_ID)
 
     def parse_content(self, response):
         item = response.meta['item']
@@ -162,10 +173,10 @@ class ChapterSpider(scrapy.Spider):
         return item
 
     def log_novels(self, novels):
-        import os
 
-        base_dir = settings['BASE_DIR']
+        base_dir = self.settings.get('BASE_DIR', '../')
         fname = os.path.join(base_dir, 'log', 'chapter_novels.log')
+        os.mkdir(os.path.dirname(fname))
         with open(fname, 'w') as f:
             f.write('novel')
             for r in novels:

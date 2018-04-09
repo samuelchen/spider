@@ -10,8 +10,9 @@ __author__ = 'samuel'
 # novel_ids = [29, 6011, 6232, 6445, 8320, 8335, 8463, 8627]
 # novel_ids = [6232, ]
 
-keywords_to_clean = ['飘天文学', '飘天', '起点', '17k', '纵横']
-keywords_to_clean.extend(['piaotian.com', 'qidian.com', '17k.com', 'zongheng.com'])
+keywords_to_clean = ['飘天\s*[文学]?', '书海阁', '17k']        # names
+idx_separator = len(keywords_to_clean)              # index to separate names & domains
+keywords_to_clean.extend(['piaotian.com', 'qidian.com', '17k.com'])     # domains
 my_domain = '${DOMAIN}'
 my_site_name = '${SITENAME}'
 
@@ -85,8 +86,9 @@ def clean_all(novel_ids=None):
 def clean(content):
 
     cnts = []
-
+    i = 0
     for regx in regx_keywords:
+        if i >= idx_separator: pass     # domains then names
         matches = regx.findall(content)
         cnt = len(matches)
         cnts.append(cnt)
