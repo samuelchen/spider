@@ -34,7 +34,7 @@ class ChapterSpider(scrapy.Spider):
 
     @property
     def SPIDER_ID(self):
-        self.settings.get('SPIDER_ID')
+        return self.settings.get('SPIDER_ID')
 
     @property
     def LIMIT_NOVELS(self):
