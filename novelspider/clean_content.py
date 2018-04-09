@@ -1,7 +1,6 @@
 #!/usr/bin/sh env
 
 from novelspider.db import Database, select, or_
-from settings import DB_CONNECTION_STRING
 import sys
 import re
 
@@ -22,7 +21,7 @@ print('keywords to be replaced:', regx_keywords)
 regx_keywords = [re.compile(k, re.IGNORECASE | re.MULTILINE) for k in regx_keywords]
 sql_keys = ['%%%s%%' % k for k in keywords_to_clean]
 
-db = Database(conn_str=DB_CONNECTION_STRING)
+db = Database()
 
 
 def clean_all(novel_ids=None):
