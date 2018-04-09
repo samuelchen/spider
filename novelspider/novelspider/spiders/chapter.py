@@ -168,7 +168,7 @@ class ChapterSpider(scrapy.Spider):
         k = txt.rfind('</div>', i, j)
         txt = txt[i:k if k > 0 else j]
 
-        txt.replace('\x00', '')
+        txt = txt.replace('\x00', '')
         # TODO: remove source site name/link lines
         item['content'] = txt
         return item
