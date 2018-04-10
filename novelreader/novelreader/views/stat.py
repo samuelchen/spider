@@ -2,27 +2,33 @@
 # coding: utf-8
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.views import View
-from ..models.novel import UserFavorite
+from ..models.novelutil import (
+    switch_novel_favorite,
+    recommend_novel,
+)
 import logging
 
 __author__ = 'samuel'
 log = logging.getLogger(__name__)
 
 
-class StatView(View):
+class StatView(View, LoginRequiredMixin):
 
     def post(self, request, *args, **kwargs):
+        action = request.POST.get('action')
         novel_id = request.POST.get('novel_id')
-        novel_name = request.POST.get('novel_name')
-        favor, created = UserFavorite.objects.get_or_create(user=request.user, novel_id=novel_id, novel_name=novel_name)
 
-        if created:
-            status = "on"
+        status = None
+        if action == 'favorite':
+            rc = switch_novel_favorite(novel_id, self.request.user.id)
+            status = 'on' if rc else 'off'
+        elif action == 'recommend':
+            status = recommend_novel(novel_id, self.request.user.id)
+        elif action == 'search-result':
+            add
         else:
-            favor.delete()
-            status = "off"
+            pass
 
         return JsonResponse({"status": status, "message": " "})
 

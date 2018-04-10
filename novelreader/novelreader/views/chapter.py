@@ -8,7 +8,6 @@ from ..models.novelutil import (
     list_hot_novels, list_recommend_novels, get_chapter
 )
 from .base import BaseViewMixin
-from ..models.novelstat import load_user_novel_state
 
 __author__ = 'samuel'
 
@@ -26,10 +25,9 @@ class ChapterView(TemplateView, BaseViewMixin):
         cid = kwargs.get('cid', None)
         if nid is None:
             raise Http404('Novel does not exist.')
-        novel = get_novel_info(nid, add_last_chapter=False)
+        novel = get_novel_info(nid, add_last_chapter=False, with_actions_user_id=self.request.user.id)
         context['novel'] = novel
         context['chapter'] = get_chapter(cid, chapter_table=novel['chapter_table'], with_next=True, with_prev=True)
-        context['state'] = load_user_novel_state(self.request.user, nid)
 
         # TODO: temporally for un-cleaned html tags in content.(NEED REMOVE if cleaned)
         s = context['chapter']['content']

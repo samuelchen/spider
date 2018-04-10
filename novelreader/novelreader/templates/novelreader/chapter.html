@@ -62,7 +62,7 @@
                             已是最后一章 <i class="fa fa-arrow-circle-right"></i>
                             {% endif %}
 
-                            <li><label>字体 <select id="font_sel"></select></label></li>
+                            <li><label for="font_sel">字体</label> <select id="font_sel"></select></li>
                             <li title="字体增大 快捷键：+(=)">
                                 <a class="fs_plus" href="#"><i class="fa fa-plus"></i> 增大</a>
                             </li>
@@ -72,7 +72,7 @@
                             <li title="字体还原 快捷键：0 （数字0） ">
                                 <a class="fs_reset" href="#"><i class="fa fa-refresh"></i> 还原</a>
                             </li>
-                            <li><label>背景色 <select id="color_sel"></select></label></li>
+                            <li><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
                         </ul>
 
                         <div class="london">
@@ -242,7 +242,7 @@
             console.log(conf);
             var name, append_attr;
             // init colors
-            for (k in colors){
+            for (var k in colors){
                 append_attr = '';
                 if (k == conf['bgcolor']) {
                     append_attr = 'selected';
@@ -251,11 +251,10 @@
                 name = colors[k][1];
                 sel_color.append('<option value="' + k + '" ' + append_attr + '>' + name + '</option>');
             }
-            set_font(conf['font-family']);
-            set_font_size(conf['font-size']);
 
             // init fonts
-            for (f in fonts) {
+            for (var f in fonts) {
+                append_attr = '';
                 if (f == conf['font-family']) {
                     append_attr = 'selected';
                     set_font(f);
@@ -263,6 +262,7 @@
                 name = fonts[f];
                 sel_font.append('<option value="' + f + '" ' + append_attr + '>' + name + '</option>');
             }
+            set_font_size(conf['font-size']);
 
             sel_color.change(function(){
                 var k = $(this).val();

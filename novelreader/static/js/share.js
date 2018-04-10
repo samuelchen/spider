@@ -4,6 +4,7 @@
 
 /* weiboShare */
 function weibo_share() {
+    console.log('- Weibo share script installed.');
     var site_info = get_site_info();
     var site = site_info[0];
     var domain = site_info[1];
@@ -36,5 +37,6 @@ function weibo_share() {
 }
 
 $(document).ready(function(){
+    console.log('Share button scripts installed.')
     weibo_share();
 });

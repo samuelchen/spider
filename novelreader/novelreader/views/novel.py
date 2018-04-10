@@ -7,8 +7,6 @@ from ..models.novelutil import (
     get_novel_info, get_latest_chapters, get_all_chapters,
     list_hot_novels, list_recommend_novels, list_favorite_novels
 )
-from ..models.novel import UserFavorite
-from ..models.novelstat import load_user_novel_state
 from .base import BaseViewMixin
 
 __author__ = 'samuel'
@@ -26,13 +24,10 @@ class NovelView(TemplateView, BaseViewMixin):
         nid = kwargs.get('nid', None)
         if nid is None:
             raise Http404('Novel does not exist.')
-        context['novel'] = get_novel_info(nid, add_last_chapter=True)
+
+        context['novel'] = get_novel_info(nid, add_last_chapter=True, with_actions_user_id=self.request.user.id)
         context['latest_chapters'] = get_latest_chapters(nid)
         context['chapters'] = get_all_chapters(nid)
-        context['hot_novels'] = list_hot_novels(page_items=5)
-        context['recommend_novels'] = list_recommend_novels(page_items=5)
-
-        context['state'] = load_user_novel_state(self.request.user, nid)
 
 
         context['top_a'] = {

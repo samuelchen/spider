@@ -7,9 +7,9 @@
                     <ul>
                         {% for r in novels %}
                             <li class="row">
-                                <span class="m col-xxs-12 col-xs-6 col-sm-7 col-md-8 col-lg-8">
+                                <span class="m col-xxs-6 col-xs-8 col-sm-7 col-md-8 col-lg-8">
                                     <a target="_blank" href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
-                                <span class="n hidden-xs hidden-xs col-sm-5 col-md-4 col-lg-4">
+                                <span class="n col-xxs-6 col-xs-4 col-sm-5 col-md-4 col-lg-4">
                                     <a target="_blank" href="{% url 'search' %}?q={{ r.author }}&qtype=author">{{ r.author }}</a></span>
                             </li>
                         {% endfor %}

@@ -43,7 +43,7 @@
                                 <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                             </div>
                             <div class="pull-right user-icons">
-                                {% include '../inc/stat_actions.html' with novel=novel state=state %}
+                                {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
                             </div>
                         </div>
@@ -166,8 +166,6 @@
 
 {% block script %}
     {{ block.super }}
-
-    <script src="{% static 'js/stat.js' %}"></script>
 
     <script>
         $(document).ready(function(){

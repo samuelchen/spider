@@ -18,10 +18,9 @@
 }
 
 .user-icons .flag-on {
-    color: #df9801;
-    /*#dfa528;*/
-    text-shadow:0 0 0.2em #75aaff,
-                -0 -0 0.2em #ff668d;
+    color: #1abfdf;
+    text-shadow:0 0 0.1em #75aaff,
+                -0 -0 0.1em #ffa0b1;
 }
 
 /* ----- for toolbar ----- */

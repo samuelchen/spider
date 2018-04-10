@@ -9,9 +9,11 @@
 {#                            </div>#}
                             <div class="info float-container col-sm-12">
                                 <div class="col-xxs-12 novel-cover">
+                                    <a target="_blank" href="{% url 'novel' novel.id %}">
                                     <img src="{% get_static_prefix %}albums/{{ novel.name }}.jpg" alt="{{ novel.name }}.jpg"
                                          onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
                                          class="img-responsive">
+                                    </a>
                                 </div>
                                 <div class="london-title novel-title">
                                     <h3 class="novel-name"><a target="_blank" href="{% url 'novel' novel.id %}">{{ novel.name }}</a></h3>
@@ -27,6 +29,7 @@
                                         <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                                     </div>
                                     <div class="pull-right user-icons">
+                                        {% include '../inc/stat_actions.html' with novel=novel %}
                                         {% include '../inc/share_actions.html' with novel=novel %}
                                     </div>
                                 </div>

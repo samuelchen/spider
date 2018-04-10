@@ -28,7 +28,7 @@ class SearchView(TemplateView, BaseViewMixin):
         qtype = self._get_request_field('qtype')
         if term:
             context['q'] = term
-            novels = search_novels(term, qtype, page_items=PAGE_ITEMS)
+            novels = search_novels(term, qtype, page_items=PAGE_ITEMS, add_last_chapter=True)
             context['novels'] = novels
             if len(novels) <= 0:
                 if qtype == 'name':
