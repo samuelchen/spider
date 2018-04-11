@@ -1,4 +1,4 @@
-{% load static %}
+    {% load static %}
 {# Simple list novels #}
 {# args: #}
 {#      novels: novels to be listed #}
@@ -7,10 +7,10 @@
                     <ul>
                         {% for r in novels %}
                             <li class="row">
-                                <span class="a col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-3"><a target="_blank" href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
-                                <span class="b col-xxs-12 col-xs-6 col-sm-6 col-md-6 col-lg-5">{% if r.last_chapter %}<a href="{% url 'chapter' r.id r.last_chapter_id %}">{{ r.last_chapter }}</a>{% endif %}</span>
-                                <span class="c hidden-xs hidden-xs col-sm-2 col-md-2 col-lg-2"><a target="_blank" href="{% url 'search' %}?q={{ r.author }}&qtype=author">{{ r.author }}</a></span>
-                                <span class="d hidden-xs hidden-xs hidden-sm hidden-md col-lg-2">{{ r.update_on|date:"y-m-d" }}</span>
+                                <span class="a col-xxs-12 col-xs-4 col-sm-3 col-md-3 col-lg-3"><a target="_blank" href="{% url 'novel' r.id %}">{{ r.name }}</a></span>
+                                <span class="b col-xxs-12 col-xs-6 col-sm-5 col-md-5 col-lg-5">{% if r.last_chapter %}<a href="{% url 'chapter' r.id r.last_chapter_id %}">{{ r.last_chapter }}</a>{% endif %}</span>
+                                <span class="c hidden-xxs hidden-xs col-sm-2 col-md-2 col-lg-2"><a target="_blank" href="{% url 'search' %}?q={{ r.author }}&qtype=author">{{ r.author }}</a></span>
+                                <span class="d hidden-xxs hidden-xs col-sm-2 col-md-2 col-lg-2">{{ r.update_on|date:"y-m-d" }}</span>
                             </li>
                         {% endfor %}
                     </ul>

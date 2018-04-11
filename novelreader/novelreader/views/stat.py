@@ -6,6 +6,8 @@ from django.views import View
 from ..models.novelutil import (
     switch_novel_favorite,
     recommend_novel,
+    update_search_hit,
+    add_search_stat,
 )
 import logging
 
@@ -13,7 +15,7 @@ __author__ = 'samuel'
 log = logging.getLogger(__name__)
 
 
-class StatView(View, LoginRequiredMixin):
+class StatView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         action = request.POST.get('action')
@@ -25,8 +27,14 @@ class StatView(View, LoginRequiredMixin):
             status = 'on' if rc else 'off'
         elif action == 'recommend':
             status = recommend_novel(novel_id, self.request.user.id)
-        elif action == 'search-result':
-            add
+        elif action == 'search-hit':
+            sid = request.POST.get('sid')
+            if sid:
+                status = update_search_hit(sid=sid, nid=novel_id)
+            else:
+                qterm = request.POST.get('qterm')
+                qtype = request.POST.get('qtype')
+                status = add_search_stat(qterm=qterm, qtype=qtype, nid=novel_id, uid=self.request.user.id)
         else:
             pass
 

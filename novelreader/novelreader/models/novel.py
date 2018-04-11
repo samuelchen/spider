@@ -4,11 +4,12 @@ from novelspider.db import Database
 from sqlalchemy import (
     Table,
     Column, ForeignKey, UniqueConstraint,
-    Integer, String, Boolean,
+    Integer, String, Boolean, DateTime,
     select,
     and_, or_, true as true_,
 )
 import logging
+from datetime import datetime
 
 __author__ = 'samuel'
 log = logging.getLogger(__name__)
@@ -46,7 +47,6 @@ class ReaderDatabase(Database):
     #     schema=Database.schema
     # )
 
-    # ----- novels states without user -----
 
     DB_table_reader_views = Table('reader_views', Database.meta,
         Column('id', Integer, primary_key=True, autoincrement=True),
@@ -63,6 +63,7 @@ class ReaderDatabase(Database):
         Column('type', String(50), nullable=False),
         Column('novel_id', Integer, index=True),   # finally user selected
         Column('user_id', Integer),
+        Column('timestamp', DateTime(timezone=True), onupdate=datetime.utcnow),
         schema=Database.schema
     )
 

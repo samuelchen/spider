@@ -5,6 +5,7 @@
 }
 .main-page {
     margin-top: 0;
+    min-height: 600px;
 }
 
 .info {
@@ -237,6 +238,10 @@
 }
 .novel-list .n {
     text-align: right;
+    font-size: 1em;
+}
+.novel-list .n a {
+    color: #333;
 }
 
 .chapter-list ul {
@@ -306,6 +311,8 @@
     .info {padding: 10px;}
     .novel-card .novel-title {margin-left: 120px;}
     .novel-cover {margin: 10px 10px 10px 10px;}
+
+    .hidden-xxs { display: none; }
 }
 
 @media  (max-width: 600px) {

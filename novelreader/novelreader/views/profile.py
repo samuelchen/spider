@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages import error, debug, info, warning
 from .base import BaseViewMixin
-from ..models.novelutil import list_favorites
+from ..models.novelutil import list_user_favorites
 
 __author__ = 'samuel'
 
@@ -29,6 +29,6 @@ class ProfileView(TemplateView, BaseViewMixin, LoginRequiredMixin):
 
         if self.request.user.is_authenticated:
             error(self.request, "暂时不支持修改个人资料")
-            context['favorites'] = list_favorites(with_actions_user_id=self.request.user.id)
+            context['favorites'] = list_user_favorites(user_id=self.request.user.id)
 
         return context

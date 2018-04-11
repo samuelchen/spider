@@ -40,9 +40,9 @@
                     </div>
 
                     {% for r in choice_novels %}
-
-                    {% include '../inc/novel_card.html' with novel=r %}
-
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 margin-b-10">
+                        {% include '../inc/novel_card.html' with novel=r %}
+                        </div>
                     {% endfor %}
 
                 </div>

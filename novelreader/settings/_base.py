@@ -172,6 +172,9 @@ WEBSITE = {
     'mobile_url': 'http://m.bihu.com'
 }
 
+# include all novels even has not started to download
+ALL_NOVELS = os.environ.get('ALL_NOVELS', False)
+
 # default items per page
 ITEMS_PER_PAGE = 30
 

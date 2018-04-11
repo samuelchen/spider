@@ -12,8 +12,8 @@ from sqlalchemy import (
     select,
     and_, or_, true as true_,
     alias, cast,
-    outerjoin
 )
+from datetime import datetime
 import logging
 
 __author__ = 'samuel'
@@ -79,7 +79,7 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
         wclause = and_(wclause, where_clause)
 
     # TODO: remove for production
-    if settings.DEBUG:
+    if settings.DEBUG and settings.ALL_NOVELS:
         wclause = where_clause if where_clause is not None else true_()
 
     # default order by clause
@@ -87,8 +87,8 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
     if order_clause is not None:
         oclause = order_clause
 
-    columns = [c for c in cols] if cols else [tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.status, tn.c.desc,
-                   tn.c.update_on, tn.c.chapter_table]
+    columns = [c for c in cols] if cols else [tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.status,
+                                              tn.c.desc, tn.c.update_on, tn.c.chapter_table]
 
     # join clause to query status/statics
     jclause = None
@@ -122,7 +122,7 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
                       ).offset(page * page_items)
 
 
-    print(stmt)
+        # print(stmt)
     novels = []
     rs = None
     conn = None
@@ -331,6 +331,7 @@ def search_novels(term, qtype=None, page=0, page_items=settings.ITEMS_PER_PAGE,
         where_clause = tn.c.author.like('%%%s%%' % term)
     else:
         where_clause = or_(tn.c.name.like('%%%s%%' % term), tn.c.author.like('%%%s%%' % term))
+
     return list_novels(where_clause=where_clause, page=page, page_items=page_items,
                        add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
 
@@ -508,20 +509,36 @@ def get_all_chapters(nid):
 # ===== Chapter functions =====
 # TODO: add call frequent limit
 
-def list_favorites(page=0, page_items=settings.ITEMS_PER_PAGE,
-                   add_last_chapter=False, with_actions_user_id=None, with_stat=False):
-    user_id = with_actions_user_id
-    t = db.DB_table_reader_favorites
+def list_user_favorites(user_id, page=0, page_items=settings.ITEMS_PER_PAGE, add_last_chapter=False):
+    if user_id is None:
+        return []
+
+    tf = db.DB_table_reader_favorites
     tn = db.DB_table_novel
-    if user_id:
-        wclause = (tn.c.is_favor==true_())
-    else:
-        wclause = true_()
-    rs = list_novels(where_clause=wclause, page=page, page_items=page_items, add_last_chapter=add_last_chapter,
-                       with_actions_user_id=user_id, with_stat=with_stat)
-    for x in rs:
-        print(x.keys())
-    return rs
+    conn = db.create_connection()
+
+    columns = [tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.status,
+               tn.c.desc, tn.c.update_on, tn.c.chapter_table, cast(tf.c.id, Boolean).label('is_favor')]
+    stmt = select(columns
+                  ).where(and_(tn.c.id==tf.c.novel_id, tf.c.user_id==user_id)
+                  ).order_by(tf.c.id.desc()
+                  ).limit(page_items
+                  ).offset(page * page_items)
+
+    novels = []
+    try:
+        rs = conn.execute(stmt)
+        for r in rs:
+            novel = dict(r)
+            if add_last_chapter:
+                last_chapter_id, last_chapter = get_last_chapter(chapter_table=r[tn.c.chapter_table], conn=conn)
+                novel["last_chapter"] = last_chapter
+                novel['last_chapter_id'] = last_chapter_id
+            novels.append(novel)
+    except Exception as err:
+        log.exception(err)
+
+    return novels
 
 
 def switch_novel_favorite(nid, user_id):
@@ -562,9 +579,9 @@ def recommend_novel(nid, uid):
     return rc
 
 
-def add_search_hit(qterm, qtype, nid, uid=None):
+def add_search_stat(qterm, qtype, nid=None, uid=None):
     t = db.DB_table_reader_searches
-    stmt = t.insert().values(term=qterm, type=qtype, novel_id=nid, user_id=uid).returning(t.c.id)
+    stmt = t.insert().values(term=qterm, type=qtype, novel_id=nid, user_id=uid, timestamp=datetime.utcnow()).returning(t.c.id)
     sid = None
     try:
         sid = db.engine.execute(stmt).scalar()
@@ -572,3 +589,16 @@ def add_search_hit(qterm, qtype, nid, uid=None):
         log.exception(err)
 
     return sid
+
+
+def update_search_hit(sid, nid):
+    t = db.DB_table_reader_searches
+    stmt = t.update().values(novel_id=nid).where(t.c.id==sid)
+    rc = False
+    try:
+        db.engine.execute(stmt)
+        rc = True
+    except Exception as err:
+        log.exception(err)
+
+    return rc

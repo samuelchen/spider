@@ -1,5 +1,5 @@
 /**
- * Created by wchen8 on 4/5/2018.
+ * Created by Samuel on 4/5/2018.
  */
 
 /* weiboShare */

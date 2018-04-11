@@ -3,15 +3,14 @@
                 <div class="actions">
                     <ul class="list-inline text-nowrap">
 
-                    {% if request.user.is_authenticated %}
-                        <li class="bottom-title"><a href="{% url 'profile' %}"><i class="fa fa-user-md"></i> <b>{{ request.user }}<!--用户信息--></b></a></li>
-{#                        <li class="bottom-title"><a href="#"><i class="fa fa-bookmark-o"></i> <b>书签</b></a></li>#}
-                        <li class="bottom-title"><a href="{% url 'search' %}" class="flag-on"><i class="fa fa-search"></i> <b>搜索</b></a></li>
-                        <li class="bottom-title"><a href="{% url 'profile' %}?t=favor"><i class="fa fa-book"></i> <b>书架</b></a></li>
                         <li class="bottom-title"><a href="{% url 'profile' %}?t=history"><i class="fa fa-history"></i> <b>最近阅读</b></a></li>
+                        <li class="bottom-title"><a href="{% url 'search' %}" class="flag-on"><i class="fa fa-search"></i> <b>搜索</b></a></li>
+                    {% if request.user.is_authenticated %}
+{#                        <li class="bottom-title"><a href="#"><i class="fa fa-bookmark-o"></i> <b>书签</b></a></li>#}
+                        <li class="bottom-title"><a href="{% url 'profile' %}?t=favor"><i class="fa fa-book"></i> <b>书架</b></a></li>
+                        <li class="bottom-title"><a href="{% url 'profile' %}"><i class="fa fa-user-md"></i> <b>{{ request.user }}<!--用户信息--></b></a></li>
                         <li class="bottom-title"><a href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i> <b>退出</b></a></li>
                     {% else %}
-                        <li class="bottom-title"><a href="{% url 'profile' %}?t=history"><i class="fa fa-history"></i> <b>最近阅读</b></a></li>
 {#                        <li class="bottom-title"><a href="{% provider_login_url 'weibo' %}"><i class="fa fa-weibo"></i> <b>微博登录</b></a></li>#}
 {#                        <li class="bottom-title"><a href="{% provider_login_url 'weixin' %}"><i class="fa fa-weixin"></i> <b>微信登录</b></a></li>#}
 {#                        <li class="bottom-title"><a href="{% provider_login_url 'qq' %}"><i class="fa fa-qq"></i> <b>QQ登录</b></a></li>#}

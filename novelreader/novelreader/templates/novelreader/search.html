@@ -8,6 +8,17 @@
         margin-bottom: 0;
         background-color: rgba(255,255,255, 0.95);
     }
+    .novel-cover img {
+        width:90px;
+        height: 120px;
+    }
+    .novel-title {
+        margin: 0;
+    }
+
+    .novel-list .small {
+        font-size: 1em;
+    }
 </style>
 {% endblock %}
 
@@ -20,8 +31,8 @@
 
         {# ===== Search box ===== #}
         <div class="row margin-b-10">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <h3 class="london-title">搜索<span class="text-danger">"{{ q }}"</span>结果</h3>
+            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                <h3 class="london-title">搜索{% if q %}<span class="text-danger">"{{ q }}"</span>结果{% endif %}</h3>
                 {% include '../inc/search_box.html' with q=q %}
             </div>
         </div>
@@ -29,7 +40,9 @@
 
         {#  ===== Search result =====  #}
         <div class="row margin-b-10">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1"
+                    data-toggle="search-result" data-qterm="{{ q }}" data-qtype="{{ qtype }}"
+                    data-sid="{{ sid }}">
                 {% include '../inc/message.html' %}
                 {% include '../inc/novel_list_detail.html' with novels=novels %}
                 {% include '../inc/novel_list_pager.html' with next_page=np prev_page=pp%}
@@ -48,4 +61,5 @@
 
 {% block script %}
     {{ block.super }}
+    <script src="{% static 'js/search.js' %}"></script>
 {% endblock %}

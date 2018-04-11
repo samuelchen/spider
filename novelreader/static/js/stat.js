@@ -1,5 +1,5 @@
 /**
- * Created by wchen8 on 4/3/2018.
+ * Created by samuel on 4/3/2018.
  */
 
 
@@ -48,7 +48,7 @@ function enable_recommends(){
             dataType: 'json',
             data: {
                 action: 'recommend',
-                novel_id: $(this).data('novel-id')
+                novel_id: trigger.data('novel-id')
             },
             beforeSend: function(xhr, settings) {
                 xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
@@ -64,35 +64,6 @@ function enable_recommends(){
                 } else {
                     icon.removeClass('flag-on');
                 }
-            },
-            error: function(resp) {
-                alert('Error: ' + resp.status + ' ' + resp.statusText);
-            }
-        })
-    });
-}
-
-
-function enable_search_statics(){
-    console.log('- Recommend button script installed');
-    var recommend_triggers = $("[data-toggle='searches']");
-
-    recommend_triggers.click(function() {
-        var trigger = $(this);
-        //var icon = trigger.find("i");
-
-        $.ajax('/stat/', {
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                action: 'search-result',
-                novel_id: $(this).data('novel-id')
-            },
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
-            },
-            success: function(resp) {
-                //do nothing
             },
             error: function(resp) {
                 alert('Error: ' + resp.status + ' ' + resp.statusText);

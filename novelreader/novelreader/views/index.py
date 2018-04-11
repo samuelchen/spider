@@ -33,7 +33,7 @@ class IndexView(TemplateView, BaseViewMixin):
         }
 
         context['tops_b'] = [
-            {"title": "推荐榜", "subtitle": "", "novels": list_recommend_novels(page_items=21), "icon": "fa fa-thumbs-up"},
-            {"title": "收藏榜", "subtitle": "", "novels": list_favorite_novels(page_items=21), "icon": "fa fa-star"},
+            {"title": "推荐榜", "subtitle": "", "novels": list_recommend_novels(page_items=22), "icon": "fa fa-thumbs-up"},
+            {"title": "收藏榜", "subtitle": "", "novels": list_favorite_novels(page_items=22), "icon": "fa fa-star"},
         ]
         return context

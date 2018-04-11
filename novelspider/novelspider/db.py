@@ -101,51 +101,6 @@ class Database(object):
         schema=schema
     )
 
-    # DB_table_novel_statics = Table('novel_statics', meta,
-    #     Column('id', Integer, primary_key=True, autoincrement=True),
-    #     Column('novel_id', Integer, ForeignKey(DB_table_novel.c.id),
-    #            nullable=False, unique=True, index=True),
-    #     # Column('name', String(100)),
-    #     # Column('author', String(50), index=True),                       # novel author name
-    #
-    #     Column('favorites', Integer, default=0),                        # favorite count
-    #     Column('favorites_year', Integer, default=0),
-    #     Column('favorites_month', Integer, default=0),
-    #
-    #     Column('recommends', Integer, default=0),                       # recommend count
-    #     Column('recommends_year', Integer, default=0),
-    #     Column('recommends_month', Integer, default=0),
-    #
-    #     Column('views', Integer, default=0),                            # view count
-    #     Column('views_year', Integer, default=0),
-    #     Column('views_month', Integer, default=0),
-    #
-    #     Column('searches', Integer, default=0),                         # search hit
-    #
-    #     Column('pick_weight', Integer, default=0),                      # weight for picking (auto fill by AI, 1-10)
-    #
-    #
-    #     Column('pad1', Integer, default=0),                             # padding for future
-    #     Column('pad2', Integer, default=0),                             # padding for future
-    #
-    #     Column('timestamp', DateTime(timezone=True), onupdate=datetime.datetime.utcnow),
-    #
-    #     schema=schema
-    # )
-    #
-    # DB_table_novel_featured = Table('novel_featured', meta,
-    #     Column('id', Integer, primary_key=True, autoincrement=True),
-    #     Column('novel_id', Integer, ForeignKey(DB_table_novel.c.id),
-    #            nullable=False, unique=True, index=True),
-    #
-    #     Column('featured', Boolean, default=False),                     # site featured
-    #     Column('selected', Boolean, default=False),                     # editor choice
-    #     Column('selected_category', String(50)),                        # editor choice by category
-    #
-    #     Column('pad1', Boolean, default=False),                         # padding for future
-    #     Column('pad2', String(50)),                                     # padding for future
-    #     schema=schema
-    # )
 
     def __init__(self, conn_str='', schema=None):
         self.schema = schema

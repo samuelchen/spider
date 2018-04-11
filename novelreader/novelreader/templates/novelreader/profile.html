@@ -193,11 +193,11 @@
                                 <ul class="list-inline">
                                     {% for f in favorites %}
                                     <li class="">
-                                        <a target="_blank" href="{% url 'novel' f.novel_id %}">
-                                        <img src="{% get_static_prefix %}albums/{{ f.novel_name }}.jpg" alt="{{ f.novel_name }} 封面"
+                                        <a target="_blank" href="{% url 'novel' f.id %}">
+                                        <img src="{% get_static_prefix %}albums/{{ f.name }}.jpg" alt="{{ f.name }} 封面"
                                              onerror="this.onerror=null;this.src='{% get_static_prefix %}images/nocover.jpg';"
                                              class="img-responsive">
-                                        <span>{{ f.novel_name }}</span></a>
+                                        <span>{{ f.name }}</span></a>
                                     </li>
                                     {% endfor %}
                                 </ul>
