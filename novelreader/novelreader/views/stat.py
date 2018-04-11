@@ -8,6 +8,7 @@ from ..models.novelutil import (
     recommend_novel,
     update_search_hit,
     add_search_stat,
+    add_novel_view_count,
 )
 import logging
 
@@ -35,6 +36,8 @@ class StatView(LoginRequiredMixin, View):
                 qterm = request.POST.get('qterm')
                 qtype = request.POST.get('qtype')
                 status = add_search_stat(qterm=qterm, qtype=qtype, nid=novel_id, uid=self.request.user.id)
+        elif action == 'novel-view':
+            status = add_novel_view_count(novel_id=novel_id)
         else:
             pass
 

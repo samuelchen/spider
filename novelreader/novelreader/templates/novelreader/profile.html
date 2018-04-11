@@ -53,7 +53,7 @@
             {% if user.is_authenticated %}
 
                 {# user card #}
-                <div class="col-xxs-12 col-xs-6 col-sm-4 col-md-4 col-lg-4">
+                <div class="col-xxs-12 col-xs-12 col-sm-5 col-md-4 col-lg-4">
                     <div class="box user-card col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="info float-container col-sm-12">
                             <div class="col-xxs-12 user-avatar">
@@ -69,7 +69,7 @@
                             <hr>
                             <div class="stat">
                                 <p>注册：{{ user.date_joined|date:"Y年m月d日 H:i:s" }}</p>
-                                <p>上次登录：{{ user.last_login|date:"Y年m月d日 H:i:s" }}</p>
+                                <p>登录：{{ user.last_login|date:"Y年m月d日 H:i:s" }}</p>
                                 <p>&nbsp;</p>
                             </div>
 {#                            <hr/>#}
@@ -83,16 +83,16 @@
                 </div>
 
                 {# some user information #}
-                <div class="col-xxs-12 col-xs-6 col-sm-8 col-md-8 col-lg-8">
+                <div class="col-xxs-12 col-xs-12 col-sm-7 col-md-8 col-lg-8">
                     <div class="box col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="info float-container col-sm-12">
                             <ul class="stat record">
                                 <li class="clearfix">
-                                    <div style="width:20%"><b>总推荐数</b></div>
-                                    <div style="width:20%"><b>总评分数</b></div>
-                                    <div style="width:20%"><b>总评论数</b></div>
-                                    <div style="width:20%"><b>总邀请访问数</b></div>
-                                    <div style="width:20%"><b>总邀请注册数</b></div>
+                                    <div style="width:20%"><b>总推荐</b></div>
+                                    <div style="width:20%"><b>总评分</b></div>
+                                    <div style="width:20%"><b>总评论</b></div>
+                                    <div style="width:20%"><b>总邀请</b></div>
+                                    <div style="width:20%"><b>总注册</b></div>
                                 </li>
                                 <li class="clearfix">
                                     <div style="width:20%">0</div>

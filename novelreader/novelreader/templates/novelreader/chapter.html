@@ -54,25 +54,25 @@
                             {% if chapter.prev  %}
                             <li title="快捷键：左键"><a class="prev_page btn btn-primary" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
                             {% else %}
-                            <i class="fa fa-arrow-circle-left"></i> 已是第一章
+                            <span class="btn btn-default disabled"><i class="fa fa-arrow-circle-left"></i> 已是第一章</span>
                             {% endif %}
 
-                            <li><label for="font_sel">字体</label> <select id="font_sel"></select></li>
+                            <li title="设置字体"><label for="font_sel">字体</label> <select id="font_sel"></select></li>
                             <li title="字体增大 快捷键：+(=)">
                                 <a class="fs_plus btn btn-primary" href="#"><i class="fa fa-plus"></i> 增大</a>
                             </li>
                             <li title="字体减小 快捷键：- （减号）">
                                 <a class="fs_minus btn btn-primary" href="#"><i class="fa fa-minus"></i> 减小</a>
                             </li>
-                            <li title="字体还原 快捷键：0 （数字0） ">
+                            <li title="字体还原 快捷键：0 （数字0）">
                                 <a class="fs_reset btn btn-primary" href="#"><i class="fa fa-refresh"></i> 还原</a>
                             </li>
-                            <li><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
+                            <li title="设置背景色"><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
 
                             {% if chapter.next %}
                             <li title="快捷键：右键"><a class="next_page btn btn-primary" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
                             {% else %}
-                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
+                            <span class="btn btn-default disabled">已是最后一章 <i class="fa fa-arrow-circle-right"></i></span>
                             {% endif %}
                         </ul>
 
@@ -114,7 +114,6 @@
 
 {% block script %}
     {{ block.super }}
-    <script src="{% static 'js/stat.js' %}"></script>
 
     <script language="javascript">
         var container = $(".chapter-block");
@@ -137,11 +136,11 @@
 
         var colors = {
                     smoke: ["rgba(230, 230, 230, 0.9)", "烟灰", "black"],
-                    light_green: ["rgba(182, 215, 168, 0.9)", "淡绿", "#073763"],
-                    light_blue: ["rgba(159, 197, 232, 0.9)", "淡蓝", "black"],
-                    dark_gray: ["rgba(80, 80, 80, 0.9)", "深灰", "silver"],
-                    light_gray: ["rgba(200, 200, 200, 0.9)", "浅灰", "black"],
-                    old_yellow: ["rgba(237, 223, 169, 0.9)", "旧黄", "black"]
+                    light_green: ["rgba(169, 190, 160, 0.7)", "淡绿", "#073763"],
+                    light_blue: ["rgba(188, 210, 238, 0.8)", "淡蓝", "black"],
+                    dark_gray: ["rgba(60, 60, 60, 0.9)", "深灰", "silver"],
+                    light_gray: ["rgba(180, 180, 180, 0.8)", "浅灰", "black"],
+                    old_yellow: ["rgba(237, 223, 169, 0.7)", "旧黄", "black"]
         };
         var default_conf = {
             "font-family": "KaiTi",
@@ -241,7 +240,7 @@
             document.onkeydown = key_pressed;
 
             var conf = load_config();
-            console.log(conf);
+{#            console.log(conf);#}
             var name, append_attr;
             // init colors
             for (var k in colors){
@@ -278,6 +277,9 @@
             fs_plus.click(increase_font_size);
             fs_minus.click(decrease_font_size);
             fs_reset.click(reset_font_size);
+
+            save_history("{{ novel.id }}", "{{ novel.name }}", null, null);
         });
+
     </script>
 {% endblock %}

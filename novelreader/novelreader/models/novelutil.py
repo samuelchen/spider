@@ -4,6 +4,7 @@ from django.conf import settings
 import os
 import sys
 from django.http import Http404
+from django.utils import timezone
 
 sys.path.append(os.path.join(settings.BASE_DIR, '..', 'novelspider'))
 from .novel import ReaderDatabase as Database
@@ -13,7 +14,6 @@ from sqlalchemy import (
     and_, or_, true as true_,
     alias, cast,
 )
-from datetime import datetime
 import logging
 
 __author__ = 'samuel'
@@ -552,7 +552,7 @@ def switch_novel_favorite(nid, user_id):
             stmt = t.delete().where(t.c.id==fid)
             rc = False
         else:
-            stmt = t.insert().values(user_id=user_id, novel_id=nid)
+            stmt = t.insert().values(user_id=user_id, novel_id=nid, timestamp=timezone.now())
             rc = True
         db.engine.execute(stmt)
     except Exception as err:
@@ -571,7 +571,7 @@ def recommend_novel(nid, uid):
         if rid is not None:
             stmt = t.update().where(t.c.id==rid).values(count=t.c.count+1).returning(t.c.count)
         else:
-            stmt = t.insert().values(user_id=uid, novel_id=nid, count=1).returning(t.c.count)
+            stmt = t.insert().values(user_id=uid, novel_id=nid, count=1, timestamp=timezone.now()).returning(t.c.count)
         rc = db.engine.execute(stmt).scalar()
     except Exception as err:
         log.exception(err)
@@ -581,7 +581,7 @@ def recommend_novel(nid, uid):
 
 def add_search_stat(qterm, qtype, nid=None, uid=None):
     t = db.DB_table_reader_searches
-    stmt = t.insert().values(term=qterm, type=qtype, novel_id=nid, user_id=uid, timestamp=datetime.utcnow()).returning(t.c.id)
+    stmt = t.insert().values(term=qterm, type=qtype, novel_id=nid, user_id=uid, timestamp=timezone.now()).returning(t.c.id)
     sid = None
     try:
         sid = db.engine.execute(stmt).scalar()
@@ -598,6 +598,39 @@ def update_search_hit(sid, nid):
     try:
         db.engine.execute(stmt)
         rc = True
+    except Exception as err:
+        log.exception(err)
+
+    return rc
+
+
+def add_novel_view_count(novel_id):
+    t = db.DB_table_reader_views
+    stmt = select(t.c).where(t.c.novel_id==novel_id)
+
+    now = timezone.now()
+    rc = None
+    try:
+        rs = db.engine.execute(stmt)
+        if rs.rowcount > 0:
+            r = rs.fetchone()
+            v = dict(r)
+            rs.close()
+            rc = r[t.c.id]
+
+            # if duration is less than 10s from last update, ignore it.
+            duration = now - r[t.c.timestamp]
+            if duration.total_seconds() < 10:
+                return rc
+
+            # TODO: batch update view(total) view_year and reset view_month
+
+            # update count
+            stmt = t.update().values(views_month=t.c.views_month+1).where(t.c.novel_id==novel_id)
+            db.engine.execute(stmt)
+        else:
+            stmt = t.insert().values(novel_id=novel_id, views_month=1, timestamp=timezone.now()).returning(t.c.id)
+            rc = db.engine.execute(stmt).scalar()
     except Exception as err:
         log.exception(err)
 
