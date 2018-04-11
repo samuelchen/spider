@@ -39,7 +39,7 @@ function enable_recommends(){
     console.log('- Recommend button script installed');
     var recommend_triggers = $("[data-toggle='recommend']");
 
-    recommend_triggers.click(function() {
+    recommend_triggers.click(function(event) {
         var trigger = $(this);
         var icon = trigger.find("i");
 

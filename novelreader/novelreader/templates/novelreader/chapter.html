@@ -52,48 +52,50 @@
                         </ul>
                         <ul class="list-inline text-center">
                             {% if chapter.prev  %}
-                            <li title="快捷键：左键"><a class="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            <li title="快捷键：左键"><a class="prev_page btn btn-primary" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
                             {% else %}
                             <i class="fa fa-arrow-circle-left"></i> 已是第一章
-                            {% endif %}
-                            {% if chapter.next %}
-                            <li title="快捷键：右键"><a class="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
-                            {% else %}
-                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
                             {% endif %}
 
                             <li><label for="font_sel">字体</label> <select id="font_sel"></select></li>
                             <li title="字体增大 快捷键：+(=)">
-                                <a class="fs_plus" href="#"><i class="fa fa-plus"></i> 增大</a>
+                                <a class="fs_plus btn btn-primary" href="#"><i class="fa fa-plus"></i> 增大</a>
                             </li>
                             <li title="字体减小 快捷键：- （减号）">
-                                <a class="fs_minus" href="#"><i class="fa fa-minus"></i> 减小</a>
+                                <a class="fs_minus btn btn-primary" href="#"><i class="fa fa-minus"></i> 减小</a>
                             </li>
                             <li title="字体还原 快捷键：0 （数字0） ">
-                                <a class="fs_reset" href="#"><i class="fa fa-refresh"></i> 还原</a>
+                                <a class="fs_reset btn btn-primary" href="#"><i class="fa fa-refresh"></i> 还原</a>
                             </li>
                             <li><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
+
+                            {% if chapter.next %}
+                            <li title="快捷键：右键"><a class="next_page btn btn-primary" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            {% else %}
+                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
+                            {% endif %}
                         </ul>
 
                         <div class="london">
                         <p class="article">{{ chapter.content|safe }}</p>
                         </div>
+                        <hr/>
 
                         <ul class="list-inline text-center">
                             {% if chapter.prev  %}
-                            <li title="快捷键：左键"><a class="prev_page" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            <li title="快捷键：左键"><a class="prev_page btn btn-primary" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
                             {% else %}
                             <i class="fa fa-arrow-circle-left"></i> 已是第一章
-                            {% endif %}
-                            {% if chapter.next %}
-                            <li title="快捷键：右键"><a class="next_page" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
-                            {% else %}
-                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
                             {% endif %}
                             <li class="user-icons">
                                 {% include '../inc/stat_actions.html' with novel=novel state=state %}
                                 {% include '../inc/share_actions.html' with novel=novel chapter=chapter%}
                             </li>
+                            {% if chapter.next %}
+                            <li title="快捷键：右键"><a class="next_page btn btn-primary" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            {% else %}
+                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
+                            {% endif %}
                         </ul>
 
                     </div>
@@ -152,7 +154,7 @@
             if (event.keyCode == 37) {
                 {# left arrow "<" pressed #}
                 {% if chapter.prev %}
-                window.location = $('#prev_page').attr('href');
+                window.location = $('.prev_page').attr('href');
                 {% else %}
                 alert('已经是第一页');
                 {% endif %}
@@ -161,7 +163,7 @@
             else if (event.keyCode == 39) {
                 {# right arrow ">" pressed #}
                 {% if chapter.next %}
-                window.location = $('#next_page').attr('href');
+                window.location = $('.next_page').attr('href');
                 {% else %}
                 alert('已经是最后一页');
                 {% endif %}
