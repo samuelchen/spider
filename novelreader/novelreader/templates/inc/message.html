@@ -2,7 +2,7 @@
     {% with DEFAULT_MESSAGE_LEVELS as L  %}
     <ul class="messagelist">
         {% for m in messages %}
-        <li class="{{ m.tags }} {% if m.level == L.ERROR %}text-danger{% endif %} {% if m.level == L.WARNING %}text-warning{% endif %} {% if m.level == L.INFO %}text-info{% endif %}">{{ m }}</li>
+        <li class="{{ m.tags }} {% if m.level == L.ERROR %}text-danger{% endif %} {% if m.level == L.WARNING %}text-warning{% endif %} {% if m.level == L.INFO %}text-info{% endif %}">{{ m|safe }}</li>
         {% endfor %}
     </ul>
     {% endwith %}
