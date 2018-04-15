@@ -14,6 +14,8 @@
 
 {% block content %}
 
+    {% include '../inc/message.html' %}
+
     <div class="row">
 
     {#  ===== Left column (Novel Info) =====  #}
@@ -43,6 +45,9 @@
                                 <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                             </div>
                             <div class="pull-right user-icons">
+{#                                <a href="#disqus_thread">评论</a>#}
+                                <a title="评论" style="cursor:pointer;" href="#disqus_thread">
+                                    <i class="fa fa-comment fa-2x"></i> 评论</a>
                                 {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
                             </div>
@@ -53,7 +58,6 @@
         </div>
         {#  ===== Novel info DONE =====  #}
 
-        {% include '../inc/message.html' %}
 
         {#  ===== New chapters =====  #}
         <div class="row margin-b-10">
@@ -151,8 +155,12 @@
         </div>
         {#  ===== Full chapters DONE ======  #}
 
+        <div id="comments" class="info float-container box">
+            {% include '../inc/comments.html' %}
+        </div>
     </div>
     {#  ===== END Bottom Column =====  #}
+
 
 
 </div>
@@ -166,7 +174,7 @@
 
 {% block script %}
     {{ block.super }}
-
+    <script id="dsq-count-scr" src="//bhks.disqus.com/count.js" async></script>
     <script>
         $(document).ready(function(){
            save_history("{{ novel.id }}", "{{ novel.name }}", null, null);

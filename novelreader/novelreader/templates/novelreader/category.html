@@ -28,10 +28,15 @@
         <div class="row margin-b-10">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 box margin-b-10 ">
-                    <div class="col-sm-12 london-title">
+                    <div class="float-container">
+
+                    <div class="london-title pull-left">
                         <h3 class="text-uppercase"><i class="fa fa-tags"></i> {{ category }}</h3>
                         <h4 class="text-uppercase">Category</h4>
                     </div>
+                        <img src="{% static 'images/logo.png' %}" class="logo pull-right" style="width:140px;margin-top: 15px;">
+
+                        </div>
                     {% include '../inc/message.html' %}
                 </div>
                 <div class="box novel-list-block">

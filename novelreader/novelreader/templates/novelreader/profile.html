@@ -155,28 +155,39 @@
 
                     <div class="tab-content">
 
+                    {% if user.is_authenticated %}
                         {#  tab content - profile  #}
-                        <div id="profile" class="tab-pane {% if tab == 'profile' %}active{% endif %}">
+                        <div id="profile" class="tab-pane {% if not tab or tab == 'profile' %}active{% endif %}">
                             <div class="form">
                                 <form method="POST">
                                     {% csrf_token %}
                                     <div class="col-lg-6 col-md-5 col-sm-7">
                                         <div class="form-group">
-                                            <label class="form-label">修改名字：</label>
-                                            <input name="username" class="form-control" type="text" placeholder="名字">
+                                            <label class="form-label">修改姓名：<span class="small">(只支持中文，英文和空格)</span> </label>
+                                            <input name="fullname" class="form-control" type="text" maxlengh='50' placeholder="{{ request.user.first_name|default_if_none:'全名' }}">
                                         </div>
-                                        <div class="form-group">
-                                            <label class="form-label">修改密码：</label>
-                                            <input name="password" class="form-control" type="password" placeholder="原密码">
-                                            <input name="password1" class="form-control" type="password" placeholder="新密码">
-                                            <input name="password2" class="form-control" type="password" placeholder="重复输入新密码">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-5">
+{#                                        <div class="form-group">#}
+{#                                            <input name="password" class="form-control" type="password" placeholder="原密码">#}
+{#                                            <input name="password1" class="form-control" type="password" placeholder="新密码">#}
+{#                                            <input name="password2" class="form-control" type="password" placeholder="重复输入新密码">#}
+{#                                        </div>#}
                                         <div class="form-group">
                                             <label class="form-label">修改头像：</label><span>（暂时不支持）</span>
                                             <button class="btn btn-default disabled" type="button">上传头像</button>
                                             <button class="btn btn-info disabled" type="button">保存头像</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-5">
+
+                                        <div class="form-group">
+                                            <label class="form-label">修改密码：</label>
+                                            <a class="btn btn-default" href="{% url 'account_change_password' %}">修改密码</a>
+                                            <a class="btn btn-default" href="{% url 'account_reset_password' %}">重置密码</a>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">管理email：</label>
+                                            <a class="btn btn-default" href="{% url 'account_email' %}">管理email</a>
                                         </div>
                                     </div>
                                     <div class="desc text-center">
@@ -203,7 +214,7 @@
                                 </ul>
                             </div>
                         </div>
-
+                    {% endif %}
 
                         {#  tab content - history  #}
                         <div id="history" class="tab-pane {% if tab == 'history' %}active{% endif %}">

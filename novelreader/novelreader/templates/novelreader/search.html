@@ -29,12 +29,17 @@
     {#  ===== Main column =====  #}
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 box">
 
+
         {# ===== Search box ===== #}
         <div class="row margin-b-10">
-            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                <h3 class="london-title">搜索{% if q %}<span class="text-danger">"{{ q }}"</span>结果{% endif %}</h3>
-                {% include '../inc/search_box.html' with q=q %}
+            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1 float-container">
+                <img src="{% static 'images/logo.png' %}" class="logo pull-right" style="width:140px;margin-top: 15px;">
+                <div class="">
+                    <h3 class="london-title">搜索{% if q %}<span class="text-danger">"{{ q }}"</span>结果{% endif %}</h3>
+                    {% include '../inc/search_box.html' with q=q %}
+                </div>
             </div>
+
         </div>
         {# ===== Search box DONE ===== #}
 

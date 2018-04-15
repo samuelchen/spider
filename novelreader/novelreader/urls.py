@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.conf import settings
 from django.contrib import admin
 from .views import (
     IndexView,
@@ -32,7 +33,8 @@ def t(name):
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^_admin_/', admin.site.urls),
+
     url(r'^$', IndexView.as_view(template_name=t('index.html')), name='index'),
     url(r'^(?P<nid>\d+)/$', NovelView.as_view(template_name=t('novel.html')), name='novel'),
     url(r'^(?P<nid>\d+)/(?P<cid>\d+)/$', ChapterView.as_view(template_name=t('chapter.html')), name='chapter'),
@@ -40,7 +42,7 @@ urlpatterns = [
     url(r'^profile/$', ProfileView.as_view(template_name=t('profile.html')), name='profile'),
     url(r'^search/$', SearchView.as_view(template_name=t('search.html')), name='search'),
 
-    url(r'^stat/$', StatView.as_view(), name='stat'),
+    url(r'^stat/$', StatView.as_view(), name='stat') if settings else None,
 
     url(r"^test/(?P<name>\w+)/$", TestView.as_view()),
 

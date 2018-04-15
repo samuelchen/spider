@@ -1,4 +1,4 @@
-{% extends "../base_site.html" %}{% load staticfiles static %}
+{% extends "../base_site.html" %}{% load staticfiles static %}{% load content %}
 
 {% block title %}{{ novel.name }}({{ novel.author }})小说_{{ chapter.name }}_{{ novel.name }}全文无弹窗_小说5200_笔趣阁_悟空追书 {{ block.super }}{% endblock %}
 
@@ -44,57 +44,69 @@
                             <li><a id="novel_page" title="书名" href="{% url 'novel' novel.id %}"><i class="fa fa-book"></i> 《{{ novel.name }}》</a></li>
                             <li><a title="作者" href="{% url 'search' %}?q={{ novel.author }}&qtype=author"><i class="fa fa-user"></i> {{ novel.author }}</a></li>
                             <li><a title="类型" href="{% url 'category' novel.category %}"><i class="fa fa-tags"></i> {{ novel.category }}</a></li>
-                            <li><i class="fa fa-thumbs-up"></i> {{ novel.recommends }}</li>
+{#                            <li><i class="fa fa-thumbs-up"></i> {{ novel.recommends }}</li>#}
                             <li class="user-icons">
                                 {% include '../inc/stat_actions.html' with novel=novel state=state %}
                                 {% include '../inc/share_actions.html' with novel=novel chapter=chapter%}
                             </li>
                         </ul>
                         <ul class="list-inline text-center">
+
+                            <li title="设置背景色"><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
+                            <li title="设置字体"><label for="font_sel">字体</label> <select id="font_sel"></select></li>
+
+                            <li>
+                                <div class="btn-group">
+                                    <a title="字体增大 快捷键：+(=)" class="fs_plus btn btn-default btn-sm" href="#"><i class="fa fa-plus"></i> 增大</a>
+                                    <a title="字体减小 快捷键：- （减号）" class="fs_minus btn btn-default btn-sm" href="#"><i class="fa fa-minus"></i> 减小</a>
+                                    <a title="字体还原 快捷键：0 （数字0）" class="fs_reset btn btn-default btn-sm" href="#"><i class="fa fa-refresh"></i> 还原</a>
+                                </div>
+                            </li>
+
+{#                            <li title="字体增大 快捷键：+(=)">#}
+{#                                <a class="fs_plus btn btn-secondary btn-sm" href="#"><i class="fa fa-plus"></i> 增大</a>#}
+{#                            </li>#}
+{#                            <li title="字体减小 快捷键：- （减号）">#}
+{#                                <a class="fs_minus btn btn-info btn-sm" href="#"><i class="fa fa-minus"></i> 减小</a>#}
+{#                            </li>#}
+{#                            <li title="字体还原 快捷键：0 （数字0）">#}
+{#                                <a class="fs_reset btn btn-primary btn-sm" href="#"><i class="fa fa-refresh"></i> 还原</a>#}
+{#                            </li>#}
+
                             {% if chapter.prev  %}
-                            <li title="快捷键：左键"><a class="prev_page btn btn-primary" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            <li title="快捷键：左键"><a class="prev_page btn btn-primary btn-sm" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"></i> 上一章</a></li>
                             {% else %}
-                            <span class="btn btn-default disabled"><i class="fa fa-arrow-circle-left"></i> 已是第一章</span>
+                            <span class="btn btn-primary btn-sm disabled"><i class="fa fa-arrow-circle-left"></i> 已是第一章</span>
                             {% endif %}
 
-                            <li title="设置字体"><label for="font_sel">字体</label> <select id="font_sel"></select></li>
-                            <li title="字体增大 快捷键：+(=)">
-                                <a class="fs_plus btn btn-primary" href="#"><i class="fa fa-plus"></i> 增大</a>
-                            </li>
-                            <li title="字体减小 快捷键：- （减号）">
-                                <a class="fs_minus btn btn-primary" href="#"><i class="fa fa-minus"></i> 减小</a>
-                            </li>
-                            <li title="字体还原 快捷键：0 （数字0）">
-                                <a class="fs_reset btn btn-primary" href="#"><i class="fa fa-refresh"></i> 还原</a>
-                            </li>
-                            <li title="设置背景色"><label for="color_sel">背景色</label> <select id="color_sel"></select></li>
-
                             {% if chapter.next %}
-                            <li title="快捷键：右键"><a class="next_page btn btn-primary" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            <li title="快捷键：右键"><a class="next_page btn btn-primary btn-sm" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
                             {% else %}
-                            <span class="btn btn-default disabled">已是最后一章 <i class="fa fa-arrow-circle-right"></i></span>
+                            <span class="btn btn-primary btn-sm disabled">已是最后一章 <i class="fa fa-arrow-circle-right"></i></span>
                             {% endif %}
                         </ul>
 
                         <div class="london">
-                        <p class="article">{{ chapter.content|safe }}</p>
+                        <p class="article">{{ chapter.content|clean|striptags|linebreaksbr|safe }}</p>
                         </div>
                         <hr/>
 
                         <ul class="list-inline text-center">
                             {% if chapter.prev  %}
-                            <li title="快捷键：左键"><a class="prev_page btn btn-primary" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"> 上一章</i></a></li>
+                            <li title="快捷键：左键"><a class="prev_page btn btn-primary btn-sm" href="{% url 'chapter' novel.id chapter.prev.id %}"><i class="fa fa-arrow-circle-left"></i> 上一章</a></li>
                             {% else %}
-                            <i class="fa fa-arrow-circle-left"></i> 已是第一章
+                            <span class="btn btn-primary btn-sm disabled"><i class="fa fa-arrow-circle-left"></i> 已是第一章</span>
                             {% endif %}
+
                             <li class="user-icons">
                                 {% include '../inc/stat_actions.html' with novel=novel state=state %}
                                 {% include '../inc/share_actions.html' with novel=novel chapter=chapter%}
                             </li>
+
                             {% if chapter.next %}
-                            <li title="快捷键：右键"><a class="next_page btn btn-primary" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
+                            <li title="快捷键：右键"><a class="next_page btn btn-primary btn-sm" href="{% url 'chapter' novel.id chapter.next.id %}">下一章 <i class="fa fa-arrow-circle-right"></i></a></li>
                             {% else %}
-                            已是最后一章 <i class="fa fa-arrow-circle-right"></i>
+                            <span class="btn btn-primary btn-sm disabled">已是最后一章 <i class="fa fa-arrow-circle-right"></i></span>
                             {% endif %}
                         </ul>
 
