@@ -5,8 +5,10 @@ cd ~/spider/novelspider
 git pull
 cd log
 if [ -e chapter.log ]; then
-  mv chapter.log `cat chapter_novels.log`
-  tail `cat chapter_novels.log`
+  if [ -e chapter_novels.log ]; then
+    mv chapter.log `cat chapter_novels.log`
+    tail `cat chapter_novels.log`
+  fi
 fi
 cd ..
 source ~/venv/py3/bin/activate
