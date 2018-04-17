@@ -1,6 +1,7 @@
 #!/usr/bin/sh env
 
 from novelspider.db import Database, select, or_
+from utils import clean_content
 import sys
 import re
 
@@ -25,7 +26,7 @@ sql_keys = ['%%%s%%' % k for k in keywords_to_clean]
 db = Database()
 
 
-def clean_all(novel_ids=None):
+def count_all(novel_ids=None):
 
     conn = db.create_connection()
 
@@ -66,7 +67,7 @@ def clean_all(novel_ids=None):
         # loop found chapter contents
         for r1 in rs1:
             print(' > ', r1[t.c.id], r1[t.c.name])
-            cnt_keywords = clean(r1[t.c.content])
+            cnt_keywords = count_content(r1[t.c.content])
             for i in range(0, len(keywords_to_clean)):
                 novel_cnt_keywords[i] += cnt_keywords[i]
 
@@ -83,7 +84,7 @@ def clean_all(novel_ids=None):
                     print(' - ', keywords_to_clean[i], ":", cnt_keywords[i])
 
 
-def clean(content):
+def count_content(content):
 
     cnts = []
     i = 0
@@ -102,6 +103,6 @@ def clean(content):
 if __name__ == '__main__':
 
     if len(sys.argv) > 1:
-        clean_all(sys.argv[1:])
+        count_all(sys.argv[1:])
     else:
-        clean_all()
+        count_all()

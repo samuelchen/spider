@@ -49,3 +49,10 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
 
 ]   # + static(settings.STATIC_URL + 'albums/', document_root=settings.STATICFILES_DIRS[1])
+
+
+# for silk profiling
+try:
+    urlpatterns += [url(r'^_silk_/', include('silk.urls', namespace='silk'))]
+except:
+    pass

@@ -25,7 +25,11 @@ class NovelView(TemplateView, BaseViewMixin):
         if nid is None:
             raise Http404('Novel does not exist.')
 
-        context['novel'] = get_novel_info(nid, add_last_chapter=True, with_actions_user_id=self.request.user.id)
+        novel = get_novel_info(nid, add_last_chapter=True, with_actions_user_id=self.request.user.id)
+        if not novel:
+            raise Http404('Novel (id=%s) is not found' % nid)
+
+        context['novel'] = novel
         context['latest_chapters'] = get_latest_chapters(nid)
         context['chapters'] = get_all_chapters(nid)
 

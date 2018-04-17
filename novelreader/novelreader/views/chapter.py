@@ -26,6 +26,9 @@ class ChapterView(TemplateView, BaseViewMixin):
         if nid is None:
             raise Http404('Novel does not exist.')
         novel = get_novel_info(nid, add_last_chapter=False, with_actions_user_id=self.request.user.id)
+        if not novel:
+            raise Http404('Novel (id=%s) is not found' % nid)
+
         context['novel'] = novel
         context['chapter'] = get_chapter(cid, chapter_table=novel['chapter_table'], with_next=True, with_prev=True)
 

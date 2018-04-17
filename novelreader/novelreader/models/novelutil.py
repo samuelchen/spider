@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 
 from django.conf import settings
-import os
-import sys
 from django.http import Http404
 from django.utils import timezone
-
-sys.path.append(os.path.join(settings.BASE_DIR, '..', 'novelspider'))
 from .novel import ReaderDatabase as Database
 from sqlalchemy import (
     Boolean,
@@ -341,42 +337,14 @@ def search_novels(term, qtype=None, page=0, page_items=settings.ITEMS_PER_PAGE,
 
 def get_novel_info(nid, add_last_chapter=False, with_actions_user_id=None, with_stat=False):
 
-    info = {}
     tn = db.DB_table_novel
     wclause = (tn.c.id==nid)
     novels = list_novels(cols=tn.c, page_items=1, where_clause=wclause, add_last_chapter=add_last_chapter,
                          with_actions_user_id=with_actions_user_id, with_stat=with_stat)
     if len(novels) <= 0:
-        raise Http404('Novel (id=%s) is not found' % nid)
-    info = novels[0]
-
-
-    # info = {}
-    # tn = db.DB_table_novel
-    # stmt = select(tn.c).where(tn.c.id==nid)
-    # if with_actions_user_id:
-    #     tf = db.DB_table_reader_favorites
-    #     stmt = select(tn.c, cast(tf.c.id, Boolean).label('is_favor')
-    #                   ).select_from(SubQuery.user_favorites(user_id=with_actions_user_id), tn.c.id==tf.c.novel_id
-    #                   ).where(tn.c.id==nid)
-    #
-    # try:
-    #     # since there is pool. use engine.execute directly
-    #     rs = db.engine.execute(stmt)
-    #     if rs.rowcount <= 0:
-    #         raise Http404('Novel (id=%s) is not found' % nid)
-    #     r = rs.fetchone()
-    #     info = dict(r)
-    #     rs.close()
-    #
-    #     if add_last_chapter:
-    #         last_chapter_id, last_chapter = get_last_chapter(chapter_table=r[tn.c.chapter_table])
-    #         info['last_chapter'] = last_chapter
-    #         info['last_chapter_id'] = last_chapter_id
-    # except Http404:
-    #     raise
-    # except Exception as err:
-    #     log.exception(err)
+        info = {}
+    else:
+        info = novels[0]
 
     return info
 

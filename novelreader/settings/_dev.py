@@ -8,10 +8,9 @@ from ._base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['azure', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS.extend([
-    'novelreader',
 ])
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'data/media')

@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from novelspider.db import Database
+from novelspider.novelspider.db import Database
 from sqlalchemy import (
     Table,
     Column, ForeignKey, UniqueConstraint,
