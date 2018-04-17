@@ -255,7 +255,7 @@
             for (var i in history.indexes) {
                 var nid = history.indexes[i];
                 var record = history.records[nid];
-                container.append('<li><a href="#"><img src="{% get_static_prefix %}albums/' + record.novel_name + '.jpg" ' +
+                container.append('<li><a href="/' + record.novel_id + '/"><img src="{% get_static_prefix %}albums/' + record.novel_name + '.jpg" ' +
                 'onerror="this.onerror=null;this.src=\'{% get_static_prefix %}images/nocover.jpg\';" ' +
                 'class="img-responsive"><span>' + record.novel_name + '</span></a></li>');
             }

@@ -171,8 +171,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 WEBSITE = {
     'name': '壁虎看书',
     'short_name': '壁虎',
-    'domain': 'bihu.com',
-    'mobile_url': 'http://m.bihu.com'
+    'domain': 'bihuks.com',
+    'mobile_url': 'http://m.bihuks.com'
 }
 
 # include all novels even has not started to download

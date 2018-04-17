@@ -39,9 +39,9 @@ class SearchView(TemplateView, BaseViewMixin):
             context['novels'] = novels
             if len(novels) <= 0:
                 if qtype == 'name':
-                    error(self.request, '没找到该名字的书. 如果是作者名，请尝试点击作者<i class="fa fa-user"></i>按钮搜索。')
+                    error(self.request, '没找到该名字的书. 如果是作者名，请尝试点击作者 <i class="fa fa-user"></i> 按钮搜索。')
                 elif qtype == 'author':
-                    error(self.request, '没找到该名字的作者. 如果是书名，请尝试点击书名<i class="fa fa-book"></i>按钮搜索。')
+                    error(self.request, '没找到该名字的作者. 如果是书名，请尝试点击书名 <i class="fa fa-book"></i> 按钮搜索。')
                 else:
                     error(self.request, '没找到该名字或者作者的书. 请尝试减少查询字数重新搜索。')
 

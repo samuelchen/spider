@@ -41,13 +41,13 @@ class CategoryView(TemplateView, BaseViewMixin):
 
         context['top_a'] = {
             "title": "热门小说", "subtitle": category, "icon": "fa fa-fire",
-            "novels": list_hot_novels_by_category(category, page_items=13)
+            "novels": list_hot_novels_by_category(category, page_items=14)
         }
 
         context['tops_b'] = [
             {"title": "推荐榜", "subtitle": category, "icon": "fa fa-thumbs-up",
-             "novels": list_recommend_novels_by_category(category, page_items=13)},
+             "novels": list_recommend_novels_by_category(category, page_items=14)},
             {"title": "收藏榜", "subtitle": category, "icon": "fa fa-star",
-             "novels": list_favorite_novels_by_category(category, page_items=13)},
+             "novels": list_favorite_novels_by_category(category, page_items=14)},
         ]
         return context
