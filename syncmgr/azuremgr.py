@@ -19,24 +19,28 @@ class AzureSyncManager(object):
 
     def sync_albums(self):
         prefix = 'albums'
+        local_path = os.path.join(self.local_static_root, prefix)
+        print('Local albums path: ' + local_path)
+
+        local_files = set(os.listdir(local_path))
+        print('local files: ', local_files)
+
         remote_blobs = self.block_blob_service.list_blobs(self.blob_container, prefix=prefix)
-        local_files = set(os.listdir(self.local_static_root))
-        print(local_files)
         remote_files = set()
         for blob in remote_blobs:
             fname = blob.name.split('/')
             fname = fname[1]
             remote_files.add(fname)
-        print(remote_files)
+        print('remote blobs: ', remote_files)
 
         ex_files = local_files - remote_files
         print(ex_files)
 
         for fname in ex_files:
-            full_path = os.path.join(self.local_static_root, fname)
+            full_path = os.path.join(local_path, fname)
             try:
-                self.block_blob_service.create_blob_from_path(self.blob_container, os.path.join(prefix, fname),
-                                                              full_path)
+                print(full_path)
+                self.block_blob_service.create_blob_from_path(self.blob_container, os.path.join(prefix, fname), full_path)
             except Exception as err:
                 print(err)
 #
