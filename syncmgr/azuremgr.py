@@ -15,7 +15,7 @@ class AzureSyncManager(object):
     def __init__(self, acc_name, acc_key, blob_container, local_static_root):
         self.block_blob_service = BlockBlobService(account_name=acc_name, account_key=acc_key)
         self.blob_container = blob_container
-        self.local_static_root = local_static_root
+        self.local_static_root = local_static_root.rstrip('/\\')
 
     def sync_albums(self):
         prefix = 'albums'
