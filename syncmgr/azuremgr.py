@@ -116,7 +116,7 @@ if __name__ == '__main__':
         folder = ''
         print('You are synchronizing FULL %s folders !!' % AzureConf.LOCAL_STATIC_ROOT)
     if input('Sure to sync ? (yes/no)').lower() == 'yes':
-        azure_syncmgr.sync_folder(folder, del_remote=True, del_local=True)
+        azure_syncmgr.sync_folder(folder, del_remote=True, del_local=False)
     else:
         print('abort.')
         exit(1)
