@@ -108,5 +108,16 @@ if __name__ == '__main__':
     azure_syncmgr = AzureSyncManager(AzureConf.ACCOUNT_NAME, AzureConf.ACCOUNT_KEY,
                                      AzureConf.BLOB_CONTAINER, AzureConf.LOCAL_STATIC_ROOT)
 
-    # azure_syncmgr.sync_albums()
-    azure_syncmgr.sync_folder('font-awesome', del_remote=True, del_local=True)
+    folder = ''
+    if len(sys.argv) > 1:
+        folder = sys.argv[1]
+        print('You are synchronizing %s folder.' % os.path.join(AzureConf.LOCAL_STATIC_ROOT, folder))
+    else:
+        folder = ''
+        print('You are synchronizing FULL %s folders !!' % AzureConf.LOCAL_STATIC_ROOT)
+    if input('Sure to sync ? (yes/no)').lower() == 'yes':
+        azure_syncmgr.sync_folder(folder, del_remote=True, del_local=True)
+    else:
+        print('abort.')
+        exit(1)
+
