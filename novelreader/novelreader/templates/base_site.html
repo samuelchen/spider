@@ -37,7 +37,13 @@
             {% include './inc/toolbar.html' %}
         {% endblock %}
 
+
         <div class="col-sm-12 col-md-12 col-lg-offset-1 col-lg-10">
+
+            {% block message %}
+                {% include './inc/message.html' %}
+            {% endblock %}
+
             <div class="row">
                 <div class="main-page">
                     <div class="content-main">

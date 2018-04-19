@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-
+from collections import Iterable
 from django.conf import settings
 from django.http import Http404
 from django.utils import timezone
 from .novel import ReaderDatabase as Database
 from sqlalchemy import (
     Boolean,
-    select,
+    select, text, literal_column,
     and_, or_, true as true_,
-    alias, cast,
+    alias, cast, exists, func
 )
 import logging
 
@@ -61,6 +61,20 @@ class SubQuery():
         stmt = alias(stmt, ts.name)
         return stmt
 
+    @staticmethod
+    def novel_recommends():
+        tr = Database.DB_table_reader_recommends
+        stmt = select([tr.c.novel_id, func.sum(tr.c.count).label('recmds')]).select_from(tr).group_by(tr.c.novel_id)
+        stmt = alias(stmt, 'novel_recommends')
+        return stmt
+
+    @staticmethod
+    def novels_has_chapters():
+        tn = db.DB_table_novel
+        stmt = text('''(select tablename from pg_catalog.pg_tables where tablename = %s)''' % tn.c.chapter_table)
+        stmt = stmt.columns(literal_column("tablename"))
+        return stmt
+
 
 # ===== Novel List functions =====
 
@@ -70,7 +84,7 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
     tn = db.DB_table_novel
 
     # default where clause
-    wclause = tn.c.id.in_(novels_has_chapters)
+    wclause = exists(SubQuery.novels_has_chapters())        # All novels which have chapters
     if where_clause is not None:
         wclause = and_(wclause, where_clause)
 
@@ -79,20 +93,24 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
         wclause = where_clause if where_clause is not None else true_()
 
     # default order by clause
-    oclause = tn.c.id.desc()
+    oclauses = (tn.c.id.desc(), )
     if order_clause is not None:
-        oclause = order_clause
+        if isinstance(order_clause, Iterable):
+            oclauses = order_clause
+        else:
+            oclauses = (order_clause, )
 
     columns = [c for c in cols] if cols else [tn.c.id, tn.c.name, tn.c.author, tn.c.category, tn.c.status,
                                               tn.c.desc, tn.c.update_on, tn.c.chapter_table]
 
     # join clause to query status/statics
     jclause = None
+    tf = SubQuery.user_favorites(user_id=with_actions_user_id)
+    tr = SubQuery.user_recommends(user_id=with_actions_user_id)
+    tv = SubQuery.novel_views()
 
     # user actions status
     if with_actions_user_id is not None:
-        tf = SubQuery.user_favorites(user_id=with_actions_user_id)
-        tr = SubQuery.user_recommends(user_id=with_actions_user_id)
         jclause = tn.join(tf, tn.c.id==tf.c.novel_id, isouter=True
                           ).join(tr, tn.c.id==tr.c.novel_id, isouter=True)
         columns.append(cast(tf.c.id, Boolean).label('is_favor'))
@@ -100,11 +118,13 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
 
     # novel statics
     if with_stat is not None:
-        tv = SubQuery.novel_views()
         if jclause is None:
             jclause = tn
+        tnr = SubQuery.novel_recommends()
         jclause = jclause.join(tv, tn.c.id==tv.c.novel_id, isouter=True)
+        jclause = jclause.join(tnr, tn.c.id==tnr.c.novel_id, isouter=True)
         columns.extend([tv.c.views, tv.c.views_year, tv.c.views_month])
+        columns.extend([tnr.c.recmds])
 
     # statement
     stmt = select(columns)
@@ -113,12 +133,11 @@ def list_novels(cols=None, where_clause=None, order_clause=None, page=0, page_it
         stmt = stmt.select_from(jclause)
 
     stmt = stmt.where(wclause
-                      ).order_by(oclause
+                      ).order_by(*oclauses
                       ).limit(page_items
                       ).offset(page * page_items)
 
-
-        # print(stmt)
+    # print(stmt)
     novels = []
     rs = None
     conn = None
@@ -157,8 +176,8 @@ def list_update_novels_by_category(category, page=0, page_items=settings.ITEMS_P
     tn = db.DB_table_novel
     order_clause = tn.c.update_on.desc()
     return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
-                       page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter,  with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter,
+                       with_actions_user_id=with_actions_user_id, with_stat=with_stat)
 
 
 # 总收藏，收藏数倒序
@@ -182,73 +201,80 @@ def list_favorite_novels_by_category(category, page=0, page_items=settings.ITEMS
 
 # 总推荐，推荐数倒序
 def list_recommend_novels(page=0, page_items=settings.ITEMS_PER_PAGE,
-                          add_last_chapter=False, with_actions_user_id=None, with_stat=False):
+                          add_last_chapter=False, with_actions_user_id=None):
     tn = db.DB_table_novel
-    order_clause = tn.c.recommends.desc()
-    return list_novels(order_clause=order_clause, page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+    tnr = SubQuery.novel_recommends()
+    order_clause = tnr.c.recmds.desc().nullslast(), tn.c.recommends.desc()
+    return list_novels(order_clause=order_clause, page=page, page_items=page_items, add_last_chapter=add_last_chapter,
+                       with_actions_user_id=with_actions_user_id, with_stat=True)
 
 
 # 总推荐（分类），推荐数倒序
 def list_recommend_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE,
-                                      add_last_chapter=False, with_actions_user_id=None, with_stat=False):
+                                      add_last_chapter=False, with_actions_user_id=None):
     tn = db.DB_table_novel
-    order_clause = tn.c.recommends.desc()
+    tnr = SubQuery.novel_recommends()
+    order_clause = tnr.c.recmds.desc().nullslast(), tn.c.recommends.desc()
     return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
-                       page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter,
+                       with_actions_user_id=with_actions_user_id, with_stat=True)
 
 
 # 月推荐，推荐数倒序
 def list_recommend_novels_month(page=0, page_items=settings.ITEMS_PER_PAGE,
-                                add_last_chapter=False, with_actions_user_id=None, with_stat=False):
+                                add_last_chapter=False, with_actions_user_id=None):
+    # TODO: add count_year, count_month to 'reader_recommends'
     tn = db.DB_table_novel
-    order_clause = tn.c.recommends_month.desc()
+    tnr = SubQuery.novel_recommends()
+    order_clause = tn.c.recommends_month.desc(), tnr.c.recmds.desc().nullslast()
     return list_novels(order_clause=order_clause, page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=True)
 
 
 # 月推荐（分类），推荐数倒序
 def list_recommend_novels_month_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE,
-                                            add_last_chapter=False, with_actions_user_id=None, with_stat=False):
+                                            add_last_chapter=False, with_actions_user_id=None):
+    # TODO: add count_year, count_month to 'reader_recommends'
     tn = db.DB_table_novel
-    order_clause = tn.c.recommends_month.desc()
+    tnr = SubQuery.novel_recommends()
+    order_clause = tn.c.recommends_month.desc(), tnr.c.recmds.desc().nullslast()
     return list_novels(where_clause=_get_category_where_clause(category), order_clause=order_clause,
-                       page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                       page=page, page_items=page_items, add_last_chapter=add_last_chapter,
+                       with_actions_user_id=with_actions_user_id, with_stat=True)
 
 
 # 总点击，点击数倒序
 def list_hot_novels(page=0, page_items=settings.ITEMS_PER_PAGE,
-                    add_last_chapter=False, with_actions_user_id=None, with_stat=False):
-    # TODO: return real
-    return list_recommend_novels_month(page=page, page_items=page_items,
-                                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                    add_last_chapter=False, with_actions_user_id=None):
+    tv = db.DB_table_reader_views
+    order_clause = tv.c.views.desc().nullslast(), tv.c.views_month.desc().nullslast()
+    novels = list_novels(order_clause=order_clause, page=page, page_items=page_items,
+                         add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id,
+                         with_stat=True)
+    return novels
 
 
 # 总点击（分类），点击数倒序
 def list_hot_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE,
-                                add_last_chapter=False, with_actions_user_id=None, with_stat=False):
-    # TODO: return real
-    return list_recommend_novels_month_by_category(category, page=page, page_items=page_items,
-                                                   add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                                add_last_chapter=False, with_actions_user_id=None):
+    tv = db.DB_table_reader_views
+    order_clause = tv.c.views.desc().nullslast(), tv.c.views_month.desc().nullslast()
+    novels = list_novels(where_clause=_get_category_where_clause(category),
+                         order_clause=order_clause, page=page, page_items=page_items,
+                         add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id,
+                         with_stat=True)
+    return novels
 
 
 # 月点击
 def list_hot_novels_month(page=0, page_items=settings.ITEMS_PER_PAGE,
-                          add_last_chapter=False, with_actions_user_id=None, with_stat=False):
-    # TODO: return real
-    pass
-
-
-# 周点击
-def list_hot_novels_week(page=0, page_items=settings.ITEMS_PER_PAGE,
-                         add_last_chapter=False, with_actions_user_id=None, with_stat=False):
-    # TODO: return real
-    tn = db.DB_table_novel
-    order_clause = tn.c.recommends.desc()
-    return list_novels(order_clause=order_clause, page=page, page_items=page_items,
-                       add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                          add_last_chapter=False, with_actions_user_id=None):
+    tv = db.DB_table_reader_views
+    order_clause = tv.c.views_month.desc().nullslast(), tv.c.views.desc().nullslast()
+    novels = list_novels(order_clause=order_clause, page=page, page_items=page_items,
+                         add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id,
+                         with_stat=True)
+    return novels
 
 
 # 强推，编辑选择，等等 （站内系统，非爬取）
@@ -256,7 +282,7 @@ def list_choice_novels(page=0, page_items=settings.ITEMS_PER_PAGE,
                        add_last_chapter=False, with_actions_user_id=None, with_stat=False):
     # TODO: return real
     return list_recommend_novels(page=page, page_items=page_items,
-                                 add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id, with_stat=with_stat)
+                                 add_last_chapter=add_last_chapter, with_actions_user_id=with_actions_user_id)
 
 
 # 完本
@@ -288,21 +314,21 @@ def list_novels_by_category(category, page=0, page_items=settings.ITEMS_PER_PAGE
 
 
 # 所有已有章节小说
-def list_novels_has_chapters(name_as_key=False):
-    #TODO: change
-    novels = {}
-    for name in db.engine.table_names():
-        if name.endswith('_conflict') or name.startswith('reader_') or name in ['home', 'novel', 'novel_lock']:
-            continue
-        arr = name.split('_')
-        novel_id = int(arr[1])
-        novel_name = arr[2]
-        if name_as_key:
-            novels[novel_name] = novel_id
-        else:
-            novels[novel_id] = novel_name
-    return novels
-novels_has_chapters = list_novels_has_chapters()
+# def list_novels_has_chapters(name_as_key=False):
+#     #TODO: change
+#     novels = {}
+#     for name in db.engine.table_names():
+#         if name.endswith('_conflict') or name.startswith('reader_') or name in ['home', 'novel', 'novel_lock']:
+#             continue
+#         arr = name.split('_')
+#         novel_id = int(arr[1])
+#         novel_name = arr[2]
+#         if name_as_key:
+#             novels[novel_name] = novel_id
+#         else:
+#             novels[novel_id] = novel_name
+#     return novels
+# novels_has_chapters = list_novels_has_chapters()
 
 
 def _get_category_where_clause(category):

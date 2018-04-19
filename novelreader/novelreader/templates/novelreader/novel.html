@@ -14,8 +14,6 @@
 
 {% block content %}
 
-    {% include '../inc/message.html' %}
-
     <div class="row">
 
     {#  ===== Left column (Novel Info) =====  #}
@@ -45,11 +43,10 @@
                                 <i class="fa fa-tag fa-2x"></i><span>{{ novel.category }}</span>
                             </div>
                             <div class="pull-right user-icons">
-{#                                <a href="#disqus_thread">评论</a>#}
-                                <a title="评论" style="cursor:pointer;" href="#disqus_thread">
-                                    <i class="fa fa-comment fa-2x"></i> 评论</a>
+                                <a id="start_read" href="#" class="btn btn-primary btn-sm"><i class="fa fa-book"></i> 开始阅读</a>
                                 {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
+                                <a title="评论" style="cursor:pointer;" href="#disqus_thread"><i class="fa fa-comment fa-2x"></i></a>
                             </div>
                         </div>
                     </div>
@@ -167,9 +164,6 @@
 
 
 
-
-
-
 {% endblock %}
 
 {% block script %}
@@ -177,7 +171,31 @@
     <script id="dsq-count-scr" src="//bhks.disqus.com/count.js" async></script>
     <script>
         $(document).ready(function(){
-           save_history("{{ novel.id }}", "{{ novel.name }}", null, null);
+            save_history("{{ novel.id }}", "{{ novel.name }}", null, null);
+
+            var btn_read = $("#start_read");
+            var history = load_history();
+            var novel_id = "{{ novel.id }}";
+            if (history.records.hasOwnProperty(novel_id)) {
+                var record = history.records[novel_id];
+                var cid = record['chapter_id'];
+                var url = '';
+                if (cid) {
+                    url = "{% url 'novel' novel.id %}" + cid;
+{#                    btn_read.removeClass('btn-primary').addClass('btn-warning');#}
+                    btn_read.html('<i class="fa fa-book"></i> 继续阅读');
+                    btn_read.attr('title', record['chapter_name']).tooltip("fixTitle").tooltip('show');
+                } else {
+                    var link_first_chapter = $("#full_chapters").find("ul a:first");
+                    console.log(link_first_chapter);
+                    url = link_first_chapter.attr("href");
+                    btn_read.attr('title', link_first_chapter.text()).tooltip('fixTitle').tooltip('show');
+                }
+            }
+
+            btn_read.click(function () {
+                window.location = url;
+            });
         });
     </script>
 {% endblock %}

@@ -60,8 +60,12 @@ class AzureSyncManager(object):
             while head != self.local_static_root:
                 head, tail = os.path.split(head)
                 prefix = '/'.join([tail, prefix])
-            files = set(prefix + name for name in files)
+
             print(prefix)
+            if prefix.startswith('_'):
+                print('ignored')
+                continue
+            files = set(prefix + name for name in files)
             print('files:', files)
             local_files.update(files)
 
@@ -77,7 +81,7 @@ class AzureSyncManager(object):
         remote_extra = remote_files - local_files
         # print('new files:', new_files)
         # print('del files:', del_files)
-
+        
         for fname in local_extra:
             local_path = os.path.join(self.local_static_root, fname)
             remote_path = fname

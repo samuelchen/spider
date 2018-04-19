@@ -17,8 +17,6 @@
 
 <div class="row">
 
-    {% include '../inc/message.html' %}
-
     <div class="hidden-xs">
         {% include '../inc/banner.html' %}
     </div>
@@ -69,7 +67,7 @@
 {#                        <p class="">&nbsp;</p><hr>#}
                         <div class="col-sm-12 location-main">
                             <div class="pull-right bottom-user">
-                                <a href="#"><i class="fa fa-caret-right"></i><span>READ MORE</span></a>
+                                <a href="{% url 'top' 'update' %}"><i class="fa fa-caret-right"></i><span>更多</span></a>
                             </div>
                         </div>
                     </div>

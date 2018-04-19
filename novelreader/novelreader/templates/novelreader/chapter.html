@@ -41,7 +41,7 @@
 {#                            <h4 class="text-uppercase">《{{ novel.name }}》</h4>#}
                         </div>
                         <ul class="list-inline text-center">
-                            <li><a id="novel_page" title="书名" href="{% url 'novel' novel.id %}"><i class="fa fa-book"></i> 《{{ novel.name }}》</a></li>
+                            <li><a id="novel_page" title="书页" href="{% url 'novel' novel.id %}"><i class="fa fa-book"></i> 《{{ novel.name }}》</a></li>
                             <li><a title="作者" href="{% url 'search' %}?q={{ novel.author }}&qtype=author"><i class="fa fa-user"></i> {{ novel.author }}</a></li>
                             <li><a title="类型" href="{% url 'category' novel.category %}"><i class="fa fa-tags"></i> {{ novel.category }}</a></li>
 {#                            <li><i class="fa fa-thumbs-up"></i> {{ novel.recommends }}</li>#}
@@ -290,7 +290,8 @@
             fs_minus.click(decrease_font_size);
             fs_reset.click(reset_font_size);
 
-            save_history("{{ novel.id }}", "{{ novel.name }}", null, null);
+            save_history("{{ novel.id }}", "{{ novel.name }}", "{{ chapter.id }}", "{{ chapter.name }}");
+
         });
 
     </script>

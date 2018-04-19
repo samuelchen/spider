@@ -8,6 +8,11 @@ from ..models.novelutil import (
     list_hot_novels_by_category,
     list_recommend_novels_by_category,
     list_favorite_novels_by_category,
+
+    list_favorite_novels,
+    list_hot_novels,
+    list_recommend_novels,
+    list_update_novels,
 )
 from .base import BaseViewMixin
 
@@ -30,24 +35,25 @@ class CategoryView(TemplateView, BaseViewMixin):
         context['category'] = category
         context['p'] = page
 
+        novels = []
         if category in categories:
             novels = list_novels_by_category(category, page=page, page_items=PAGE_ITEMS, add_last_chapter=True)
-            context['novels_top'] = novels[0:4]
-            context['novels'] = novels[4:]
         else:
             raise Http404('未找到此类型小说')
 
-        self.gen_pager_context(context, context['novels'], page_items=PAGE_ITEMS)
+        context['novels_top'] = novels[0:4]
+        context['novels'] = novels[4:]
+        self.gen_pager_context(context, novels, page_items=PAGE_ITEMS)
 
         context['top_a'] = {
-            "title": "热门小说", "subtitle": category, "icon": "fa fa-fire",
+            "title": "热门小说", "subtitle": category, "keyword": "hot", "icon": "fa fa-fire",
             "novels": list_hot_novels_by_category(category, page_items=14)
         }
 
         context['tops_b'] = [
-            {"title": "推荐榜", "subtitle": category, "icon": "fa fa-thumbs-up",
+            {"title": "推荐榜", "subtitle": category, "keyword": "recommend", "icon": "fa fa-thumbs-up",
              "novels": list_recommend_novels_by_category(category, page_items=14)},
-            {"title": "收藏榜", "subtitle": category, "icon": "fa fa-star",
+            {"title": "收藏榜", "subtitle": category, "keyword": "favorite", "icon": "fa fa-star",
              "novels": list_favorite_novels_by_category(category, page_items=14)},
         ]
         return context

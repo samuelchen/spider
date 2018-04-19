@@ -35,13 +35,15 @@ class NovelView(TemplateView, BaseViewMixin):
 
 
         context['top_a'] = {
-            "title": "热门小说", "subtitle": "", "icon": "fa fa-fire",
+            "title": "热门小说", "subtitle": "", "keyword": "hot", "icon": "fa fa-fire",
             "novels": list_hot_novels(page_items=5)
         }
 
         context['tops_b'] = [
-            {"title": "推荐榜", "subtitle": "", "novels": list_recommend_novels(page_items=6), "icon": "fa fa-thumbs-up"},
-            {"title": "收藏榜", "subtitle": "", "novels": list_favorite_novels(page_items=6), "icon": "fa fa-star"},
+            {"title": "推荐榜", "subtitle": "", "keyword": "recommend",
+             "novels": list_recommend_novels(page_items=6), "icon": "fa fa-thumbs-up"},
+            {"title": "收藏榜", "subtitle": "",  "keyword": "favorite",
+             "novels": list_favorite_novels(page_items=6), "icon": "fa fa-star"},
         ]
 
         return context

@@ -4,6 +4,20 @@
 
 if (!window['main.js']) {
 
+    Array.prototype.indexOf = function (val) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == val) return i;
+        }
+        return -1;
+    };
+
+    Array.prototype.remove = function (val) {
+        var index = this.indexOf(val);
+        if (index > -1) {
+            this.splice(index, 1);
+        }
+    };
+
 // get site name & domain in array
     function get_site_info() {
         var author = document.getElementsByTagName("meta")["author"]['content'];
@@ -22,20 +36,6 @@ if (!window['main.js']) {
             records: {}
         };
 
-        // This book was read already. Add chapters read count.
-        if (history.records.hasOwnProperty(novel_id)) {
-            var cnt = history.records[novel_id]['count'];
-            cnt += 1;
-            history.records[novel_id]['count'] = cnt;
-            Cookies.set('history', history, {expires: 36500});
-
-            // if read more than 10 chapters, we count the views of novel.
-            if (cnt > 10) {
-                add_novel_view_count(novel_id);
-            }
-            return;
-        }
-
         var record = {
             "novel_id": novel_id,
             "novel_name": novel_name,
@@ -43,11 +43,26 @@ if (!window['main.js']) {
             "chapter_name": chapter_name,
             "count": 0
         };
-        history.indexes.push(novel_id);
+
+        // This book was read already.
+        if (history.records.hasOwnProperty(novel_id)) {
+            record = history.records[novel_id];
+            history.indexes.remove(novel_id);
+        }
+
+        if (chapter_id) record['chapter_id'] = chapter_id;
+        if (chapter_name) record['chapter_name'] = chapter_name;
+        record['count'] += 1;
+        history.indexes.unshift(novel_id);
         history.records[novel_id] = record;
 
+        // if read more than 10 chapters, we count the views of novel.
+        if (record['count'] > 10) {
+            add_novel_view_count(novel_id);
+        }
+
         if (history.indexes.length > MAX) {
-            var remove_id = history.indexes.shift();
+            var remove_id = history.indexes.pop();
             delete history.records[remove_id];
         }
 

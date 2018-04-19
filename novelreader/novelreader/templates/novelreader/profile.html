@@ -129,8 +129,6 @@
             {% endif %}
                 <hr/>
 
-                {% include '../inc/message.html' %}
-
                 {# tabs #}
                 <div class=" col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <ul class="nav nav-tabs">
@@ -252,7 +250,7 @@
         $(document).ready(function(){
             var container = $("#history").find('ul');
             var history = load_history();
-            for (var i in history.indexes) {
+            for (var i = 0; i < history.indexes.length; i++) {
                 var nid = history.indexes[i];
                 var record = history.records[nid];
                 container.append('<li><a href="/' + record.novel_id + '/"><img src="{% get_static_prefix %}albums/' + record.novel_name + '.jpg" ' +
