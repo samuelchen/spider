@@ -3,8 +3,10 @@
 __author__ = 'Samuel Chen <samuel.net@gmail.com>'
 
 import os, uuid, sys
-from azure.storage.blob import BlockBlobService, PublicAccess
+from azure.storage.blob import BlockBlobService, PublicAccess, ContentSettings
 from conf import AzureConf
+import mimetypes
+# from .content_types import CONTENT_TYPE
 
 
 class AzureSyncManager(object):
@@ -17,33 +19,33 @@ class AzureSyncManager(object):
         self.blob_container = blob_container
         self.local_static_root = local_static_root.rstrip('/\\')
 
-    def sync_albums(self):
-        prefix = 'albums'
-        local_path = os.path.join(self.local_static_root, prefix)
-        print('Local albums path: ' + local_path)
-
-        local_files = set(os.listdir(local_path))
-        print('local files: ', local_files)
-
-        remote_blobs = self.block_blob_service.list_blobs(self.blob_container, prefix=prefix)
-        remote_files = set()
-        for blob in remote_blobs:
-            fname = blob.name.split('/')
-            fname = fname[1]
-            remote_files.add(fname)
-        print('remote blobs: ', remote_files)
-
-        ex_files = local_files - remote_files
-        print(ex_files)
-
-        for fname in ex_files:
-            full_path = os.path.join(local_path, fname)
-            try:
-                print(full_path)
-                self.block_blob_service.create_blob_from_path(self.blob_container, os.path.join(prefix, fname), full_path)
-            except Exception as err:
-                print(err)
+#     def sync_albums(self):
+#         prefix = 'albums'
+#         local_path = os.path.join(self.local_static_root, prefix)
+#         print('Local albums path: ' + local_path)
 #
+#         local_files = set(os.listdir(local_path))
+#         print('local files: ', local_files)
+#
+#         remote_blobs = self.block_blob_service.list_blobs(self.blob_container, prefix=prefix)
+#         remote_files = set()
+#         for blob in remote_blobs:
+#             fname = blob.name.split('/')
+#             fname = fname[1]
+#             remote_files.add(fname)
+#         print('remote blobs: ', remote_files)
+#
+#         ex_files = local_files - remote_files
+#         print(ex_files)
+#
+#         for fname in ex_files:
+#             full_path = os.path.join(local_path, fname)
+#             try:
+#                 print(full_path)
+#                 self.block_blob_service.create_blob_from_path(self.blob_container, os.path.join(prefix, fname), full_path)
+#             except Exception as err:
+#                 print(err)
+# #
 
     def sync_folder(self, folder, del_remote=False, del_local=False):
         root_path = os.path.join(self.local_static_root, folder)
@@ -79,13 +81,21 @@ class AzureSyncManager(object):
         for fname in local_extra:
             local_path = os.path.join(self.local_static_root, fname)
             remote_path = fname
+
             try:
                 if del_local:
-                    print(' ^^ \tDEL\t', local_path, ' <-- ', '(remote)')
+                    print(' ^^ \tDEL\t', local_path, ' <-- ', '(local)')
                     os.remove(local_path)
                 else:
                     print(' ^^ \tUPLOAD\t', local_path, ' --> ', remote_path)
-                    self.block_blob_service.create_blob_from_path(self.blob_container, remote_path, local_path)
+                    content = None
+                    content_type = mimetypes.guess_type(local_path)[0]
+                    if content_type is not None:
+                        content = ContentSettings()
+                        content.content_type = content_type
+                    self.block_blob_service.create_blob_from_path(container_name=self.blob_container,
+                                                                  blob_name=remote_path, file_path=local_path,
+                                                                  content_settings=content)
             except Exception as err:
                 print(err)
 
@@ -94,11 +104,12 @@ class AzureSyncManager(object):
             remote_path = fname
             try:
                 if del_remote:
-                    print(' xx \tDEL\t', '(local)', ' --> ', remote_path)
-                    self.block_blob_service.delete_blob(self.blob_container, remote_path)
+                    print(' xx \tDEL\t', '(remote)', ' --> ', remote_path)
+                    self.block_blob_service.delete_blob(container_name=self.blob_container, blob_name=remote_path)
                 else:
                     print(' ^^ \tDOWNLOAD\t', local_path, ' <-- ', remote_path)
-                    self.block_blob_service.get_blob_to_path(self.blob_container, remote_path, local_path)
+                    self.block_blob_service.get_blob_to_path(container_name=self.blob_container,
+                                                             blob_name=remote_path, file_path=local_path)
             except Exception as err:
                 print(err)
 
