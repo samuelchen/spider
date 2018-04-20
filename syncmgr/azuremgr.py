@@ -81,7 +81,7 @@ class AzureSyncManager(object):
         remote_extra = remote_files - local_files
         # print('new files:', new_files)
         # print('del files:', del_files)
-        
+
         for fname in local_extra:
             local_path = os.path.join(self.local_static_root, fname)
             remote_path = fname

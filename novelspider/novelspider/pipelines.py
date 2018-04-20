@@ -44,7 +44,7 @@ class NovelspiderDBPipeline(object):
                 log.warn('Conflict (home): %(name)s %(url)s' % item)
 
         elif spider.name == 'novel':
-            # log.info('<spider:novel>: %(name)s %(url)s' % item)
+            # log.debug('<spider:novel>: %(name)s %(url)s' % item)
 
             is_updating = item.get('is_updating', False)
             t = self.db.DB_table_novel

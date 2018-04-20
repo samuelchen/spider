@@ -64,18 +64,27 @@ class NovelSpider(scrapy.Spider):
             update_on = datetime.strptime(update_on, '%y-%m-%d') if update_on else datetime.min
             update_on = update_on.replace(tzinfo=CST)
 
-            if update_on > last_update_on:
+            log.debug('extracted: %s %s %s' % (name, update_on.strftime('%Y-%m-%d'), url))
+            if not name or not url:
+                continue
+
+            if update_on >= last_update_on:
                 # remember largest update_on date
                 if update_on > new_update_on:
                     new_update_on = update_on
             else:
+                if update_on == datetime.min:
+                    continue
                 # update_on date of this novel is smaller than last_update_on,
                 # which means novels on rest home-index pages are not updated
                 # because home-index pages are sorted by date desc.
                 update_done = True
+                log.info('%s update done due to novel (%s %s) is not updated (%s) since last update (%s)' % (
+                    home_url, name, url, update_on.strftime('%y-%m-%d'), last_update_on.strftime('%y-%m-%d')))
+                break
 
             # only yield item which is later than the date last updated.
-            if name and url and update_on > last_update_on:
+            if name and url and update_on >= last_update_on:
                 item = {
                     "name": name.strip(),
                     "url": url.strip(),
@@ -86,8 +95,6 @@ class NovelSpider(scrapy.Spider):
                 yield response.follow(url, meta={"item": item, "dont_cache": True}, callback=self.parse_novel)
 
         if update_done:
-            log.info('%s update done due to novel is not updated (%s) since last update (%s)' % (
-                home_url, update_on.strftime('%y-%m-%d'), last_update_on.strftime('%y-%m-%d')))
             # update latest update_on date to home
             t = self.db.DB_table_home
             stmt = t.update().values(update_on=new_update_on).where(t.c.url==home_url)
@@ -100,7 +107,7 @@ class NovelSpider(scrapy.Spider):
 
         self.pages += 1
         if self.pages > LIMIT_INDEX_PAGES > 0:
-            log.info('Exit due to reach limitation (LIMIT_INDEX_PAGES=%s)' % LIMIT_INDEX_PAGES)
+            log.info('Exit due to reach limitation (LIMIT_INDEX_PAGES=%s, %s)' % (LIMIT_INDEX_PAGES, home_url))
             return
 
         next_page = response.css('div.pagelink > a.next::attr("href")').extract_first()
