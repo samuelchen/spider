@@ -95,6 +95,8 @@ class NovelSpider(scrapy.Spider):
                 yield response.follow(url, meta={"item": item, "dont_cache": True}, callback=self.parse_novel)
 
         if update_done and new_update_on > last_update_on:
+            # TODO: last_update_on or new_update_on need to be changed while uddated.
+
             # update latest update_on date to home
             t = self.db.DB_table_home
             log.info('Updating "%s" table last update_on to %s for %s:' % (t.name, new_update_on, home_url))
@@ -111,6 +113,7 @@ class NovelSpider(scrapy.Spider):
             log.info('Exit due to reach limitation (LIMIT_INDEX_PAGES=%s, %s)' % (LIMIT_INDEX_PAGES, home_url))
             return
 
+        # TODO: last_update_on or new_update_on need to be changed while next page.
         next_page = response.css('div.pagelink > a.next::attr("href")').extract_first()
         log.debug('next page: %s' % next_page)
         if next_page is not None:
