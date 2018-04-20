@@ -71,7 +71,7 @@ class NovelSpider(scrapy.Spider):
                 # remember largest update_on date
                 if update_on > new_update_on:
                     new_update_on = update_on
-                    log.info('new update time becoming: %s' % new_update_on)
+                    log.debug('new update time becoming: %s' % new_update_on)
             else:
                 if update_on == datetime.min:
                     continue
