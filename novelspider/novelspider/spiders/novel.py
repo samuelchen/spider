@@ -50,7 +50,6 @@ class NovelSpider(scrapy.Spider):
         home_url = response.meta['home_url']
         last_update_on = response.meta['last_update_on']
         new_update_on = last_update_on
-        update_on = datetime.min
         update_done = False
 
         # if 'Bandwidth exceeded' in response.body:
@@ -64,14 +63,15 @@ class NovelSpider(scrapy.Spider):
             update_on = datetime.strptime(update_on, '%y-%m-%d') if update_on else datetime.min
             update_on = update_on.replace(tzinfo=CST)
 
-            log.debug('extracted: %s %s %s' % (name, update_on.strftime('%Y-%m-%d'), url))
             if not name or not url:
                 continue
+            log.debug('extracted: %s %s %s' % (name, update_on.strftime('%Y-%m-%d'), url))
 
             if update_on >= last_update_on:
                 # remember largest update_on date
                 if update_on > new_update_on:
                     new_update_on = update_on
+                    log.info('new update time becoming: %s' % new_update_on)
             else:
                 if update_on == datetime.min:
                     continue
@@ -94,9 +94,10 @@ class NovelSpider(scrapy.Spider):
                     item['is_updating'] = True
                 yield response.follow(url, meta={"item": item, "dont_cache": True}, callback=self.parse_novel)
 
-        if update_done:
+        if update_done and new_update_on > last_update_on:
             # update latest update_on date to home
             t = self.db.DB_table_home
+            log.info('Updating "%s" table last update_on to %s for %s:' % (t.name, new_update_on, home_url))
             stmt = t.update().values(update_on=new_update_on).where(t.c.url==home_url)
             try:
                 self.db.engine.execute(stmt)
