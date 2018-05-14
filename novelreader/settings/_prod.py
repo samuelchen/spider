@@ -13,6 +13,9 @@ DEBUG = False
 ALLOWED_HOSTS = [WEBSITE['domain'], 'www.'+WEBSITE['domain'], ]
 
 INSTALLED_APPS.extend([
+    # for django-allauth
+    'allauth.socialaccount.providers.weibo',
+    'allauth.socialaccount.providers.weixin',
 ])
 
 MEDIA_ROOT = os.path.abspath('/opt/novelreader/media')
@@ -63,3 +66,12 @@ CACHES = {
 MIDDLEWARE.insert(0, 'django.middleware.cache.UpdateCacheMiddleware')
 MIDDLEWARE.append('django.middleware.cache.FetchFromCacheMiddleware')
 CACHE_MIDDLEWARE_SECONDS = 3600
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASWORD = ''
+EMAIL_PORT = 25
+# EMAIL_SUBJECT_PREFIX = '[壁虎看书]'
+EMAIL_USE_LOCALTIME = True

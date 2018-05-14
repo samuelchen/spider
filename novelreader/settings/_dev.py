@@ -11,6 +11,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['azure', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS.extend([
+    # for django-allauth
+    'allauth.socialaccount.providers.weibo',
+    'allauth.socialaccount.providers.weixin',
 ])
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'data/media')

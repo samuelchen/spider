@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.weibo',
-    'allauth.socialaccount.providers.weixin',
+    # 'allauth.socialaccount.providers.weibo',
+    # 'allauth.socialaccount.providers.weixin',
 
 ]
 
@@ -158,7 +158,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = False
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
-
+# ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"     # "mandatory", "optional", or "none"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -174,6 +174,8 @@ WEBSITE = {
     'domain': 'bihuks.com',
     'mobile_url': 'http://m.bihuks.com'
 }
+DEFAULT_FROM_EMAIL = 'no-reply@%s' % WEBSITE['domain']
+
 
 # include all novels even has not started to download
 ALL_NOVELS = os.environ.get('ALL_NOVELS', False)
