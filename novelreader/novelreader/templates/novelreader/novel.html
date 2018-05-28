@@ -185,12 +185,14 @@
 {#                    btn_read.removeClass('btn-primary').addClass('btn-warning');#}
                     btn_read.html('<i class="fa fa-book"></i> 继续阅读');
                     btn_read.attr('title', record['chapter_name']).tooltip("fixTitle").tooltip('show');
-                } else {
-                    var link_first_chapter = $("#full_chapters").find("ul a:first");
-                    console.log(link_first_chapter);
-                    url = link_first_chapter.attr("href");
-                    btn_read.attr('title', link_first_chapter.text()).tooltip('fixTitle').tooltip('show');
                 }
+            }
+
+            if (!url) {
+                var link_first_chapter = $("#full_chapters").find("ul a:first");
+                console.log(link_first_chapter);
+                url = link_first_chapter.attr("href");
+                btn_read.attr('title', link_first_chapter.text()).tooltip('fixTitle').tooltip('show');
             }
 
             btn_read.click(function () {
