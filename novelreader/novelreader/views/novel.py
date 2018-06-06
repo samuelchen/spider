@@ -71,9 +71,6 @@ class NovelView(TemplateView, BaseViewMixin):
         author = unicodedata.normalize("NFKD", novel['author'])
         desc = unicodedata.normalize("NFKD", novel['desc'])
 
-        chapters = get_all_chapters(nid, with_content=True)
-
-
         # folder = os.environ.get('TMP')
         folder = settings.MEDIA_ROOT
         zipname = '%s_%s.zip' % (nid, name)
@@ -81,9 +78,14 @@ class NovelView(TemplateView, BaseViewMixin):
         fname = '%s_%s.txt' % (nid, name)
         fpath = os.path.join(folder, fname)
 
+        if os.path.exists(zippath):
+            return zippath
+
         line_bold = '=' * 30
         line = '-' * 30
         line_break = '\r\n' * 2
+
+        chapters = get_all_chapters(nid, with_content=True)
 
         with open(fpath, 'w') as f:
             log.debug('\tExport novel %s(id=%s) to file %s' % (name or '', nid, zippath))
