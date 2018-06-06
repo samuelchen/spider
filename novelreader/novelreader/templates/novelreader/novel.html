@@ -44,6 +44,9 @@
                             </div>
                             <div class="pull-right user-icons">
                                 <a id="start_read" href="#" class="btn btn-primary btn-sm"><i class="fa fa-book"></i> 开始阅读</a>
+                                {% if request.user.is_superuser %}
+                                    <a id="download_novel" href="{% url 'novel' novel.id %}?download"><i class="fa fa-download"></i></a>
+                                {% endif %}
                                 {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
                                 <a title="评论" style="cursor:pointer;" href="#disqus_thread"><i class="fa fa-comment fa-2x"></i></a>
@@ -198,6 +201,7 @@
             btn_read.click(function () {
                 window.location = url;
             });
+
         });
     </script>
 {% endblock %}

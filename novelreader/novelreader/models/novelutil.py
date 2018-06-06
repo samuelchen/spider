@@ -481,18 +481,21 @@ def get_latest_chapters(nid, count=12):
     return chapters
 
 
-def get_all_chapters(nid):
+def get_all_chapters(nid, with_content=False):
     tn = db.DB_table_novel
     stmt = select([tn.c.chapter_table]).where(tn.c.id==nid)
     # chapters = []
+
     rs = []
     try:
         # since there is pool, use engine.execute directly
         table = db.engine.execute(stmt).scalar()
         if db.exist_table(table):
             t = db.get_chapter_table(table)
-            stmt = select([t.c.id, t.c.name, t.c.is_section, t.c.url]
-                          ).order_by(t.c.id)
+            cols = [t.c.id, t.c.name, t.c.is_section, t.c.url]
+            if with_content:
+                cols.append(t.c.content)
+            stmt = select(cols                          ).order_by(t.c.id)
             rs = db.engine.execute(stmt)
     except Exception as err:
         log.exception(err)

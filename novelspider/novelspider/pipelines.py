@@ -96,7 +96,7 @@ class NovelspiderDBPipeline(object):
             except Database.IntegrityError:
                 log.warn('Conflict (novel): %(name)s %(url)s' % item)
 
-        elif spider.name == 'chapter':
+        elif spider.name == 'chapter' or spider.name == 'single':
 
             novel_id = item['novel_id']
 
