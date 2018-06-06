@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from .views import (
     IndexView,
@@ -52,6 +53,8 @@ urlpatterns = [
 
 ]   # + static(settings.STATIC_URL + 'albums/', document_root=settings.STATICFILES_DIRS[1])
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # for silk profiling
 try:

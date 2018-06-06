@@ -1,7 +1,7 @@
 #!/usr/bin/evn python
 
 import logging
-from django.http import Http404, StreamingHttpResponse
+from django.http import Http404, StreamingHttpResponse, HttpResponseRedirect
 from django.utils.encoding import escape_uri_path
 from django.views.generic import TemplateView
 from django.conf import settings
@@ -29,10 +29,13 @@ class NovelView(TemplateView, BaseViewMixin):
         novel = context.get('novel')
         if 'download' in self.request.GET:
             zipbook = self.gen_ebook(novel)
+            head, fname = os.path.split(zipbook)
+            url = settings.MEDIA_URL + fname
             f = open(zipbook, 'rb')
-            response = StreamingHttpResponse(f, content_type='application/zip')
-            response['Content-Disposition'] = 'attachment;filename="%s.zip"' % escape_uri_path(novel['name'])
-            return response
+            return HttpResponseRedirect(url)
+            # response = StreamingHttpResponse(f, content_type='application/zip')
+            # response['Content-Disposition'] = 'attachment;filename="%s.zip"' % escape_uri_path(novel['name'])
+            # return response
         return super(NovelView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
