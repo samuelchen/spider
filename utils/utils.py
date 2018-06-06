@@ -6,7 +6,6 @@ from time import time
 import re
 from django.conf import settings
 import os
-import zipstream
 
 
 __author__ = 'Samuel Chen <samuel.net@gmail.com>'
@@ -62,34 +61,8 @@ def clean_content(value, *args, **kwargs):
     return value
 
 
-class ZipUtilities:
-    zip_file = None
-
-    def __init__(self):
-        self.zip_file = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
-
-    def toZip(self, file, name):
-        if os.path.isfile(file):
-            self.zip_file.write(file, arcname=os.path.basename(file))
-        else:
-            self.addFolderToZip(file, name)
-
-    def addFolderToZip(self, folder, name):
-        for file in os.listdir(folder):
-            full_path = os.path.join(folder, file)
-            if os.path.isfile(full_path):
-                self.zip_file.write(full_path, arcname=os.path.join(name, os.path.basename(full_path)))
-            elif os.path.isdir(full_path):
-                self.addFolderToZip(full_path, os.path.join(name, os.path.basename(full_path)))
-
-    def close(self):
-        if self.zip_file:
-            self.zip_file.close()
-
-
 __all__ = [
     'timeit',
     'is_valid_username',
     'clean_content',
-    'ZipUtilities',
 ]
