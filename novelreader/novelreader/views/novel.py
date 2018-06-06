@@ -4,6 +4,7 @@ import logging
 from django.http import Http404, StreamingHttpResponse
 from django.utils.encoding import escape_uri_path
 from django.views.generic import TemplateView
+from django.conf import settings
 import unicodedata
 from ..models.novelutil import (
     get_novel_info, get_latest_chapters, get_all_chapters,
@@ -73,7 +74,8 @@ class NovelView(TemplateView, BaseViewMixin):
         chapters = get_all_chapters(nid, with_content=True)
 
 
-        folder = os.environ.get('TMP')
+        # folder = os.environ.get('TMP')
+        folder = settings.MEDIA_ROOT
         zipname = '%s_%s.zip' % (nid, name)
         zippath = os.path.join(folder, zipname)
         fname = '%s_%s.txt' % (nid, name)
@@ -101,5 +103,5 @@ class NovelView(TemplateView, BaseViewMixin):
 
         with zipfile.ZipFile(zippath, 'w') as myzip:
                 myzip.write(fpath, fname)
-
+        os.remove(fpath)
         return zippath
