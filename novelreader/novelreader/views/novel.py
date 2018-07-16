@@ -47,9 +47,9 @@ class NovelView(TemplateView, BaseViewMixin):
             email = EmailMessage(
                 novel['name'],             # mail subject
                 novel['name'],      # mail body
-                user.email,             # from
-                [user.email, ],         # to
-                [],                     # bcc
+                # user.email,             # from
+                to=[user.email, ],         # to
+                # [],                     # bcc
                 reply_to=[user.email],
                 # headers={'Message-ID': 'foo'},
             )
@@ -97,9 +97,11 @@ class NovelView(TemplateView, BaseViewMixin):
 
         # folder = os.environ.get('TMP')
         folder = settings.MEDIA_ROOT
-        zipname = '%s_%s.zip' % (nid, name)
+        # zipname = '%s_%s.zip' % (nid, name)
+        zipname = '%s.zip' % nid
         zippath = os.path.join(folder, zipname)
-        fname = '%s_%s.txt' % (nid, name)
+        # fname = '%s_%s.txt' % (nid, name)
+        fname = '%s.txt' % nid
         fpath = os.path.join(folder, fname)
 
         if os.path.exists(zippath):
@@ -127,7 +129,7 @@ class NovelView(TemplateView, BaseViewMixin):
                 f.writelines(line_break)
                 log.debug('\tExported chapter %s_%s' % (c.id, c.name))
 
-        with zipfile.ZipFile(zippath, 'w') as myzip:
+        with zipfile.ZipFile(zippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 myzip.write(fpath, fname)
         os.remove(fpath)
         return zippath
