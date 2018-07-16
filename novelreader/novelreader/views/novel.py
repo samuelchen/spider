@@ -3,6 +3,8 @@
 import logging
 from django.http import Http404, StreamingHttpResponse, HttpResponseRedirect
 from django.utils.encoding import escape_uri_path
+from django.contrib.messages import error, debug, info, warning
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
 import unicodedata
@@ -54,6 +56,7 @@ class NovelView(TemplateView, BaseViewMixin):
             email.attach_file(zipbook)
             email.send()
             log.info('%s sent as email attachment to %s' % (novel['name'], user))
+            info(request, _('%s is sent to your email box as attachment.' % novel['name']))
         return super(NovelView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
