@@ -16,6 +16,8 @@ import zipfile
 import os
 from utils.utils import clean_content
 from django.template.defaultfilters import striptags, linebreaksbr
+from django.core.mail import EmailMessage
+
 
 __author__ = 'samuel'
 
@@ -36,6 +38,22 @@ class NovelView(TemplateView, BaseViewMixin):
             # response = StreamingHttpResponse(f, content_type='application/zip')
             # response['Content-Disposition'] = 'attachment;filename="%s.zip"' % escape_uri_path(novel['name'])
             # return response
+        elif 'email' in self.request.GET:
+            user = self.request.user
+            zipbook = self.gen_ebook(novel)
+
+            email = EmailMessage(
+                novel['name'],             # mail subject
+                novel['name'],      # mail body
+                user.email,             # from
+                [user.email, ],         # to
+                [],                     # bcc
+                reply_to=[user.email],
+                # headers={'Message-ID': 'foo'},
+            )
+            email.attach_file(zipbook)
+            email.send()
+            log.info('%s sent as email attachment to %s' % (novel['name'], user))
         return super(NovelView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

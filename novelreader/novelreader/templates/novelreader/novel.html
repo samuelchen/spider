@@ -45,7 +45,10 @@
                             <div class="pull-right user-icons">
                                 <a id="start_read" href="#" class="btn btn-primary btn-sm"><i class="fa fa-book"></i> 开始阅读</a>
                                 {% if request.user.is_superuser %}
-                                    <a id="download_novel" href="{% url 'novel' novel.id %}?download"><i class="fa fa-download"></i></a>
+                                    <a id="download_novel" title="下载" href="{% url 'novel' novel.id %}?download"><i class="fa fa-download"></i></a>
+                                {% endif %}
+                                {% if request.user.is_superuser %}
+                                    <a id="email_novel" title="发送邮件" href="{% url 'novel' novel.id %}?email"><i class="fa fa-envelope"></i></a>
                                 {% endif %}
                                 {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
