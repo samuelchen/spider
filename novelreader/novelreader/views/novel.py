@@ -107,26 +107,28 @@ class NovelView(TemplateView, BaseViewMixin):
         if os.path.exists(zippath):
             return zippath
 
-        line_bold = '=' * 30
-        line = '-' * 30
-        line_break = '\r\n' * 2
+        blank = ' ' * 4
+        line_bold = '=' * 20
+        line = '-' * 20
+        line_break = '\r\n'
+        line_break2 = '\r\n' * 2
 
         chapters = get_all_chapters(nid, with_content=True)
 
         with open(fpath, 'w') as f:
             log.debug('\tExport novel %s(id=%s) to file %s' % (name or '', nid, zippath))
-            f.writelines([line_bold, line_break, ' ' * 10, name, line_break, '作者: ' + author,
-                          line_break, line_bold, line_break, '简介:' + desc, line_break * 5])
+            f.writelines([line_bold, line_break2, blank, name, line_break2, '作者: ' + author,
+                          line_break2, line_bold, line_break2, '简介:' + desc, line_break2 * 5])
 
             for c in chapters:
                 if c['is_section']:
-                    f.writelines([line_bold, c['name'], line_bold, line_break])
+                    f.writelines([line_bold, line_break, '卷：', c['name'], line_break, line_bold, line_break2])
                     continue
-                f.writelines([line, c['name'], line, line_break])
+                f.writelines([line, line_break, c['name'], line_break, line, line_break2])
                 content = unicodedata.normalize("NFKD", c['content'])
                 content = striptags(clean_content(content))
                 f.write(content)
-                f.writelines(line_break)
+                f.writelines(line_break2)
                 log.debug('\tExported chapter %s_%s' % (c.id, c.name))
 
         with zipfile.ZipFile(zippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
