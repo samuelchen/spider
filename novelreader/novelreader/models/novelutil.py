@@ -495,7 +495,7 @@ def get_all_chapters(nid, with_content=False):
             cols = [t.c.id, t.c.name, t.c.is_section, t.c.url]
             if with_content:
                 cols.append(t.c.content)
-            stmt = select(cols                          ).order_by(t.c.id)
+            stmt = select(cols).order_by(t.c.id)
             rs = db.engine.execute(stmt)
     except Exception as err:
         log.exception(err)

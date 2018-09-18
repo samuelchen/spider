@@ -46,9 +46,16 @@
                                 <a id="start_read" href="#" class="btn btn-primary btn-sm"><i class="fa fa-book"></i> 开始阅读</a>
                                 {% if request.user.is_superuser %}
                                     <a id="download_novel" title="下载" href="{% url 'novel' novel.id %}?download"><i class="fa fa-download"></i></a>
-                                {% endif %}
-                                {% if request.user.is_superuser %}
-                                    <a id="email_novel" title="发送邮件" href="{% url 'novel' novel.id %}?email"><i class="fa fa-envelope"></i></a>
+                                    <div class="btn-group dropup">
+                                       <a id="email_novel" title="发送邮件" class="dropdown-toggle" href="#"
+                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                                            class="fa fa-envelope"><span class="caret"></span></i></a>
+                                        <ul class="dropdown-menu small">
+                                            <li><a href="{% url 'novel' novel.id %}?email=html">html</a></li>
+                                            <li><a href="{% url 'novel' novel.id %}?email=txt">text</a></li>
+{#                                            <li role="separator" class="divider"></li>#}
+                                        </ul>
+                                    </div>
                                 {% endif %}
                                 {% include '../inc/stat_actions.html' with novel=novel %}
                                 {% include '../inc/share_actions.html' with novel=novel %}
