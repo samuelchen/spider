@@ -4,5 +4,5 @@ import sys
 
 # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-name = sys.argv[1]
-execute(['scrapy', 'crawl', name])
+# name = sys.argv[1]
+execute(['scrapy', 'crawl', *sys.argv[1:]])

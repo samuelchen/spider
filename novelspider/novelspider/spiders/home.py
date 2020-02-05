@@ -14,6 +14,8 @@ class HomeSpider(scrapy.Spider):
     rex = re.compile(r'^/booksort\d/')
 
     def __init__(self, *args, **kwargs):
+        print(args)
+        print(kwargs)
         self.db = Database()
         self.db.DB_table_home.create(self.db.engine, checkfirst=True)
         super(HomeSpider, self).__init__(*args, **kwargs)
