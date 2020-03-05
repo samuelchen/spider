@@ -1,0 +1,17 @@
+# systemd conf. add to /usr/lib/systemd/system/
+
+[Unit]
+Description='bihuks gunicorn service'
+After=network.target
+
+[Service]
+Type=forking
+PrivateTmp=true
+Restart=on-failure
+PIDFile=/run/bihuks.pid
+ExecStart=/opt/bihuks/venv/bin/gunicorn -c /opt/bihuks/spider/gunicorn_conf.py novelreader.wsgi
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
